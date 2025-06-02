@@ -3,6 +3,7 @@ The default tile set is loosely based on the backrooms.
 Currently Linux only.
 
 Building on Linux:
+- Depenencies: illwill
 - build.sh will create the required directories and compile everything needed
 
 Keyboard Repeat may help for quicker movement:
