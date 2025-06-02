@@ -1,11 +1,12 @@
 import illwill, strutils, random
 import screen
 
-var map: string = readFile("../loadedLevel/map")
-
-var 
+const
   tX: int = 10
   tY: int = 5
+
+var
+  map: string = readFile("../loadedLevel/map")
   w: int = terminalWidth()
   h: int = terminalHeight() - 1
   x: int = 0
