@@ -47,7 +47,7 @@ var
   sY: int = 0
   gY: int = 0
 
-echo "Calculating min/max coordinates"
+echo "Finding min/max coordinates"
 for i in 0 .. path.len - 1:
   if path[i][0] < sX: sX = path[i][0]
   if path[i][0] > gX: gX = path[i][0]
