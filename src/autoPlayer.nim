@@ -38,7 +38,7 @@ proc main() =
   var stEn: char = 'S'
   for i in 1 .. 2:
     if i == 2: stEn = 'X'
-    while not map.contains(&"{stEn}"):
+    while not map.contains(stEn):
       for mY in 0 .. mYC - 1:
         for mX in 0 .. mW - 1:
           if map[mY * (mW + 1) + mX] == '*':
@@ -48,7 +48,7 @@ proc main() =
                 y = mY
                 x = mX
               break
-        if map.contains(&"{stEn}"): 
+        if map.contains(stEn): 
           break
 
   var m = map.replace("\n", "")

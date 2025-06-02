@@ -25,7 +25,7 @@ autoPlayer:
 player:
 - Loads the current map in ../loadedLevel/map
 - Uses the level number set in ../loadedLevel/level
-- Has no end goal currently
+- Has a goal same as autoPlayer but it disappeares on contact instead
 
 genMap:
 - Writes the selected level number to ../loadedLevel/level
