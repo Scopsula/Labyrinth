@@ -1,9 +1,11 @@
 import illwill, strutils, strformat, random, os
 import screen, autoGen
 
-var 
+const
   tX: int = 10
   tY: int = 5
+
+var 
   w: int = terminalWidth()
   h: int = terminalHeight() - 1
   x: int = 0
@@ -19,11 +21,6 @@ h = scY * tY
 echo "Set level size: "
 let n: int = readLine(stdin).parseInt
 
-var llimit = false
-echo "Limit to terminalWidth? [y/n]"
-if readLine(stdin).toUpper == "Y":
-  llimit = true
-
 randomize()
 illwillInit(fullscreen=true)
 hideCursor()
@@ -33,7 +30,7 @@ proc main() =
   if not fileExists(&"../chars/{lv}"): lv = 0
   writeFile("../loadedLevel/level", &"{lv}")
   newLevel()
-  autoGenLv(n, llimit)
+  autoGenLv(n)
   var map: string = readFile("../loadedLevel/map")
   let mYC: int = map.splitLines.len
   let mW: int = map.splitlines[0].len
