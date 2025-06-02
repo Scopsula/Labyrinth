@@ -29,17 +29,13 @@ var stEn: char = 'S'
 for i in 1 .. 2:
   if i == 2: stEn = 'X'
   while not map.contains(stEn):
-    for mY in 0 .. mYC - 1:
-      for mX in 0 .. mW - 1:
-        if map[mY * (mW + 1) + mX] == '*':
-          if rand(1 .. map.len) == 1:
-            map[mY * (mW + 1) + mX] = stEn
-            if i == 1:
-              y = mY
-              x = mX
-            break
-      if map.contains(stEn): 
-        break
+    let mY = rand(0 .. mYC - 1)
+    let mX = rand(0 .. mW - 1)
+    if map[mY * (mW + 1) + mX] == '*':
+      map[mY * (mW + 1) + mX] = stEn
+      if i == 1:
+        y = mY
+        x = mX
 
 var m = map.replace("\n", "")
 
