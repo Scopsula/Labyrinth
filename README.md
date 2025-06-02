@@ -1,5 +1,5 @@
-This is a small Labyrinth game with theming options (10x5 character tile for walls & paths)
-The default tile set is loosely based on the backrooms
+This is a small Labyrinth game with theming options (10x5 character tile for walls & paths).
+The default tile set is loosely based on the backrooms.
 Currently Linux only.
 
 Building on Linux:
