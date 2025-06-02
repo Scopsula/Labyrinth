@@ -5,8 +5,10 @@ Currently Linux only.
 Building on Linux:
 - build.sh will create the required directories and compile everything needed
 
-Keyboard Repeat may help for quicker movement
+
+Keyboard Repeat may help for quicker movement:
 Tested with a repeat delay of 300ms & repeat rate of 50ms
+
 
 Suggested Values for Level Iterations/Size:
 - 300 to 500 for small monitors (laptops) and short completion times
@@ -14,6 +16,7 @@ Suggested Values for Level Iterations/Size:
 - 3000 to 10000+ is fine on desktops (1920x1080)
 - 10000 takes ~1.27 seconds to generate on my system
 - 100000 takes ~129 seconds to generate on my system
+
 
 autoPlayer:
 - Automatically generates and switches to the next level (increments tile by one)
