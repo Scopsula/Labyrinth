@@ -4,11 +4,12 @@ const
   tX: int = 10
   tY: int = 5
 
+randomize()
+
 proc autoGenLv*(n: int) =
   var pos: array[2, int] = [0,0]
   var path: seq[array[2, int]]
 
-  randomize()
   path.insert(pos)
   for i in 1 .. n:
     let dir: string = sample(["x+", "x-", "y+", "y-"])
