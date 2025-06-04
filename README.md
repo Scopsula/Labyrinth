@@ -13,8 +13,9 @@ Suggested Values for Level Iterations/Size:
 - 300 to 500 for small monitors (laptops) and short completion times
 - 1000 to 5000 for longer completion times
 - 3000 to 10000+ is fine on desktops (1920x1080)
-- 10000 takes ~0.99 seconds to generate on my system
-- 100000 takes ~82.70 seconds to generate on my system
+- 10000 took ~0.99 seconds to generate on my system
+- 100000 took ~82.70 seconds
+- 300000 took ~795 seconds
 
 autoPlayer:
 - Automatically generates and switches to the next level (increments tile by one)
