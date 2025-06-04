@@ -21,23 +21,27 @@ for i in 1 .. n:
   of "x+":
     for x in 1 .. rand(1 .. tX):
       pos[0] += 1
-      path.insert(pos)
+      if not path.contains(pos):
+        path.insert(pos)
 
   of "x-":
     for x in 1 .. rand(1 .. tX):
       pos[0] -= 1
-      path.insert(pos)
+      if not path.contains(pos):
+        path.insert(pos)
 
   of "y+":
     for y in 1 .. rand(1 .. tY):
       pos[1] += 1
-      path.insert(pos)
+      if not path.contains(pos):
+        path.insert(pos)
 
   of "y-":
     for y in 1 .. rand(1 .. tY):
       pos[1] -= 1
-      path.insert(pos)
-  
+      if not path.contains(pos):
+        path.insert(pos)
+
 echo &"{n} Iterations - {cpuTime() - time}s\n"
 
 var
