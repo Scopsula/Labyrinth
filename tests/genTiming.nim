@@ -16,31 +16,11 @@ path.insert(pos)
 echo "\nGenerating path coordinates"
 var time = cpuTime()
 for i in 1 .. n:
-  let dir: string = sample(["x+", "x-", "y+", "y-"])
-  case dir
-  of "x+":
-    for x in 1 .. rand(1 .. tX):
-      pos[0] += 1
-      if not path.contains(pos):
-        path.insert(pos)
-
-  of "x-":
-    for x in 1 .. rand(1 .. tX):
-      pos[0] -= 1
-      if not path.contains(pos):
-        path.insert(pos)
-
-  of "y+":
-    for y in 1 .. rand(1 .. tY):
-      pos[1] += 1
-      if not path.contains(pos):
-        path.insert(pos)
-
-  of "y-":
-    for y in 1 .. rand(1 .. tY):
-      pos[1] -= 1
-      if not path.contains(pos):
-        path.insert(pos)
+  let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+  for i in 1 .. rand(tX - d[0] * tY):
+    pos[d[0]] += d[1]
+    if not path.contains(pos):
+      path.insert(pos)
 
 echo &"{n} Iterations - {cpuTime() - time}s\n"
 
