@@ -12,34 +12,11 @@ proc autoGenLv*(n: int) =
 
   path.insert(pos)
   for i in 1 .. n:
-    let dir: string = sample(["x+", "x-", "y+", "y-"])
-    case dir
-    of "x+":
-      for x in 1 .. rand(1 .. tX):
-        pos[0] += 1
-        if not path.contains(pos):
-          path.insert(pos)
-
-    of "x-":
-      for x in 1 .. rand(1 .. tX):
-        pos[0] -= 1
-        if not path.contains(pos):
-          path.insert(pos)
-
-
-    of "y+":
-      for y in 1 .. rand(1 .. tY):
-        pos[1] += 1
-        if not path.contains(pos):
-          path.insert(pos)
-
-
-    of "y-":
-      for y in 1 .. rand(1 .. tY):
-        pos[1] -= 1
-        if not path.contains(pos):
-          path.insert(pos)
-
+    let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+    for i in 1 .. rand(tX - d[0] * tY):
+      pos[d[0]] += d[1]
+      if not path.contains(pos):
+        path.insert(pos)
   var
     sX: int = 0
     gX: int = 0
