@@ -35,15 +35,33 @@ proc autoGenLv*(n: int) =
   let w: int = gX - sX + 1
   let h: int = gY - sY + 1
 
+  let ca: int = n div h + 1
+
   var w1: string
   for i in 1 .. w:
     w1 = w1 & " "
 
+  var w2: string
+  for i in 1 .. ca:
+    w2 = w2 & w1 
+    if i < ca: 
+      w2 = w2 & "\n"
+
   var map: string
-  for i in 1 .. h:
-    map = map & w1
-    if i < h:
+  for i in 1 .. h div ca:
+    map = map & w2
+    if i < h div ca:
       map = map & "\n"
+
+  var m2: string
+  if h - (h div ca) * ca > 0:
+    map = map & "\n"
+    for i in 1 .. h - (h div ca) * ca:
+      m2 = m2 & w1
+      if i < h - (h div ca) * ca:
+        m2 = m2 & "\n"
+
+  map = map & m2
 
   for i in 0 .. path.len - 1:
     var mP: int
