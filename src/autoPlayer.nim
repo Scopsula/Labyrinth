@@ -39,7 +39,7 @@ proc main() =
   for i in 1 .. 2:
     if i == 2: stEn = 'X'
     while not map.contains(stEn):
-      let mY = rand(0 .. mYC - 1)
+      let mY = rand(0 .. mYC - 2)
       let mX = rand(0 .. mW - 1)
       if map[mY * (mW + 1) + mX] == '*':
         map[mY * (mW + 1) + mX] = stEn
@@ -60,36 +60,24 @@ proc main() =
   proc update() =
     visible = ""
     let pos = y * mW + x
-    if x >= xD:
-      if y - lD >= 0:
-        if y + lD <= mYC - 1:
-          if x + xD < mW: loadChunk(-lD, lD, pos - xD, pos + xD)
-          else: loadChunk(-lD, lD, pos - xD, pos - x + mW - 1)
-        else:
-          if x + xD < mW: loadChunk(-lD, lD - (y + lD - mYC + 1), pos - xD, pos + xD)
-          else: loadChunk(-lD, lD - (y + lD - mYC + 1), pos - xD, pos - x + mW - 1)
-      else:
-        if y + lD <= mYC - 1:
-          if x + xD < mW: loadChunk(-(lD + (y - lD)), lD, pos - xD, pos + xD)
-          else: loadChunk(-(lD + (y - lD)), lD, pos - xD, pos - x + mW - 1)
-        else:
-          if x + xD < mW: loadChunk(-(lD + (y - lD)), lD - (y + lD - mYC + 1), pos - xD, pos + xD)      
-          else: loadChunk(-(lD + (y - lD)), lD - (y + lD - mYC + 1), pos - xD, pos - x + mW - 1)
-    else:
-      if y - lD >= 0:
-        if y + lD <= mYC - 1:
-          if x + xD < mW: loadChunk(-lD, lD, pos - x, pos + xD)
-          else: loadChunk(-lD, lD, pos - x, pos - x + mW - 1)
-        else:
-          if x + xD < mW: loadChunk(-lD, lD - (y + lD - mYC + 1), pos - x, pos + xD)      
-          else: loadChunk(-lD, lD - (y + lD - mYC + 1), pos - x, pos - x + mW - 1)      
-      else:
-        if y + lD <= mYC - 1:
-          if x + xD < mW: loadChunk(-(lD + (y - lD)), lD, pos - x, pos + xD)
-          else: loadChunk(-(lD + (y - lD)), lD, pos - x, pos - x + mW - 1)
-        else:
-          if x + xD < mW: loadChunk(-(lD + (y - lD)), lD - (y + lD - mYC + 1), pos - x, pos + xD)
-          else: loadChunk(-(lD + (y - lD)), lD - (y + lD - mYC + 1), pos - x, pos - x + mW - 1)
+
+    var lXB: int
+    if x >= xD: lXB = pos - xD 
+    else: lXB = pos - x
+
+    var uXB: int
+    if x + xD < mW: uXB = pos + xD
+    else: uXB = pos - x + mW - 1
+
+    var lYB: int
+    if y >= lD: lYB = -lD
+    else: lYB = -(lD + (y - lD))
+
+    var uYB: int
+    if y + lD <= mYC - 2: uYB = lD 
+    else: uYB = lD - (y + lD - mYC + 2)
+
+    loadChunk(lYB,uYB,lXB,uXB)
 
   var up: bool = true
   while true:
