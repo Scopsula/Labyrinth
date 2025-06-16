@@ -34,7 +34,6 @@ proc autoGenLv*(n: int) =
  
   let w: int = gX - sX + 1
   let h: int = gY - sY + 1
-
   let ca: int = n div h + 1
 
   var w1: string
