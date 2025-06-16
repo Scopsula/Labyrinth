@@ -23,7 +23,6 @@ for i in 1 .. n:
     tempPath.insert(pos)
   path.add(tempPath)
   tempPath.setLen(0)
-
 echo &"{n} Iterations - {cpuTime() - time}s\n"
 
 var
@@ -73,7 +72,6 @@ if h - (h div ca) * ca > 0:
       m2 = m2 & "\n"
 
 map = map & m2
-
 echo &"{w} Width - {h} Height - {cpuTime() - time}s\n" 
 
 echo "Writing paths to map"
