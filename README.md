@@ -13,6 +13,7 @@ Suggested Values for Level Iterations/Size:
 - 300 to 500 for small monitors (laptops) and short completion times
 - 1000 to 5000 for longer completion times
 - 3000 to 10000+ is fine on desktops (1920x1080)
+- Anything up to 1000000 will generate quick enough
 
 autoPlayer:
 - Automatically generates and switches to the next level (increments tile by one)
