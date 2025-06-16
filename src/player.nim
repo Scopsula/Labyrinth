@@ -74,33 +74,36 @@ hideCursor()
 var up: bool = true
 while true:
   if up == true:
+    m[y * mW + x] = 'S'
     update()
     sc(visible, terminalWidth(), terminalHeight(), tX, tY)
     up = false
-  m[y * mW + x] = '*'
   let input = getKey()
   case input
   of Key.Left:
     if x - 1 >= 0:
       if m[y * mW + x - 1] != ' ':
+        m[y * mW + x] = '*'
         x -= 1
         up = true
   of Key.Right:
     if x + 1 <= mW - 1:
       if m[y * mW + x + 1] != ' ':
+        m[y * mW + x] = '*'
         x += 1
         up = true
   of Key.Up:
     if (y - 1) * mW + x >= 0:
       if m[(y - 1) * mW + x] != ' ':
+        m[y * mW + x] = '*'
         y -= 1
         up = true
   of Key.Down:
     if (y + 1) * mW + x < m.len:
       if m[(y + 1) * mW + x] != ' ':
+        m[y * mW + x] = '*'
         y += 1
         up = true
   of Key.Q: break
   else: discard
-  m[y * mW + x] = 'S'
 
