@@ -5,7 +5,7 @@ if [ ! -d ./bin ]; then
 fi
 
 if [ ! -d ./loadedLevel ]; then 
-  mkdir d ./loadedLevel; 
+  mkdir ./loadedLevel; 
 fi
 
 nim c -d:release ./src/player

@@ -7,6 +7,7 @@ const
 var 
   pos: array[2, int] = [0,0]
   path: seq[array[2, int]]
+  tempPath: seq[array[2, int]]
 
 echo "Level Number:"
 let lNum: string = readLine(stdin)
@@ -22,8 +23,9 @@ for i in 1 .. n:
   let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
   for i in 1 .. rand(tX - d[0] * tY):
     pos[d[0]] += d[1]
-    if not path.contains(pos):
-      path.insert(pos)
+    tempPath.insert(pos)
+  path.add(tempPath)
+  tempPath.setLen(0)
 
 var
   sX: int = 0
