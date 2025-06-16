@@ -9,14 +9,17 @@ randomize()
 proc autoGenLv*(n: int) =
   var pos: array[2, int] = [0,0]
   var path: seq[array[2, int]]
+  var tempPath: seq[array[2, int]]
 
   path.insert(pos)
   for i in 1 .. n:
     let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
     for i in 1 .. rand(tX - d[0] * tY):
       pos[d[0]] += d[1]
-      if not path.contains(pos):
-        path.insert(pos)
+      tempPath.insert(pos)
+    path.add(tempPath)
+    tempPath.setLen(0)
+
   var
     sX: int = 0
     gX: int = 0
