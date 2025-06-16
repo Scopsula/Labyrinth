@@ -44,12 +44,10 @@ echo &"{pLen} Path Len - {cpuTime() - time}s\n"
 
 let w: int = gX - sX + 1
 let h: int = gY - sY + 1
+let ca: int = n div h + 1
 
 echo "Creating blank map"
 time = cpuTime()
-
-let ca: int = n div h + 1
-
 var w1: string
 for i in 1 .. w:
   w1 = w1 & " "
