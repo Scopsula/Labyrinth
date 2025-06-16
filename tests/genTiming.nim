@@ -43,7 +43,7 @@ echo &"{pLen} Path Len - {cpuTime() - time}s\n"
 
 let w: int = gX - sX + 1
 let h: int = gY - sY + 1
-let ca: int = n div h + 1
+let g: int = n div h + 1
 
 echo "Creating blank map"
 time = cpuTime()
@@ -52,26 +52,19 @@ for i in 1 .. w:
   w1 = w1 & " "
 
 var w2: string
-for i in 1 .. ca:
-  w2 = w2 & w1 
-  if i < ca: 
-    w2 = w2 & "\n"
+for i in 1 .. g:
+  w2 = w2 & w1 & "\n"
 
 var map: string
-for i in 1 .. h div ca:
+for i in 1 .. h div g:
   map = map & w2
-  if i < h div ca:
-    map = map & "\n"
 
-var m2: string
-if h - (h div ca) * ca > 0:
-  map = map & "\n"
-  for i in 1 .. h - (h div ca) * ca:
-    m2 = m2 & w1
-    if i < h - (h div ca) * ca:
-      m2 = m2 & "\n"
+var m1: string
+if h - (h div g) * g > 0:
+  for i in 1 .. h - (h div g) * g:
+    m1 = m1 & w1 & "\n"
 
-map = map & m2
+map = map & m1
 echo &"{w} Width - {h} Height - {cpuTime() - time}s\n" 
 
 echo "Writing paths to map"
