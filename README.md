@@ -34,6 +34,3 @@ genTiming:
 - Used to benchmark the map generation times
 - Does not modify the level number
 - Generates and writes a map to ../loadedLevel/map
-
-mapCollection:
-- Place for storing maps of intesrest (e.g high iteration count)
