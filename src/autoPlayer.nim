@@ -19,10 +19,10 @@ let xD = (scX - 1) div 2
 echo "Set level size: "
 let n: int = readLine(stdin).parseInt
 
-var hide: bool = true
+var h0: int = 0
 echo "\nEnable Coordinates? [y/n]"
 let eC: string = readLine(stdin).toUpper
-if eC == "Y": hide = false
+if eC == "Y": h0 = 1
 
 randomize()
 illwillInit(fullscreen=true)
@@ -96,7 +96,7 @@ proc main() =
     if up == true:
       m[y * mW + x] = 'S'
       update()
-      sc(visible, w, h + 1, tX, tY, x, y, gX, gY, hide)
+      sc(visible, w, h + 1, tX, tY, [x, y], [gX, gY, h0])
       up = false
     let input = getKey()
     case input

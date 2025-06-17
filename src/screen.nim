@@ -24,7 +24,7 @@ proc writeChar(y, x, tX: int, tY: int, w: int, c: int) =
       let wrC: char = cH[iY * (tX + 1) + iX]
       scr[sPos + iY * (w + 1) + iX] = wrC
 
-proc sc*(v: string, w: int, h: int, tX: int, tY: int, pX: int, pY: int, gX: int, gY: int, hi: bool) =
+proc sc*(v: string, w: int, h: int, tX: int, tY: int, xy: array[2, int], gXYH: array[3, int]) =
   var w1: string
   for i in 1 .. w:
     w1 = w1 & "/"
@@ -42,9 +42,9 @@ proc sc*(v: string, w: int, h: int, tX: int, tY: int, pX: int, pY: int, gX: int,
       let c: int = match(t)
       writeChar(r, rx, tX, tY, w, c)
 
-  if hi == false:
-    let dsXY: string = &"pX: {pX} pY: {pY} "
-    let dsGXY: string = &"gX: {gX} gY: {gY} "
+  if gXYH[2] == 1:
+    let dsXY: string = &"pX: {xy[0]} pY: {xy[1]} "
+    let dsGXY: string = &"gX: {gXYH[0]} gY: {gXYH[1]} "
     scr[w + 1 .. w  + dsXY.len] = dsXY
     scr[2 * (w + 1) .. 2 * w + 1 + dsGXY.len] = dsGXY
 
