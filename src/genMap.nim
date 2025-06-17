@@ -1,4 +1,4 @@
-import random, strutils
+import random, strutils, strformat, times
 
 const
   tX: int = 10
@@ -9,23 +9,21 @@ var
   path: seq[array[2, int]]
   tempPath: seq[array[2, int]]
 
-echo "Level Number:"
-let lNum: string = readLine(stdin)
-writeFile("../loadedLevel/level", lNum)
-
-echo "\nMap Iterations:"
+echo "Map Iterations:"
 let n: int = readLine(stdin).parseInt
 
 randomize()
 path.insert(pos)
 echo "\nGenerating path coordinates"
+var time = cpuTime()
 for i in 1 .. n:
   let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
-  for i in 1 .. rand(1 .. tX - d[0] * tY):
+  for i in 1 .. rand(tX - d[0] * tY):
     pos[d[0]] += d[1]
     tempPath.insert(pos)
   path.add(tempPath)
   tempPath.setLen(0)
+echo &"{n} Iterations - {cpuTime() - time}s\n"
 
 var
   sX: int = 0
@@ -33,18 +31,22 @@ var
   sY: int = 0
   gY: int = 0
 
-echo "Finding min/max coordinates"
-for i in 0 .. path.len - 1:
+echo "Calculating min/max coordinates"
+let pLen = path.len
+time = cpuTime()
+for i in 0 .. pLen - 1:
   if path[i][0] < sX: sX = path[i][0]
   if path[i][0] > gX: gX = path[i][0]
   if path[i][1] < sY: sY = path[i][1]
   if path[i][1] > gY: gY = path[i][1]
- 
+echo &"{pLen} Path Len - {cpuTime() - time}s\n" 
+
 let w: int = gX - sX + 1
 let h: int = gY - sY + 1
 let g: int = n div h + 1
 
 echo "Creating blank map"
+time = cpuTime()
 var w1: string
 for i in 1 .. w:
   w1 = w1 & " "
@@ -63,13 +65,16 @@ if h - (h div g) * g > 0:
     m1 = m1 & w1 & "\n"
 
 map = map & m1
+echo &"{w} Width - {h} Height - {cpuTime() - time}s\n" 
 
 echo "Writing paths to map"
-for i in 0 .. path.len - 1:
+time = cpuTime()
+for i in 0 .. pLen - 1:
   var mP: int
   mP += path[i][0] - sX
   mP += (path[i][1] - sY) * (w + 1)
   map[mP] = '*'
+echo &"{pLen} Path Len - {cpuTime() - time}s\n" 
 
 writeFile("../loadedLevel/map", map)
 echo "Map written to ../loadedLevel/map"
