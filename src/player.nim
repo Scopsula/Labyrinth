@@ -17,10 +17,10 @@ let scY = h div tY
 let lD = (scY - 1) div 2
 let xD = (scX - 1) div 2
 
-var hide: bool = true
+var h0: int = 0
 echo "Enable Coordinates? [y/n]"
 let eC: string = readLine(stdin).toUpper
-if eC == "Y": hide = false
+if eC == "Y": h0 = 1
 
 randomize()
 newLevel()
@@ -86,7 +86,7 @@ while true:
   if up == true:
     m[y * mW + x] = 'S'
     update()
-    sc(visible, w, h + 1, tX, tY, x, y, gX, gY, hide)
+    sc(visible, w, h + 1, tX, tY, [x, y], [gX, gY, h0])
     up = false
   let input = getKey()
   case input
