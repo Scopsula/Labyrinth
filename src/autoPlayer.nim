@@ -44,10 +44,12 @@ proc main() =
 
   for i in 1 .. 2:
     var po: array[2, int] = sample(valPoint)
-    let nx = po[0] - valPoint[0][0]
-    let ny = po[1] - valPoint[0][1]
-    while map[ny * (mW + 1) + nx] == '*':
+    var nx = po[0] - valPoint[0][0]
+    var ny = po[1] - valPoint[0][1]
+    while map[ny * (mW + 1) + nx] != '*':
       po = sample(valPoint)
+      nx = po[0] - valPoint[0][0]
+      ny = po[1] - valPoint[0][1]
     if i == 1:
       map[ny * (mW + 1) + nx] = 'S'
       x = nx
