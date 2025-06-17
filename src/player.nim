@@ -16,8 +16,11 @@ let scX = w div tX
 let scY = h div tY
 let lD = (scY - 1) div 2
 let xD = (scX - 1) div 2
-w = scX * tX
-h = scY * tY
+
+var hide: bool = true
+echo "Enable Coordinates? [y/n]"
+let eC: string = readLine(stdin).toUpper
+if eC == "Y": hide = false
 
 randomize()
 newLevel()
@@ -25,7 +28,11 @@ newLevel()
 let mYC: int = map.splitLines.len
 let mW: int = map.splitlines[0].len
 
-var stEn: char = 'S'
+var 
+  stEn: char = 'S'
+  gY: int
+  gX: int
+
 for i in 1 .. 2:
   if i == 2: stEn = 'X'
   while not map.contains(stEn):
@@ -36,6 +43,9 @@ for i in 1 .. 2:
       if i == 1:
         y = mY
         x = mX
+      else:
+        gY = mY
+        gX = mX
 
 var m = map.replace("\n", "")
 
@@ -76,7 +86,7 @@ while true:
   if up == true:
     m[y * mW + x] = 'S'
     update()
-    sc(visible, terminalWidth(), terminalHeight(), tX, tY)
+    sc(visible, w, h + 1, tX, tY, x, y, gX, gY, hide)
     up = false
   let input = getKey()
   case input
