@@ -12,10 +12,11 @@ var
   x: int = 0
   y: int = 0
 
-let scX = w div tX
-let scY = h div tY
-let lD = (scY - 1) div 2
-let xD = (scX - 1) div 2
+let 
+  scX = w div tX
+  scY = h div tY
+  lD = (scY - 1) div 2
+  xD = (scX - 1) div 2
 
 var h0: int = 0
 echo "Enable Coordinates? [y/n]"
