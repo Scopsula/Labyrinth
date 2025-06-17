@@ -33,29 +33,27 @@ proc main() =
   if not fileExists(&"../chars/{lv}"): lv = 0
   writeFile("../loadedLevel/level", &"{lv}")
   newLevel()
-  autoGenLv(n)
+  let valPoint = autoGenLv(n)
   var map: string = readFile("../loadedLevel/map")
   let mYC: int = map.splitLines.len
   let mW: int = map.splitlines[0].len
 
   var 
-    stEn: char = 'S'
-    gY: int
     gX: int
+    gY: int
 
   for i in 1 .. 2:
-    if i == 2: stEn = 'X'
-    while not map.contains(stEn):
-      let mY = rand(0 .. mYC - 2)
-      let mX = rand(0 .. mW - 1)
-      if map[mY * (mW + 1) + mX] == '*':
-        map[mY * (mW + 1) + mX] = stEn
-        if i == 1:
-          y = mY
-          x = mX
-        else:
-          gY = mY
-          gX = mX
+    var po: array[2, int] = sample(valPoint)
+    let nx = po[0] - valPoint[0][0]
+    let ny = po[1] - valPoint[0][1]
+    if i == 1:
+      map[ny * (mW + 1) + nx] = 'S'
+      x = nx
+      y = ny
+    else:
+      map[ny * (mW + 1) + nx] = 'X'
+      gX = nx
+      gY = ny
 
   var m = map.replace("\n", "")
 

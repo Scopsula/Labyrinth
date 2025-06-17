@@ -6,7 +6,7 @@ const
 
 randomize()
 
-proc autoGenLv*(n: int) =
+proc autoGenLv*(n: int): seq[array[2, int]] =
   var pos: array[2, int] = [0,0]
   var path: seq[array[2, int]]
   var tempPath: seq[array[2, int]]
@@ -62,3 +62,5 @@ proc autoGenLv*(n: int) =
     map[mP] = '*'
 
   writeFile("../loadedLevel/map", map)
+  path.insert([sX,sY])
+  return path
