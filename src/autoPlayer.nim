@@ -46,6 +46,8 @@ proc main() =
     var po: array[2, int] = sample(valPoint)
     let nx = po[0] - valPoint[0][0]
     let ny = po[1] - valPoint[0][1]
+    while map[ny * (mW + 1) + nx] == '*':
+      po = sample(valPoint)
     if i == 1:
       map[ny * (mW + 1) + nx] = 'S'
       x = nx
