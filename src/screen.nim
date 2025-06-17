@@ -5,6 +5,8 @@ var lv: string
 var level: int
 
 proc newLevel*() =
+  if not fileExists("../loadedLevel/level"):
+    writeFile("../loadedLevel/level", "0")
   lv = readFile("../loadedLevel/level").splitLines[0]
   level = lv.parseInt
 
