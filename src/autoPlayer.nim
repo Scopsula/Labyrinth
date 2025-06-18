@@ -96,7 +96,7 @@ proc main() =
     if up == true:
       m[y * mW + x] = 'S'
       update()
-      sc(visible, w, h + 1, tX, tY, [x, y], [gX, gY, h0])
+      sc(visible, w, h, tX, tY, [x, y], [gX, gY, h0])
       up = false
     let input = getKey()
     case input

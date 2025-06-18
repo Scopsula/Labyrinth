@@ -47,8 +47,8 @@ proc sc*(v: string, w: int, h: int, tX: int, tY: int, xy: array[2, int], gXYH: a
   if gXYH[2] == 1:
     let dsXY: string = &"pX: {xy[0]} pY: {xy[1]} "
     let dsGXY: string = &"gX: {gXYH[0]} gY: {gXYH[1]} "
-    scr[w + 1 .. w  + dsXY.len] = dsXY
-    scr[2 * (w + 1) .. 2 * w + 1 + dsGXY.len] = dsGXY
+    scr[0 .. dsXY.len - 1] = dsXY
+    scr[w .. w + dsGXY.len] = dsGXY
 
   discard execShellCmd("clear")
   echo scr
