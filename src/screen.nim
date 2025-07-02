@@ -19,12 +19,19 @@ proc match(t: char): int =
   else: discard
 
 proc writeChar(y, x, tX: int, tY: int, w: int, c: int) =
-  let cH = readFile(&"../chars/{c}")
-  let sPos = (y * tY) * (w + 1) + (x * tX)
+  var cBH: string
+  if c == 900:
+    cBH = readFile(&"../chars/{match('*')}")
+  let cH: string = readFile(&"../chars/{c}")
+  let sPos = (y * tY) * (w + 1) + (x * tX) 
   for iY in 0 .. tY - 1:
     for iX in 0 .. tX - 1:
-      let wrC: char = cH[iY * (tX + 1) + iX]
-      scr[sPos + iY * (w + 1) + iX] = wrC
+      if cBH != "" and cH[iY * (tX + 1) + iX] == ' ':
+        let wrC: char = cBH[iY * (tX + 1) + iX]
+        scr[sPos + iY * (w + 1) + iX] = wrC
+      else:
+        let wrC: char = cH[iY * (tX + 1) + iX]
+        scr[sPos + iY * (w + 1) + iX] = wrC
 
 proc sc*(v: string, w: int, h: int, tX: int, tY: int, xy: array[2, int], gXYH: array[3, int]) =
   var w1: string
