@@ -103,31 +103,31 @@ while true:
     up = false
   let input = getKey()
   case input
-    of "a", "left":
-      if x - 1 >= 0:
-        if m[y * mW + x - 1] != ' ':
-          m[y * mW + x] = '*'
-          x -= 1
-          up = true
-    of "d", "right":
-      if x + 1 <= mW - 1:
-        if m[y * mW + x + 1] != ' ':
-          m[y * mW + x] = '*'
-          x += 1
-          up = true
-    of "w", "up":
-      if (y - 1) * mW + x >= 0:
-        if m[(y - 1) * mW + x] != ' ':
-          m[y * mW + x] = '*'
-          y -= 1
-          up = true
-    of "s", "down":
-      if (y + 1) * mW + x < m.len:
-        if m[(y + 1) * mW + x] != ' ':
-          m[y * mW + x] = '*'
-          y += 1
-          up = true
-    of "q":
-      showCursor()
-      quit(0)
-    else: discard
+  of "a", "left":
+    if x - 1 >= 0:
+      if m[y * mW + x - 1] != ' ':
+        m[y * mW + x] = '*'
+        x -= 1
+        up = true
+  of "d", "right":
+    if x + 1 <= mW - 1:
+      if m[y * mW + x + 1] != ' ':
+        m[y * mW + x] = '*'
+        x += 1
+        up = true
+  of "w", "up":
+    if (y - 1) * mW + x >= 0:
+      if m[(y - 1) * mW + x] != ' ':
+        m[y * mW + x] = '*'
+        y -= 1
+        up = true
+  of "s", "down":
+    if (y + 1) * mW + x < m.len:
+      if m[(y + 1) * mW + x] != ' ':
+        m[y * mW + x] = '*'
+        y += 1
+        up = true
+  of "q":
+    showCursor()
+    quit(0)
+  else: discard
