@@ -1,4 +1,4 @@
-import illwill, strutils, strformat, random, os
+import terminal, strutils, strformat, random, os
 import screen, autoGen
 
 const
@@ -25,7 +25,6 @@ let eC: string = readLine(stdin).toUpper
 if eC == "Y": h0 = 1
 
 randomize()
-illwillInit(fullscreen=true)
 hideCursor()
 
 var lv: int = 0
@@ -91,6 +90,19 @@ proc main() =
 
     loadChunk(lYB,uYB,lXB,uXB)
 
+  proc getKey(): string =
+    let fC = getch()
+    if fC == '\e':
+      if getch() == '[':
+        case getch()
+        of 'C': return "right"
+        of 'D': return "left"
+        of 'A': return "up"
+        of 'B': return "down"
+        else: discard
+    else:
+      return $fC
+
   var up: bool = true
   while true:
     if up == true:
@@ -100,34 +112,36 @@ proc main() =
       up = false
     let input = getKey()
     case input
-    of Key.Left:
+    of "a", "left":
       if x - 1 >= 0:
         if m[y * mW + x - 1] != ' ':
           m[y * mW + x] = '*'
           x -= 1
           up = true
-    of Key.Right:
+    of "d", "right":
       if x + 1 <= mW - 1:
         if m[y * mW + x + 1] != ' ':
           m[y * mW + x] = '*'
           x += 1
           up = true
-    of Key.Up:
+    of "w", "up":
       if (y - 1) * mW + x >= 0:
         if m[(y - 1) * mW + x] != ' ':
           m[y * mW + x] = '*'
           y -= 1
           up = true
-    of Key.Down:
+    of "s", "down":
       if (y + 1) * mW + x < m.len:
         if m[(y + 1) * mW + x] != ' ':
           m[y * mW + x] = '*'
           y += 1
           up = true
-    of Key.R:
+    of "r":
       lv -= 1
       break
-    of Key.Q: quit(0)
+    of "q":
+      showCursor()
+      quit(0)
     else: discard
     if m[y * mW + x] == 'X': break
   lv += 1
