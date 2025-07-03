@@ -1,4 +1,4 @@
-import illwill, strutils, random
+import terminal, strutils, random
 import screen
 
 const
@@ -25,6 +25,7 @@ if eC == "Y": h0 = 1
 
 randomize()
 newLevel()
+hideCursor()
 
 let mYC: int = map.splitLines.len
 let mW: int = map.splitlines[0].len
@@ -80,8 +81,19 @@ proc update() =
 
   loadChunk(lYB,uYB,lXB,uXB)
 
-illwillInit(fullscreen=true)
-hideCursor()
+proc getKey(): string =
+  let fC = getch()
+  if fC == '\e':
+    if getch() == '[':
+      case getch()
+        of 'C': return "right"
+        of 'D': return "left"
+        of 'A': return "up"
+        of 'B': return "down"
+        else: discard
+  else:
+    return $fC
+
 var up: bool = true
 while true:
   if up == true:
@@ -91,30 +103,31 @@ while true:
     up = false
   let input = getKey()
   case input
-  of Key.Left:
-    if x - 1 >= 0:
-      if m[y * mW + x - 1] != ' ':
-        m[y * mW + x] = '*'
-        x -= 1
-        up = true
-  of Key.Right:
-    if x + 1 <= mW - 1:
-      if m[y * mW + x + 1] != ' ':
-        m[y * mW + x] = '*'
-        x += 1
-        up = true
-  of Key.Up:
-    if (y - 1) * mW + x >= 0:
-      if m[(y - 1) * mW + x] != ' ':
-        m[y * mW + x] = '*'
-        y -= 1
-        up = true
-  of Key.Down:
-    if (y + 1) * mW + x < m.len:
-      if m[(y + 1) * mW + x] != ' ':
-        m[y * mW + x] = '*'
-        y += 1
-        up = true
-  of Key.Q: break
-  else: discard
-
+    of "a", "left":
+      if x - 1 >= 0:
+        if m[y * mW + x - 1] != ' ':
+          m[y * mW + x] = '*'
+          x -= 1
+          up = true
+    of "d", "right":
+      if x + 1 <= mW - 1:
+        if m[y * mW + x + 1] != ' ':
+          m[y * mW + x] = '*'
+          x += 1
+          up = true
+    of "w", "up":
+      if (y - 1) * mW + x >= 0:
+        if m[(y - 1) * mW + x] != ' ':
+          m[y * mW + x] = '*'
+          y -= 1
+          up = true
+    of "s", "down":
+      if (y + 1) * mW + x < m.len:
+        if m[(y + 1) * mW + x] != ' ':
+          m[y * mW + x] = '*'
+          y += 1
+          up = true
+    of "q":
+      showCursor()
+      quit(0)
+    else: discard
