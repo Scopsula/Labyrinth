@@ -5,6 +5,9 @@ Currently Linux only.
 Building on Linux:
 - build.sh will create the required directories and compile everything needed
 
+Keyboard Repeat may help for quicker movement:
+- Tested with a repeat delay of 300ms & repeat rate of 50ms
+
 Suggested Values for Level Iterations/Size:
 - 300 to 500 for small monitors (laptops) and short completion times
 - 1000 to 5000 for longer completion times
