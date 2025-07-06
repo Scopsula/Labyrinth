@@ -4,7 +4,6 @@ const
   tX: int = 10
   tY: int = 5
 
-
 echo "Map Iterations:"
 let n: int = readLine(stdin).parseInt
 
