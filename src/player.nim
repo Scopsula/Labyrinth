@@ -86,11 +86,11 @@ proc getKey(): string =
   if fC == '\e':
     if getch() == '[':
       case getch()
-        of 'C': return "right"
-        of 'D': return "left"
-        of 'A': return "up"
-        of 'B': return "down"
-        else: discard
+      of 'C': return "right"
+      of 'D': return "left"
+      of 'A': return "up"
+      of 'B': return "down"
+      else: discard
   else:
     return $fC
 
