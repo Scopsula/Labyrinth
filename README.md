@@ -1,4 +1,11 @@
-This is a small Labyrinth game with theming options (10x5 character tile for walls & paths).
+This is a small Labyrinth game with theming options.
+Tiles are 10x5 and additional matching can be created in chars/{level}/match.
+Logic for level specific themeing (e.g ceillings) can be editted in src/style.nim.
+New levels can be created without any code:
+- Create a directory with the proceeding level number
+- Add files path and wall with your 10x5 tiles
+- Optinally add match file to match an internal character with a tile
+
 The default tile set is loosely based on the backrooms.
 Currently Linux only.
 
