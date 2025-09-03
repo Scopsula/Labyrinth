@@ -22,5 +22,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
               incr += 8
             let c = "abcdefghijklmnop"[incr]
             visible[y * (lw + 1) + x] = c
+          elif rows[y - 1][x] != ' ':
+            visible[y * (lw + 1) + x] = 'w'
   return visible
 
