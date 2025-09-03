@@ -7,7 +7,7 @@ New levels can be created without any code:
 - Optinally add match file to match an internal character with a tile
 
 The default tile set is loosely based on the backrooms.
-Currently Linux only.
+Made on Linux, may work on other systems
 
 Building on Linux:
 - build.sh will create the required directories and compile everything needed
