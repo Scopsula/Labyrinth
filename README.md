@@ -1,6 +1,7 @@
-<img width="1846" height="942" alt="Level 0" src="https://github.com/user-attachments/assets/6c7db594-000b-4bd7-83df-168591d4e916" />
+<img width="1847" height="938" alt="Level 0" src="https://github.com/user-attachments/assets/a610d98c-3475-461d-9cbf-6b83390536f8" />
 
 This is a small Labyrinth game with theming options.
+
 Tiles are 10x5 and additional matching can be created in chars/{level}/match.
 Logic for level specific themeing (e.g ceillings) can be editted in src/style.nim.
 New levels can be created without any code:
