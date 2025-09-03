@@ -1,4 +1,4 @@
-import strutils, strformat, random
+import strutils, strformat
 
 proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
   var visible: string = v 
@@ -23,7 +23,17 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
             let c = "abcdefghijklmnop"[incr]
             visible[y * (lw + 1) + x] = c
           elif rows[y - 1][x] != ' ':
-            visible[y * (lw + 1) + x] = 'w'
+            if rows[y][x - 1] != ' ': 
+              visible[y * (lw + 1) + x] = '0'
+            elif rows[y][x + 1] != ' ': 
+              visible[y * (lw + 1) + x] = '1'
+            else: 
+              visible[y * (lw + 1) + x] = '2'
+          elif rows[y + 1][x] != ' ':
+            if rows[y][x - 1] != ' ': 
+              visible[y * (lw + 1) + x] = '3'
+            elif rows[y][x + 1] != ' ': 
+              visible[y * (lw + 1) + x] = '4'
   if level == 1:
     var coords: array[2, int]
     for y in 0 .. rows.len - 1:
