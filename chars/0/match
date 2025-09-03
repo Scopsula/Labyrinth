@@ -17,5 +17,7 @@ p cel/tbleftright
 0 walls/thinLeft
 1 walls/thinRight
 2 walls/thinWall
-3 walls/left
-4 walls/right
+3 walls/thinLR
+4 walls/left
+5 walls/right
+6 walls/LR

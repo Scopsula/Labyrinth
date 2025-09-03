@@ -25,15 +25,19 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
           elif rows[y - 1][x] != ' ':
             if rows[y][x - 1] != ' ': 
               visible[y * (lw + 1) + x] = '0'
+              if rows[y][x + 1] != ' ':
+                visible[y * (lw + 1) + x] = '3'
             elif rows[y][x + 1] != ' ': 
               visible[y * (lw + 1) + x] = '1'
             else: 
               visible[y * (lw + 1) + x] = '2'
           elif rows[y + 1][x] != ' ':
             if rows[y][x - 1] != ' ': 
-              visible[y * (lw + 1) + x] = '3'
-            elif rows[y][x + 1] != ' ': 
               visible[y * (lw + 1) + x] = '4'
+              if rows[y][x + 1] != ' ':
+                visible[y * (lw + 1) + x] = '6'
+            elif rows[y][x + 1] != ' ': 
+              visible[y * (lw + 1) + x] = '5'
   if level == 1:
     var coords: array[2, int]
     for y in 0 .. rows.len - 1:
