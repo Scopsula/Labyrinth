@@ -13,8 +13,8 @@ var
 
 let scX = w div tX
 let scY = h div tY
-let lD = (scY - 1) div 2
-let xD = (scX - 1) div 2
+let yD = (scY - 1) div 2 + 1
+let xD = (scX - 1) div 2 + 1
 
 echo "Set level size: "
 let n: int = readLine(stdin).parseInt
@@ -29,7 +29,7 @@ hideCursor()
 
 var lv: int = 0
 proc main() =
-  if not fileExists(&"../chars/{lv}"): lv = 0
+  if not dirExists(&"../chars/{lv}"): lv = 0
   writeFile("../loadedLevel/level", &"{lv}")
   newLevel()
   let valPoint: seq[array[2, int]] = autoGenLv(n)
@@ -81,12 +81,12 @@ proc main() =
     else: uXB = pos - x + mW - 1
 
     var lYB: int
-    if y >= lD: lYB = -lD
-    else: lYB = -(lD + (y - lD))
+    if y >= yD: lYB = -yD
+    else: lYB = -(yD + (y - yD))
 
     var uYB: int
-    if y + lD <= mYC - 2: uYB = lD 
-    else: uYB = lD - (y + lD - mYC + 2)
+    if y + yD <= mYC - 2: uYB = yD 
+    else: uYB = yD - (y + yD - mYC + 2)
 
     loadChunk(lYB,uYB,lXB,uXB)
 
@@ -108,7 +108,7 @@ proc main() =
     if up == true:
       m[y * mW + x] = 'S'
       update()
-      sc(visible, w, h, tX, tY, [x, y], [gX, gY, h0])
+      sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC])
       up = false
     let input = getKey()
     case input
