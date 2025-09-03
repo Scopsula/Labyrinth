@@ -14,9 +14,9 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
               incr += 1
             elif rows[y + 2][x] != ' ':
               incr += 1
-            if rows[y][x - 1] != ' ':
+            if rows[y][x - 1] != ' ' or rows[y + 1][x - 1] != ' ':
               incr += 2
-            if rows[y][x + 1] != ' ':
+            if rows[y][x + 1] != ' ' or rows[y + 1][x + 1] != ' ':
               incr += 4
             if rows[y - 1][x] != ' ':
               incr += 8
