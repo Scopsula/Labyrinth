@@ -1,4 +1,4 @@
-<img width="1847" height="938" alt="Level 0" src="https://github.com/user-attachments/assets/a610d98c-3475-461d-9cbf-6b83390536f8" />
+<img width="1847" height="938" alt="Level 0" src="https://github.com/user-attachments/assets/81c876f2-ccfb-4e71-97da-84e9564c607e" />
 
 This is a small Labyrinth game with theming options.
 
