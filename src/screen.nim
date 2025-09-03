@@ -1,4 +1,5 @@
 import strutils, strformat, os
+import style
 
 var scr: string = ""
 var lv: string
@@ -10,19 +11,26 @@ proc newLevel*() =
   lv = readFile("../loadedLevel/level").splitLines[0]
   level = lv.parseInt
 
-proc match(t: char): int =
+proc match(t: char): string =
   case t
-  of ' ': return level
-  of '*': return level + 800
-  of 'S': return 900
-  of 'X': return 901
-  else: discard
+  of ' ': return "wall"
+  of '*': return "path"
+  of 'S': return "player"
+  of 'X': return "goal"
+  elif fileExists(&"../chars/{level}/match"):
+    let mF = readFile(&"../chars/{level}/match").splitLines
+    for i in 0 .. mF.len - 1:
+      if mF[i][0] == t:
+        return mF[i].split(' ')[1]
 
-proc writeChar(y, x, tX: int, tY: int, w: int, c: int) =
+proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
   var cBH: string
-  if c == 900:
-    cBH = readFile(&"../chars/{match('*')}")
-  let cH: string = readFile(&"../chars/{c}")
+  var cH : string
+  if c == "player" or c == "goal":
+    cBH = readFile(&"../chars/{level}/path")
+    cH = readFile(&"../chars/{c}")
+  else:
+    cH = readFile(&"../chars/{level}/{c}")
   let sPos = (y * tY) * (w + 1) + (x * tX) 
   for iY in 0 .. tY - 1:
     for iX in 0 .. tX - 1:
@@ -33,29 +41,42 @@ proc writeChar(y, x, tX: int, tY: int, w: int, c: int) =
         let wrC: char = cH[iY * (tX + 1) + iX]
         scr[sPos + iY * (w + 1) + iX] = wrC
 
-proc sc*(v: string, w: int, h: int, tX: int, tY: int, xy: array[2, int], gXYH: array[3, int]) =
+proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], chkD: array[4, int]) =
   var w1: string
-  for i in 1 .. w:
+  for i in 1 .. wht[0]:
     w1 = w1 & "/"
 
   scr = ""
-  for i in 1 .. h:
+  for i in 1 .. wht[1]:
     scr = scr & w1
-    if i < h: 
+    if i < wht[1]: 
       scr = scr & "\n"
 
-  let rows = v.splitLines
+  let vis: string = adjustVisible(v, xy, level)
+  var rows = vis.splitLines
+
+  if xy[1] >= chkD[1]:
+    rows.delete(0)
+  if xy[1] + chkD[1] < chkD[3] - 1:
+    rows.delete(rows.len - 1)
+  if xy[0] >= chkD[0]:
+    for i in 0 .. rows.len - 1:
+      rows[i][0 .. ^1] = rows[i][1 .. ^1]
+  if xY[0] + chkD[0] < chkD[2]:
+    for i in 0 .. rows.len - 1:
+      rows[i][0 .. ^1] = rows[i][0 .. ^2]
+
   for r in 0 .. rows.len - 1:
     for rX in 0 .. rows[r].len - 1:
       let t: char = rows[r][rx]
-      let c: int = match(t)
-      writeChar(r, rx, tX, tY, w, c)
+      let c: string = match(t)
+      writeChar(r, rx, wht[2], wht[3], wht[0], c)
 
   if gXYH[2] == 1:
     let dsXY: string = &"pX: {xy[0]} pY: {xy[1]} "
     let dsGXY: string = &"gX: {gXYH[0]} gY: {gXYH[1]} "
     scr[0 .. dsXY.len - 1] = dsXY
-    scr[w + 1 .. w + dsGXY.len] = dsGXY
+    scr[wht[0] + 1 .. wht[0] + dsGXY.len] = dsGXY
 
   discard execShellCmd("clear")
   echo scr

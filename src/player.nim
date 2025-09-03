@@ -15,8 +15,8 @@ var
 let 
   scX = w div tX
   scY = h div tY
-  lD = (scY - 1) div 2
-  xD = (scX - 1) div 2
+  yD = (scY - 1) div 2 + 1
+  xD = (scX - 1) div 2 + 1
 
 var h0: int = 0
 echo "Enable Coordinates? [y/n]"
@@ -72,12 +72,12 @@ proc update() =
   else: uXB = pos - x + mW - 1
 
   var lYB: int
-  if y >= lD: lYB = -lD
-  else: lYB = -(lD + (y - lD))
+  if y >= yD: lYB = -yD
+  else: lYB = -(yD + (y - yD))
 
   var uYB: int
-  if y + lD <= mYC - 2: uYB = lD 
-  else: uYB = lD - (y + lD - mYC + 2)
+  if y + yD <= mYC - 2: uYB = yD 
+  else: uYB = yD - (y + yD - mYC + 2)
 
   loadChunk(lYB,uYB,lXB,uXB)
 
@@ -99,7 +99,7 @@ while true:
   if up == true:
     m[y * mW + x] = 'S'
     update()
-    sc(visible, w, h, tX, tY, [x, y], [gX, gY, h0])
+    sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC])
     up = false
   let input = getKey()
   case input
