@@ -49,7 +49,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
       for x in 1 .. lw - 2:
         let nx = &"{(xy[0] - coords[0] + x) div 50}"
         let ny = &"{(xy[1] - coords[1] + y) div 25}"
-        if not "3579".contains(nx[^1]) and not "3579".contains(ny[^1]):
+        if not "13579".contains(nx[^1]) and not "13579".contains(ny[^1]):
           if rows[y][x] == ' ':
             var incr: int = 0
             if rows[y + 1][x] != ' ':
