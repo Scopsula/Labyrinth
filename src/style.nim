@@ -1,9 +1,18 @@
 import strutils, strformat
 
-proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
+proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
+  var map = mS[1]
   var rows = v.splitLines
   let lw = rows[0].len
+
+  var coords: array[2, int]
+  for y in 0 .. rows.len - 1:
+    for x in 0 .. lw - 1:
+      if rows[y][x] == 'S':
+        coords = [x, y]
+        break
+
   if level == 0:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
@@ -38,19 +47,19 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
                 visible[y * (lw + 1) + x] = '6'
             elif rows[y][x + 1] != ' ': 
               visible[y * (lw + 1) + x] = '5'
+
   if level == 1:
-    var coords: array[2, int]
-    for y in 0 .. rows.len - 1:
-      for x in 0 .. lw - 1:
-        if rows[y][x] == 'S':
-          coords = [x, y]
-          break
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        let nx = &"{(xy[0] - coords[0] + x) div 50}"
-        let ny = &"{(xy[1] - coords[1] + y) div 25}"
-        if not "13579".contains(nx[^1]) and not "13579".contains(ny[^1]):
-          if rows[y][x] == ' ':
+        if rows[y][x] == ' ':
+          let nx: string = &"{(xy[0] - coords[0] + x) div (t[0] * t[1])}"
+          let ny: string = &"{(xy[1] - coords[1] + y) div (t[1] * t[1])}"
+          if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
+            let cx: string = &"{xy[0] - coords[0] + x}"
+            let cy: string = &"{xy[1] - coords[1] + y}"
+            if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
+              visible[y * (lw + 1) + x] = '*'
+          else:
             var incr: int = 0
             if rows[y + 1][x] != ' ':
               incr += 1
@@ -62,5 +71,13 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int): string =
               incr += 8
             let c = "abcdefghijklmnop"[incr]
             visible[y * (lw + 1) + x] = c
-  return visible
+
+    let mW = mS[0].parseInt
+    for y in 0 .. rows.len - 1:
+      for x in 0 .. lw - 1:
+        if visible[y * (lw + 1) + x] == '*':
+          let wx: int = xy[0] - coords[0] + x
+          let wy: int = xy[1] - coords[1] + y
+          map[wy * mW + wx] = '*'
+  return [visible, map]
 
