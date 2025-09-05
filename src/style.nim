@@ -73,8 +73,8 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             visible[y * (lw + 1) + x] = c
 
     let mW = mS[0].parseInt
-    for y in 0 .. rows.len - 1:
-      for x in 0 .. lw - 1:
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
         if visible[y * (lw + 1) + x] == '*':
           let wx: int = xy[0] - coords[0] + x
           let wy: int = xy[1] - coords[1] + y
