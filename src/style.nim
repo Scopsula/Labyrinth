@@ -6,13 +6,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
   var rows = v.splitLines
   let lw = rows[0].len
 
-  var coords: array[2, int]
-  for y in 0 .. rows.len - 1:
-    for x in 0 .. lw - 1:
-      if rows[y][x] == 'S':
-        coords = [x, y]
-        break
-
   if level == 0:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
@@ -49,6 +42,13 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
               visible[y * (lw + 1) + x] = '5'
 
   if level == 1:
+    var coords: array[2, int]
+    for y in 0 .. rows.len - 1:
+      for x in 0 .. lw - 1:
+        if rows[y][x] == 'S':
+          coords = [x, y]
+          break
+
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         if rows[y][x] == ' ':
@@ -79,5 +79,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           let wx: int = xy[0] - coords[0] + x
           let wy: int = xy[1] - coords[1] + y
           map[wy * mW + wx] = '*'
+
   return [visible, map]
 
