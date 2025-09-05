@@ -58,7 +58,7 @@ proc main() =
       gX = nx
       gY = ny
 
-  var m = map.replace("\n", "")
+  var m: string = map.replace("\n", "")
 
   var visible: string
   proc loadChunk(lYB: int, uYB: int, lXB: int, uXB: int) =
@@ -108,7 +108,7 @@ proc main() =
     if up == true:
       m[y * mW + x] = 'S'
       update()
-      sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC])
+      m = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC], m)
       up = false
     let input = getKey()
     case input

@@ -99,7 +99,7 @@ while true:
   if up == true:
     m[y * mW + x] = 'S'
     update()
-    sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC])
+    m = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC], m)
     up = false
   let input = getKey()
   case input
