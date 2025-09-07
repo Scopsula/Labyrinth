@@ -69,7 +69,16 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
               incr += 4
             if rows[y - 1][x] != ' ':
               incr += 8
-            let c = "abcdefghijklmnop"[incr]
+            if incr == 0:
+              if rows[y + 1][x - 1] != ' ':
+                incr = 16 
+              elif rows[y + 1][x + 1] != ' ':
+                incr = 17
+              elif rows[y - 1][x - 1] != ' ':
+                incr = 18
+              elif rows[y - 1][x + 1] != ' ':
+                incr = 19
+            let c = "abcdefghijklmnopqrst"[incr]
             visible[y * (lw + 1) + x] = c
 
     let mW = mS[0].parseInt
