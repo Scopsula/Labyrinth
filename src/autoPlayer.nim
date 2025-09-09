@@ -146,7 +146,7 @@ proc main() =
             y += 1
             up = true
       of "m":
-        openMap([w, h], [x, y, gX, gY], m, mW, h0)
+        openMap([w, h], [x, y], m, mW, h0)
         while true:
           if getch() == 'm':
             break
