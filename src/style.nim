@@ -1,4 +1,11 @@
-import strutils, strformat
+import strutils, strformat, os
+
+proc refresh*(): bool =
+  if fileExists("../loadedLevel/level"):
+    let level: string = readFile("../loadedLevel/level")
+    case level
+    of "1": return true
+    else: discard
 
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
