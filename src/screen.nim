@@ -63,7 +63,7 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
     if xy[0] >= chkD[0] - i + 1:
       for i in 0 .. rows.len - 1:
         rows[i][0 .. ^1] = rows[i][1 .. ^1]
-    if xY[0] + chkD[0] < chkD[2] - i + 1:
+    if xY[0] + chkD[0] < chkD[2] + i - 1:
       for i in 0 .. rows.len - 1:
         rows[i][0 .. ^1] = rows[i][0 .. ^2]
 
