@@ -15,8 +15,8 @@ var
 let 
   scX = w div tX
   scY = h div tY
-  yD = (scY - 1) div 2 + 1
-  xD = (scX - 1) div 2 + 1
+  yD = (scY - 1) div 2 + 2
+  xD = (scX - 1) div 2 + 2
 
 var h0: int = 0
 echo "Enable Coordinates? [y/n]"

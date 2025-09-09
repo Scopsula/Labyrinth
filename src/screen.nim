@@ -55,16 +55,17 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
   let vis: array[2, string] = adjustVisible(v, xy, level, [&"{chkD[2]}", map], [wht[2], wht[3]])
   var rows = vis[0].splitLines
 
-  if xy[1] >= chkD[1]:
-    rows.delete(0)
-  if xy[1] + chkD[1] < chkD[3] - 1:
-    rows.delete(rows.len - 1)
-  if xy[0] >= chkD[0]:
-    for i in 0 .. rows.len - 1:
-      rows[i][0 .. ^1] = rows[i][1 .. ^1]
-  if xY[0] + chkD[0] < chkD[2]:
-    for i in 0 .. rows.len - 1:
-      rows[i][0 .. ^1] = rows[i][0 .. ^2]
+  for i in 1 .. 2:
+    if xy[1] >= chkD[1] - i + 1:
+      rows.delete(0)
+    if xy[1] + chkD[1] < chkD[3] - 2 + i:
+      rows.delete(rows.len - 1)
+    if xy[0] >= chkD[0] - i + 1:
+      for i in 0 .. rows.len - 1:
+        rows[i][0 .. ^1] = rows[i][1 .. ^1]
+    if xY[0] + chkD[0] < chkD[2] - i + 1:
+      for i in 0 .. rows.len - 1:
+        rows[i][0 .. ^1] = rows[i][0 .. ^2]
 
   for r in 0 .. rows.len - 1:
     for rX in 0 .. rows[r].len - 1:

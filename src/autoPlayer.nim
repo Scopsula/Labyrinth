@@ -13,8 +13,8 @@ var
 
 let scX = w div tX
 let scY = h div tY
-let yD = (scY - 1) div 2 + 1
-let xD = (scX - 1) div 2 + 1
+let yD = (scY - 1) div 2 + 2
+let xD = (scX - 1) div 2 + 2
 
 echo "Set level size: "
 let n: int = readLine(stdin).parseInt
