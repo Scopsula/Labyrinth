@@ -74,15 +74,16 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
       let c: string = match(t)
       writeChar(r, rx, wht[2], wht[3], wht[0], c)
 
-  let oMap: string = &"[m] to open map "
-  if gXYH[2] == 1:
-    let dsXY: string = &"pX: {xy[0]} pY: {xy[1]} "
-    let dsGXY: string = &"gX: {gXYH[0]} gY: {gXYH[1]} "
-    scr[0 .. dsXY.len - 1] = dsXY
-    scr[wht[0] + 1 .. wht[0] + dsGXY.len] = dsGXY
-    scr[2 * wht[0] + 2 .. wht[0] * 2 + oMap.len + 1] = oMap
+  proc wrLine(line: string, num: int) =
+    scr[num * (wht[0] + 1) .. num * (wht[0] + 1) + line.len - 1] = line
+
+  if gXYH[2] == 1: 
+    wrLine(&"pX: {xy[0]} pY: {xy[1]} ", 0)
+    wrLine(&"gX: {gXYH[0]} gY: {gXYH[1]} ", 1)
+    wrLine("[m] to open map ", 2)
+
   else:
-    scr[0 .. oMap.len - 1] = oMap
+    wrLine("[m] to open map ", 0)
 
   discard execShellCmd("clear")
   echo scr
