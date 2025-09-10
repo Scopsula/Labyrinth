@@ -1,6 +1,6 @@
 import os, strutils
 
-proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int) =
+proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int, bg: string) =
   var paths: string = readFile("../loadedLevel/map")
   let mYC = paths.splitLines.len
   paths = paths.multiReplace(("\n", ""), ("A", "*"))
@@ -50,20 +50,25 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
     visible[b * (x + 1)] = '|'
     visible[b * (x + 1) + x - 1] = '|'
 
+  var scr: string = bg
+  let sW: int = bg.splitLines[0].len
   proc wrLine(line: string, num: int) =
-    visible[num * (x + 1) + 1 .. num * (x + 1) + line.len] = line
+    scr[num * (sW + 1) .. num * (sW + 1) + line.len - 1] = line
   
-  if h0 == 1:
-    wrLine(" X: --Exit------------------- |", 5)
-    wrLine(" ---------------------------- |", 6)
-  else: 
-    wrLine(" ---------------------------- |", 5)
+  for i in 0 .. y - 1:
+    wrLine(visible.splitLines[i], i)
 
-  wrLine(" Unique areas may be unmarked |", 1)
-  wrLine(" S: --Player----------------- |", 2)
-  wrLine(" C: --Tiles Visited---------- |", 3)
-  wrLine(" :: --[m] to close map------- |", 4)
+  if h0 == 1:
+    wrLine("| X: Exit                      |", 5)
+    wrLine("|------------------------------|", 6)
+  else: 
+    wrLine("|------------------------------|", 5)
+
+  wrLine("| Unique areas may be unmarked |", 1)
+  wrLine("| S: Player                    |", 2)
+  wrLine("| C: Tiles Visited             |", 3)
+  wrLine("| :: [m] to close map          |", 4)
 
   discard execShellCmd("clear")
-  echo visible
+  echo scr
 

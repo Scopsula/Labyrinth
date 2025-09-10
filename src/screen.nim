@@ -44,7 +44,7 @@ proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
         let wrC: char = cH[iY * (tX + 1) + iX]
         scr[sPos + iY * (w + 1) + iX] = wrC
 
-proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], chkD: array[4, int], map: string): string =
+proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], chkD: array[4, int], map: string): array[2, string] =
   var w1: string
   for i in 1 .. wht[0]:
     w1 = w1 & "/"
@@ -76,6 +76,8 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
       let c: string = match(t)
       writeChar(r, rx, wht[2], wht[3], wht[0], c)
 
+  let bg: string = scr
+
   proc wrLine(line: string, num: int) =
     scr[num * (wht[0] + 1) .. num * (wht[0] + 1) + line.len - 1] = line
 
@@ -100,14 +102,16 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
   wrLine(hBar, 0)
   wrLine(tBar, 1)
 
+  var lC: int = 0
   if gXYH[2] == 1: 
     wrLine(&"pX: {xy[0]} pY: {xy[1]} ", 2)
     wrLine(&"gX: {gXYH[0]} gY: {gXYH[1]} ", 3)
-    wrLine("[m] to open map ", 4)
+    lC = 2
 
-  else:
-    wrLine("[m] to open map ", 2)
+  wrLine("[m] to open map ", 2 + lC)
+  wrLine("[i] to open inv ", 3 + lC)
+  wrLine("[q] to quit ", 4 + lC)
 
   discard execShellCmd("clear")
   echo scr
-  return vis[1]
+  return [vis[1], bg]
