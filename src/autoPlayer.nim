@@ -137,6 +137,13 @@ proc main() =
         thirst -= 1
         steps = 0
 
+    if m[y * mW + x] == 'A':
+      let t1: string = &"thirst {thirst}"
+      let t2: string = &"thirst {thirst + 5}"
+      stats = stats.replace(t1, t2)
+      writeFile("../data", stats)
+      thirst += 5
+
     if up == true:
       m[y * mW + x] = 'S'
       update()
