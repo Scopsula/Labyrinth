@@ -56,7 +56,10 @@ proc autoGenLv*(n: int): seq[array[2, int]] =
     var mP: int
     mP += path[i][0] - sX
     mP += (path[i][1] - sY) * (w + 1)
-    map[mP] = '*'
+    if rand(1 .. 300) == 1:
+      map[mP] = 'A'
+    else:
+      map[mP] = '*'
 
   writeFile("../loadedLevel/map", map)
   path.add([sX,sY])

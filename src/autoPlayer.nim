@@ -17,10 +17,29 @@ let
   yD = (scY - 1) div 2 + 2
   xD = (scX - 1) div 2 + 2
 
-var h0: int = 0
+var stats = """
+health 50
+thirst 50
+"""
+
+var
+  health: int = 50
+  thirst: int = 50
+  h0: int = 0
+  h1: int = 0
+  h2: int = 0
+
 let conf = readFile("../config").splitLines
 let n = conf[0].split(' ')[1].parseInt
-if conf[1].split(' ')[1] == "true": h0 = 1
+if conf[1].split(' ')[1] == "true": h0 = 1 
+if conf[2].split(' ')[1] == "true" or not fileExists("../data"): 
+  writeFile("../data", stats)
+else:
+  stats = readFile("../data")
+  health = stats.splitLines[0].split(' ')[1].parseInt
+  thirst = stats.splitLines[1].split(' ')[1].parseInt
+if conf[3].split(' ')[1] == "true": h1 = 1
+if conf[4].split(' ')[1] == "true": h2 = 1
 
 randomize()
 hideCursor()
@@ -106,8 +125,18 @@ proc main() =
     up: bool = true
     bypass: bool = true
     closeMap: bool = false
+    steps: int = 0
 
   while true:
+    if h1 == 1:
+      if steps == tX * tY and thirst > 0:
+        let t1: string = &"thirst {thirst}"
+        let t2: string = &"thirst {thirst - 1}"
+        stats = stats.replace(t1, t2)
+        writeFile("../data", stats)
+        thirst -= 1
+        steps = 0
+
     if up == true:
       m[y * mW + x] = 'S'
       update()
@@ -126,24 +155,28 @@ proc main() =
           if m[y * mW + x - 1] != ' ':
             m[y * mW + x] = '9'
             x -= 1
+            steps += 1
             up = true
       of "d", "l", "right":
         if x + 1 <= mW - 1:
           if m[y * mW + x + 1] != ' ':
             m[y * mW + x] = '9'
             x += 1
+            steps += 1
             up = true
       of "w", "k", "up":
         if (y - 1) * mW + x >= 0:
           if m[(y - 1) * mW + x] != ' ':
             m[y * mW + x] = '9'
             y -= 1
+            steps += 1
             up = true
       of "s", "j", "down":
         if (y + 1) * mW + x < m.len:
           if m[(y + 1) * mW + x] != ' ':
             m[y * mW + x] = '9'
             y += 1
+            steps += 1
             up = true
       of "m":
         openMap([w, h], [x, y], m, mW, h0)

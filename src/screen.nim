@@ -16,6 +16,7 @@ proc match(t: char): string =
   of ' ': return "wall"
   of '*': return "path"
   of '9': return "path"
+  of 'A': return "almond"
   of 'S': return "player"
   of 'X': return "goal"
   elif fileExists(&"../chars/{level}/match"):
@@ -77,13 +78,34 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
   proc wrLine(line: string, num: int) =
     scr[num * (wht[0] + 1) .. num * (wht[0] + 1) + line.len - 1] = line
 
+  let stats = readFile("../data").splitLines
+  let dHealth = stats[0].split(' ')[1].parseInt div 10
+  let dThirst = stats[1].split(' ')[1].parseInt div 10
+
+  var hBar: string = "H: "
+  for i in 1 .. dHealth:
+    hBar = hBar & "O-"
+  for i in dHealth + 1 .. 5:
+    hBar = hBar & "| "
+  hBar[^1] = ' '
+
+  var tBar: string = "T: "
+  for i in 1 .. dThirst:
+    tBar = tBar & "O-"
+  for i in dThirst + 1 .. 5:
+    tBar = tBar & "|-"
+  tBar[^1] = ' '
+
+  wrLine(hBar, 0)
+  wrLine(tBar, 1)
+
   if gXYH[2] == 1: 
-    wrLine(&"pX: {xy[0]} pY: {xy[1]} ", 0)
-    wrLine(&"gX: {gXYH[0]} gY: {gXYH[1]} ", 1)
-    wrLine("[m] to open map ", 2)
+    wrLine(&"pX: {xy[0]} pY: {xy[1]} ", 2)
+    wrLine(&"gX: {gXYH[0]} gY: {gXYH[1]} ", 3)
+    wrLine("[m] to open map ", 4)
 
   else:
-    wrLine("[m] to open map ", 0)
+    wrLine("[m] to open map ", 2)
 
   discard execShellCmd("clear")
   echo scr
