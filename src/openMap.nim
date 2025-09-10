@@ -4,14 +4,6 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
   var paths: string = readFile("../loadedLevel/map")
   let mYC = paths.splitLines.len
   paths = paths.replace("\n", "")
-  for i in 0 .. m.len - 1:
-    if m[i] == '9': 
-      paths[i] = 'C'
-    if m[i] == 'S':
-      paths[i] = 'S'
-    if h0 == 1:
-      if m[i] == 'X':
-        paths[i] = 'X'
 
   let
     yD = (wh[1] - 1) div 2
@@ -36,6 +28,14 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
   var visible: string
   for i in lYB .. uYB:
     let lY: int = i * mW
+    for c in lXB .. uXB:
+      if m[c + lY] == '9': 
+        paths[c + lY] = 'C'
+      if m[c + lY] == 'S':
+        paths[c + lY] = 'S'
+      if h0 == 1:
+        if m[c + lY] == 'X':
+          paths[c + lY] = 'X'
     let l: string = paths[lXB + lY .. uXB + lY]
     if i < uYB: visible = visible & l & "\n"
     else: visible = visible & l
@@ -51,14 +51,14 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
     visible[b * (x + 1) + x - 1] = '|'
 
   let 
-    l1: string = " Some areas may be unmarked |"
-    l2: string = " S: --Player--------------- |"
-    l3: string = " C: --Tiles Visited-------- |"
-    l4: string = " :: --[m] to close map----- |"
-    lD: string = "----------------------------|"
+    l1: string = " Unique areas may be unmarked |"
+    l2: string = " S: --Player----------------- |"
+    l3: string = " C: --Tiles Visited---------- |"
+    l4: string = " :: --[m] to close map------- |"
+    lD: string = " ---------------------------- |"
 
   if h0 == 1:
-    let l5: string = " X: --Exit----------------- |"
+    let l5: string = " X: --Exit------------------- |"
     visible[5 * (x + 1) + 1  .. 5 * (x + 1) + l5.len] = l5
     visible[6 * (x + 1) + 1  .. 6 * (x + 1) + lD.len] = lD
   else: 
