@@ -1,7 +1,7 @@
 import os, strutils
 
-proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int, bg: string) =
-  var paths: string = readFile("../loadedLevel/map")
+proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int, bg: string, sMap: string) =
+  var paths: string = sMap
   let mYC = paths.splitLines.len
   paths = paths.multiReplace(("\n", ""), ("A", "*"))
 
