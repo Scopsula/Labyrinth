@@ -13,9 +13,9 @@ proc newLevel*() =
 
 proc match(t: char): string =
   case t
-  of ' ': return "wall"
-  of '*': return "path"
-  of '9': return "path"
+  of ' ': return &"{level}/wall"
+  of '*': return &"{level}/path"
+  of '9': return &"{level}/path"
   of 'A': return "almond"
   of 'S': return "player"
   of 'X': return "goal"
@@ -23,16 +23,17 @@ proc match(t: char): string =
     let mF = readFile(&"../chars/{level}/match").splitLines
     for i in 0 .. mF.len - 1:
       if mF[i][0] == t:
-        return mF[i].split(' ')[1]
+        let lMatch: string = mF[i].split(' ')[1]
+        return &"{level}/{lMatch}"
 
 proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
   var cBH: string
   var cH : string
-  if c == "player" or c == "goal":
+  if not c.contains(&"{level}"):
     cBH = readFile(&"../chars/{level}/path")
     cH = readFile(&"../chars/{c}")
   else:
-    cH = readFile(&"../chars/{level}/{c}")
+    cH = readFile(&"../chars/{c}")
   let sPos = (y * tY) * (w + 1) + (x * tX) 
   for iY in 0 .. tY - 1:
     for iX in 0 .. tX - 1:
