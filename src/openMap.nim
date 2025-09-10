@@ -50,24 +50,19 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
     visible[b * (x + 1)] = '|'
     visible[b * (x + 1) + x - 1] = '|'
 
-  let 
-    l1: string = " Unique areas may be unmarked |"
-    l2: string = " S: --Player----------------- |"
-    l3: string = " C: --Tiles Visited---------- |"
-    l4: string = " :: --[m] to close map------- |"
-    lD: string = " ---------------------------- |"
-
+  proc wrLine(line: string, num: int) =
+    visible[num * (x + 1) + 1 .. num * (x + 1) + line.len] = line
+  
   if h0 == 1:
-    let l5: string = " X: --Exit------------------- |"
-    visible[5 * (x + 1) + 1  .. 5 * (x + 1) + l5.len] = l5
-    visible[6 * (x + 1) + 1  .. 6 * (x + 1) + lD.len] = lD
+    wrLine(" X: --Exit------------------- |", 5)
+    wrLine(" ---------------------------- |", 6)
   else: 
-    visible[5 * (x + 1) + 1  .. 5 * (x + 1) + lD.len] = lD
+    wrLine(" ---------------------------- |", 5)
 
-  visible[x + 2 .. x + 1 + l1.len] = l1
-  visible[2 * (x + 1) + 1  .. 2 * (x + 1) + l2.len] = l2
-  visible[3 * (x + 1) + 1  .. 3 * (x + 1) + l3.len] = l3
-  visible[4 * (x + 1) + 1  .. 4 * (x + 1) + l4.len] = l4
+  wrLine(" Unique areas may be unmarked |", 1)
+  wrLine(" S: --Player----------------- |", 2)
+  wrLine(" C: --Tiles Visited---------- |", 3)
+  wrLine(" :: --[m] to close map------- |", 4)
 
   discard execShellCmd("clear")
   echo visible
