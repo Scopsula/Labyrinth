@@ -6,6 +6,7 @@ coordinates true
 resetStats true
 thirstDrain true
 entities false
+items true
 """
 
 if fileExists("../config"):
