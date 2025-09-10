@@ -1,4 +1,4 @@
-import random
+import random, strutils
 
 const 
   tX: int = 10
@@ -52,13 +52,20 @@ proc autoGenLv*(n: int): seq[array[2, int]] =
 
   map = map & m1
 
-  for i in 0 .. path.len - 1:
-    var mP: int
-    mP += path[i][0] - sX
-    mP += (path[i][1] - sY) * (w + 1)
-    if rand(1 .. 300) == 1:
-      map[mP] = 'A'
-    else:
+  if readFile("../config").splitLines[5].split(' ')[1] == "true":
+    for i in 0 .. path.len - 1:
+      var mP: int
+      mP += path[i][0] - sX
+      mP += (path[i][1] - sY) * (w + 1)
+      if rand(1 .. 300) == 1:
+        map[mP] = 'A'
+      else:
+        map[mP] = '*'
+  else:
+    for i in 0 .. path.len - 1:
+      var mP: int
+      mP += path[i][0] - sX
+      mP += (path[i][1] - sY) * (w + 1)
       map[mP] = '*'
 
   writeFile("../loadedLevel/map", map)
