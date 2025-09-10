@@ -1,5 +1,5 @@
 import terminal, strutils, random
-import screen, style, openMap
+import ../src/screen, ../src/style, ../src/openMap
 
 const
   tX: int = 10

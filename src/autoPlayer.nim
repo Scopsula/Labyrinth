@@ -1,5 +1,5 @@
 import terminal, strutils, strformat, random, os
-import screen, autoGen, style, openMap
+import screen, autoGen, style, openMap, openInv
 
 const
   tX: int = 10
@@ -20,6 +20,7 @@ let
 var stats = """
 health 50
 thirst 50
+inventory
 """
 
 var
@@ -124,8 +125,9 @@ proc main() =
   var 
     up: bool = true
     bypass: bool = true
-    closeMap: bool = false
+    closeMenu: bool = false
     steps: int = 0
+    bg: string
 
   while true:
     if h1 == 1:
@@ -138,21 +140,31 @@ proc main() =
         steps = 0
 
     if m[y * mW + x] == 'A':
-      let t1: string = &"thirst {thirst}"
-      let t2: string = &"thirst {thirst + 5}"
-      stats = stats.replace(t1, t2)
-      writeFile("../data", stats)
-      thirst += 5
+      if thirst == 50:
+        if checkCount()[0] < 6:
+          let inv = readFile("../data").splitLines[2]
+          stats = stats.replace(inv, &"{inv} A")
+          writeFile("../data", stats)
+
+      elif thirst < 50:
+        let t1: string = &"thirst {thirst}"
+        if thirst + 5 > 50: thirst = 45
+        let t2: string = &"thirst {thirst + 5}"
+        stats = stats.replace(t1, t2)
+        writeFile("../data", stats)
+        thirst += 5
 
     if up == true:
       m[y * mW + x] = 'S'
       update()
-      m = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC], m)
+      let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC], m)
+      m = rSc[0]
+      bg = rSc[1]
       up = false
     if bypass == true:
       bypass = false
-      if refresh() == true or closeMap == true:
-        closeMap = false
+      if refresh() == true or closeMenu == true:
+        closeMenu = false
         up = true
     else:
       let input = getKey()
@@ -186,14 +198,20 @@ proc main() =
             steps += 1
             up = true
       of "m":
-        openMap([w, h], [x, y], m, mW, h0)
+        openMap([w, h], [x, y], m, mW, h0, bg)
         while true:
           if getch() == 'm':
             break
         bypass = true
-        closeMap = true
+        closeMenu = true
+      of "i":
+        oInv(bg)
+        bypass = true
+        closeMenu = true
       of "r":
         lv -= 1
+        break
+      of "n":
         break
       of "q":
         showCursor()
