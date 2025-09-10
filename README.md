@@ -40,7 +40,7 @@ autoPlayer:
 - Planned to have entities
 - For testing purpose:
 - - [r] can be used to regenerate levels
-- - [n] can be used to cycle 1 level
+- - [n] can be used to cycle levels
 
 player:
 - LEGACY MAY NOT WORK AND IS OUTDATED
