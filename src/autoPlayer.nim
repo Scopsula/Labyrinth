@@ -52,6 +52,7 @@ proc main() =
   newLevel()
   let valPoint: seq[array[2, int]] = autoGenLv(n)
   var map: string = readFile("../loadedLevel/map")
+  let sMap: string = map
   let mYC: int = map.splitLines.len
   let mW: int = map.splitlines[0].len
 
@@ -139,6 +140,17 @@ proc main() =
         thirst -= 1
         steps = 0
 
+      elif thirst == 0 and steps == 3 and health > 0:
+        let h1: string = &"health {health}"
+        let h2: string = &"health {health - 1}"
+        stats = stats.replace(h1, h2)
+        writeFile("../data", stats)
+        health -= 1
+        steps = 0
+
+      elif health == 0:
+        quit(0)
+
     if m[y * mW + x] == 'A':
       if thirst == 50:
         if checkCount()[0] < 6:
@@ -198,7 +210,7 @@ proc main() =
             steps += 1
             up = true
       of "m":
-        openMap([w, h], [x, y], m, mW, h0, bg)
+        openMap([w, h], [x, y], m, mW, h0, bg, sMap)
         while true:
           if getch() == 'm':
             break

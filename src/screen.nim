@@ -89,7 +89,7 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
   for i in 1 .. dHealth:
     hBar = hBar & "O-"
   for i in dHealth + 1 .. 5:
-    hBar = hBar & "| "
+    hBar = hBar & "|-"
   hBar[^1] = ' '
 
   var tBar: string = "T: "
