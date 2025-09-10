@@ -3,6 +3,9 @@ import os
 var defConf: string = """
 levelSize 10000
 coordinates true
+resetStats true
+thirstDrain true
+entities false
 """
 
 if fileExists("../config"):
