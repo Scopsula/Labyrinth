@@ -50,6 +50,7 @@ proc oInv*(bg: string) =
   var pBg: string = bg
   if bg[^1] == 'x':
     wrLine("| Thirst is minimal |", dLInv.len + 5)
+    wrLine("|-------------------|", dLInv.len + 6)
     pBg[^1] = '/'
 
   discard execShellCmd("clear")
@@ -69,6 +70,7 @@ proc oInv*(bg: string) =
           else:
             if stats[i] == 'A':
               stats[i] = '!'
+              break
 
         stats = stats.replace("!", "")
 
