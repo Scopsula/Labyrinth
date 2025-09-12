@@ -17,6 +17,8 @@ proc match(t: char): string =
   of '*': return &"{level}/path"
   of '9': return &"{level}/path"
   of 'A': return "almond"
+  of 'B': return "can"
+  of 'F': return "flashlight"
   of 'S': return "player"
   of 'X': return "goal"
   elif fileExists(&"../chars/{level}/match"):

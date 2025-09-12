@@ -11,7 +11,7 @@ proc checkCount*(): array[3, int] =
   for i in 0 .. inv.len - 1:
     if inv[i].len > 0:
       if inv[i][0] == 'A': aCount += 1
-      elif inv[i][0] == 'H': hCount += 1
+      elif inv[i][0] == 'C': hCount += 1
       elif inv[i][0] == 'F': fCount += 1
 
   return [aCount, hCount, fCount]
@@ -43,13 +43,18 @@ proc oInv*(bg: string) =
 
   wrLine("|-------------------|", dLInv.len)
   wrLine("| [a] drink almond  |", dLInv.len + 1)
-  wrLine("| [h] eat food      |", dLInv.len + 2)
+  wrLine("| [b] eat food      |", dLInv.len + 2)
   wrLine("| [i] to close inv  |", dLInv.len + 3)
   wrLine("|-------------------|", dLInv.len + 4)
   
   var pBg: string = bg
   if bg[^1] == 'x':
     wrLine("| Thirst is minimal |", dLInv.len + 5)
+    wrLine("|-------------------|", dLInv.len + 6)
+    pBg[^1] = '/'
+
+  if bg[^1] == 'y':
+    wrLine("| Health is maximal |", dLInv.len + 5)
     wrLine("|-------------------|", dLInv.len + 6)
     pBg[^1] = '/'
 
@@ -80,10 +85,36 @@ proc oInv*(bg: string) =
         stats = stats.replace(t1, t2)
         writeFile("../data", stats)
         break
+
+    elif input == 'b' and h > 0:
+      var stats = readFile("../data")
+      var health = stats.splitLines[0].split(' ')[1].parseInt
+      if health < 50:
+        var chk: bool = false
+        for i in 0 .. stats.len - 1:
+          if chk == false:
+            if stats[i .. i + 2] == "inv":
+              chk = true
+          else:
+            if stats[i] == 'C':
+              stats[i] = '!'
+              break
+
+        stats = stats.replace("!", "")
+
+        let t1 = &"health {health}"
+        if health > 45: health = 45
+        let t2 = &"health {health + 5}"
+        stats = stats.replace(t1, t2)
+        writeFile("../data", stats)
+        break
+
       else:
         input = 'n'
-        pBg[^1] = 'x'
+        pBg[^1] = 'y'
+
     else: break
 
   if input != 'i':
     oInv(pBg)
+
