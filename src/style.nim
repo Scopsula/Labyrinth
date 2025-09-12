@@ -1,4 +1,4 @@
-import strutils, strformat, os
+import strutils, strformat, random, os
 
 proc refresh*(): bool =
   if fileExists("../loadedLevel/level"):
@@ -65,7 +65,10 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             let cx: string = &"{xy[0] - coords[0] + x}"
             let cy: string = &"{xy[1] - coords[1] + y}"
             if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
-              visible[y * (lw + 1) + x] = '*'
+              if rand(1 .. 100) == 1:
+                visible[y * (lw + 1) + x] = 'R'
+              else:
+                visible[y * (lw + 1) + x] = '*'
           else:
             var incr: int = 0
             if rows[y + 1][x] != ' ':
