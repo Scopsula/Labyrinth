@@ -86,6 +86,10 @@ proc oInv*(bg: string) =
         writeFile("../data", stats)
         break
 
+      else:
+        input = 'n'
+        pBg[^1] = 'x'
+
     elif input == 'b' and h > 0:
       var stats = readFile("../data")
       var health = stats.splitLines[0].split(' ')[1].parseInt

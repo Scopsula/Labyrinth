@@ -6,7 +6,6 @@ var lv: string
 var level: int
 
 proc newLevel*() =
-  #doRand()
   if not fileExists("../loadedLevel/level"):
     writeFile("../loadedLevel/level", "0")
   lv = readFile("../loadedLevel/level").splitLines[0]
@@ -48,7 +47,7 @@ proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
         let wrC: char = cH[iY * (tX + 1) + iX]
         scr[sPos + iY * (w + 1) + iX] = wrC
 
-proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], chkD: array[4, int], map: string): array[2, string] =
+proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], chkD: array[4, int], map: string, msg: string): array[2, string] =
   var w1: string
   for i in 1 .. wht[0]:
     w1 = w1 & "/"
@@ -115,6 +114,7 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
   wrLine("[m] to open map ", 2 + lC)
   wrLine("[i] to open inv ", 3 + lC)
   wrLine("[q] to quit ", 4 + lC)
+  wrLine(msg, 5 + lC)
 
   discard execShellCmd("clear")
   echo scr
