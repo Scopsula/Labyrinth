@@ -132,25 +132,26 @@ proc main() =
 
   while true:
     if h1 == 1:
-      if steps == tX * tY and thirst > 0:
-        stats = readFile("../data")
-        thirst = stats.splitLines[1].split(' ')[1].parseInt
-        let t1: string = &"thirst {thirst}"
-        let t2: string = &"thirst {thirst - 1}"
-        stats = stats.replace(t1, t2)
-        writeFile("../data", stats)
-        thirst -= 1
-        steps = 0
-
-      elif thirst == 0 and steps == 3 and health > 0:
+      if steps == tX * tY or steps == 3:
         stats = readFile("../data")
         health = stats.splitLines[0].split(' ')[1].parseInt
-        let h1: string = &"health {health}"
-        let h2: string = &"health {health - 1}"
-        stats = stats.replace(h1, h2)
-        writeFile("../data", stats)
-        health -= 1
-        steps = 0
+        thirst = stats.splitLines[1].split(' ')[1].parseInt
+
+        if thirst > 0 and steps == tX * tY:
+          let t1: string = &"thirst {thirst}"
+          let t2: string = &"thirst {thirst - 1}"
+          stats = stats.replace(t1, t2)
+          writeFile("../data", stats)
+          thirst -= 1
+          steps = 0
+
+        elif thirst == 0 and steps == 3 and health > 0:
+          let h1: string = &"health {health}"
+          let h2: string = &"health {health - 1}"
+          stats = stats.replace(h1, h2)
+          writeFile("../data", stats)
+          health -= 1
+          steps = 0
 
       elif health == 0:
         quit(0)
@@ -172,6 +173,31 @@ proc main() =
         stats = stats.replace(t1, t2)
         writeFile("../data", stats)
         thirst += 5
+
+    if m[y * mW + x] == 'B':
+      if health == 50:
+        if checkCount()[1] < 6:
+          stats = readFile("../data")
+          let inv = stats.splitLines[2]
+          stats = stats.replace(inv, &"{inv} C")
+          writeFile("../data", stats)
+
+      elif health < 50:
+        stats = readFile("../data")
+        health = stats.splitLines[0].split(' ')[1].parseInt
+        let t1: string = &"health {health}"
+        if thirst + 5 > 50: thirst = 45
+        let t2: string = &"health {health + 5}"
+        stats = stats.replace(t1, t2)
+        writeFile("../data", stats)
+        health += 5
+
+    if m[y * mW + x] == 'F':
+      if checkCount()[2] < 3:
+        stats = readFile("../data")
+        let inv = stats.splitLines[2]
+        stats = stats.replace(inv, &"{inv} F")
+        writeFile("../data", stats)
 
     if up == true:
       m[y * mW + x] = 'S'

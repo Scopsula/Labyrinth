@@ -3,7 +3,10 @@ import os, strutils
 proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int, bg: string, sMap: string) =
   var paths: string = sMap
   let mYC = paths.splitLines.len
-  paths = paths.multiReplace(("\n", ""), ("A", "*"))
+  if readFile("../config").splitLines[6].split(' ')[1] == "true":
+    paths = paths.replace("\n", "")
+  else:
+    paths = paths.multiReplace(("\n", ""), ("A", "*"), ("B", "*"), ("F", "*"))
 
   let
     yD = (wh[1] - 1) div 2

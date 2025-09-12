@@ -57,7 +57,12 @@ proc autoGenLv*(n: int): seq[array[2, int]] =
       var mP: int
       mP += path[i][0] - sX
       mP += (path[i][1] - sY) * (w + 1)
-      if rand(1 .. 300) == 1:
+      let iRan: int = rand(1 .. (100 * tY * tX))
+      if iRan == 1:
+        map[mP] = 'F'
+      elif iRan <= 3:
+        map[mP] = 'B'
+      elif iRan <= 10:
         map[mP] = 'A'
       else:
         map[mP] = '*'

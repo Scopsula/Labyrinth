@@ -7,6 +7,7 @@ resetStats true
 thirstDrain true
 entities false
 items true
+itemsOnMap false
 """
 
 if fileExists("../config"):
