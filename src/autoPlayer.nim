@@ -133,6 +133,8 @@ proc main() =
   while true:
     if h1 == 1:
       if steps == tX * tY and thirst > 0:
+        stats = readFile("../data")
+        thirst = stats.splitLines[1].split(' ')[1].parseInt
         let t1: string = &"thirst {thirst}"
         let t2: string = &"thirst {thirst - 1}"
         stats = stats.replace(t1, t2)
@@ -141,6 +143,8 @@ proc main() =
         steps = 0
 
       elif thirst == 0 and steps == 3 and health > 0:
+        stats = readFile("../data")
+        health = stats.splitLines[0].split(' ')[1].parseInt
         let h1: string = &"health {health}"
         let h2: string = &"health {health - 1}"
         stats = stats.replace(h1, h2)
@@ -154,11 +158,14 @@ proc main() =
     if m[y * mW + x] == 'A':
       if thirst == 50:
         if checkCount()[0] < 6:
-          let inv = readFile("../data").splitLines[2]
+          stats = readFile("../data")
+          let inv = stats.splitLines[2]
           stats = stats.replace(inv, &"{inv} A")
           writeFile("../data", stats)
 
       elif thirst < 50:
+        stats = readFile("../data")
+        thirst = stats.splitLines[1].split(' ')[1].parseInt
         let t1: string = &"thirst {thirst}"
         if thirst + 5 > 50: thirst = 45
         let t2: string = &"thirst {thirst + 5}"
