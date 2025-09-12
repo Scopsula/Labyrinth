@@ -6,6 +6,7 @@ var lv: string
 var level: int
 
 proc newLevel*() =
+  #doRand()
   if not fileExists("../loadedLevel/level"):
     writeFile("../loadedLevel/level", "0")
   lv = readFile("../loadedLevel/level").splitLines[0]

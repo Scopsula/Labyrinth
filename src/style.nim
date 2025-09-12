@@ -65,7 +65,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             let cx: string = &"{xy[0] - coords[0] + x}"
             let cy: string = &"{xy[1] - coords[1] + y}"
             if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
-              if rand(1 .. 100) == 1:
+              if rand(1 .. 500) == 1:
                 visible[y * (lw + 1) + x] = 'R'
               else:
                 visible[y * (lw + 1) + x] = '*'
@@ -91,13 +91,17 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             let c = "abcdefghijklmnopqrst"[incr]
             visible[y * (lw + 1) + x] = c
 
+    if rand(1 .. 10) == 1:
+      map = map.replace("R", " ")
+
     let mW = mS[0].parseInt
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if visible[y * (lw + 1) + x] == '*':
+        let uC: char = visible[y * (lw + 1) + x]
+        if uC == '*' or uC == 'R':
           let wx: int = xy[0] - coords[0] + x
           let wy: int = xy[1] - coords[1] + y
-          map[wy * mW + wx] = '*'
+          map[wy * mW + wx] = uC
 
   return [visible, map]
 
