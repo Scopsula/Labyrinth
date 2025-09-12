@@ -11,7 +11,7 @@ var
   x: int = 0
   y: int = 0
 
-let 
+let
   scX = w div tX
   scY = h div tY
   yD = (scY - 1) div 2 + 2
@@ -129,8 +129,10 @@ proc main() =
     closeMenu: bool = false
     steps: int = 0
     bg: string
+    msg: string
 
   while true:
+    msg = ""
     if h1 == 1:
       if steps == tX * tY or steps == 3:
         stats = readFile("../data")
@@ -144,6 +146,7 @@ proc main() =
           writeFile("../data", stats)
           thirst -= 1
           steps = 0
+          msg = "Lost hydration"
 
         elif thirst == 0 and steps == 3 and health > 0:
           let h1: string = &"health {health}"
@@ -152,6 +155,7 @@ proc main() =
           writeFile("../data", stats)
           health -= 1
           steps = 0
+          msg = "Dying to dehydration"
 
       elif health == 0:
         quit(0)
@@ -163,6 +167,9 @@ proc main() =
           let inv = stats.splitLines[2]
           stats = stats.replace(inv, &"{inv} A")
           writeFile("../data", stats)
+          msg = "Picked up almond water"
+        else:
+          msg = "Out of room, destroyed"
 
       elif thirst < 50:
         stats = readFile("../data")
@@ -173,7 +180,8 @@ proc main() =
         stats = stats.replace(t1, t2)
         writeFile("../data", stats)
         thirst += 5
-
+        msg = "Drank almond water"
+      
     if m[y * mW + x] == 'B':
       if health == 50:
         if checkCount()[1] < 6:
@@ -181,6 +189,9 @@ proc main() =
           let inv = stats.splitLines[2]
           stats = stats.replace(inv, &"{inv} C")
           writeFile("../data", stats)
+          msg = "Picked up canned food"
+        else:
+          msg = "Out of room, destroyed"
 
       elif health < 50:
         stats = readFile("../data")
@@ -191,6 +202,7 @@ proc main() =
         stats = stats.replace(t1, t2)
         writeFile("../data", stats)
         health += 5
+        msg = "Ate canned food"
 
     if m[y * mW + x] == 'F':
       if checkCount()[2] < 3:
@@ -198,11 +210,43 @@ proc main() =
         let inv = stats.splitLines[2]
         stats = stats.replace(inv, &"{inv} F")
         writeFile("../data", stats)
+        msg = "Picked up flashlight"
+      else:
+        msg = "Out of room, destroyed"
+
+    if m[y * mW + x] == 'R':
+      let 
+        r1: int = rand(4)
+        r2: int = rand(4)
+        r3: int = rand(1)
+
+      stats = readFile("../data")
+
+      if r1 > 0:
+        for i in 1 .. r1:
+          if checkCount()[0] < 6:
+            let inv = stats.splitLines[2]
+            stats = stats.replace(inv, &"{inv} A")
+            writeFile("../data", stats)
+      if r2 > 0:
+        for i in 1 .. r2:
+          if checkCount()[1] < 6:
+            let inv = stats.splitLines[2]
+            stats = stats.replace(inv, &"{inv} C")
+            writeFile("../data", stats)
+      if r3 > 0:
+        for i in 1 .. r3:
+          if checkCount()[2] < 6:
+            let inv = stats.splitLines[2]
+            stats = stats.replace(inv, &"{inv} F")
+            writeFile("../data", stats)
+
+      msg = "Opened crate, check inventory"
 
     if up == true:
       m[y * mW + x] = 'S'
       update()
-      let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC], m)
+      let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC], m, msg)
       m = rSc[0]
       bg = rSc[1]
       up = false

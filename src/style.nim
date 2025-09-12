@@ -91,9 +91,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             let c = "abcdefghijklmnopqrst"[incr]
             visible[y * (lw + 1) + x] = c
 
-    if rand(1 .. 10) == 1:
-      map = map.replace("R", " ")
-
+    map = map.replace("R", " ")
     let mW = mS[0].parseInt
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
