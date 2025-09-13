@@ -236,7 +236,7 @@ proc main() =
             writeFile("../data", stats)
       if r3 > 0:
         for i in 1 .. r3:
-          if checkCount()[2] < 6:
+          if checkCount()[2] < 3:
             let inv = stats.splitLines[2]
             stats = stats.replace(inv, &"{inv} F")
             writeFile("../data", stats)
