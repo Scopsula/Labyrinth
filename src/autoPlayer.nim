@@ -310,6 +310,7 @@ proc main() =
       if m[y * mW + x] == 'X': break
   lv += 1
   bypass = true
+  resetEntities()
   main()
 main()
 
