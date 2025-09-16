@@ -1,5 +1,5 @@
 import strutils, strformat, os
-import style
+import style, entities
 
 var scr: string = ""
 var lv: string
@@ -11,7 +11,7 @@ proc newLevel*() =
   lv = readFile("../loadedLevel/level").splitLines[0]
   level = lv.parseInt
 
-proc match(t: char): string =
+proc match(t: char, v: string, xy: array[2, int], exy: array[2, int]): string =
   case t
   of ' ': return &"{level}/wall"
   of '*': return &"{level}/path"
@@ -22,6 +22,7 @@ proc match(t: char): string =
   of 'R': return "crate"
   of 'S': return "player"
   of 'X': return "goal"
+  of 'E': return findEntity(v, xy, exy)
   elif fileExists(&"../chars/{level}/match"):
     let mF = readFile(&"../chars/{level}/match").splitLines
     for i in 0 .. mF.len - 1:
@@ -58,7 +59,8 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
     if i < wht[1]: 
       scr = scr & "\n"
 
-  let vis: array[2, string] = adjustVisible(v, xy, level, [&"{chkD[2]}", map], [wht[2], wht[3]])
+  var vis: array[2, string] = adjustVisible(v, xy, level, [&"{chkD[2]}", map], [wht[2], wht[3]])
+  vis = entities(vis[0], [&"{chkD[2]}", vis[1]], xy)
   var rows = vis[0].splitLines
 
   for i in 1 .. 2:
@@ -73,11 +75,14 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
       for i in 0 .. rows.len - 1:
         rows[i][0 .. ^1] = rows[i][0 .. ^2]
 
+  var nV: string
   for r in 0 .. rows.len - 1:
+    nV = nV & rows[r]
     for rX in 0 .. rows[r].len - 1:
-      let t: char = rows[r][rx]
-      let c: string = match(t)
+      let t: char = rows[r][rX]
+      let c: string = match(t, nV, xy, [rX, r])
       writeChar(r, rx, wht[2], wht[3], wht[0], c)
+    nV = nV & "\n"
 
   let bg: string = scr
 
