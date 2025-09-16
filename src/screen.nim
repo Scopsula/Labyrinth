@@ -48,7 +48,7 @@ proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
         let wrC: char = cH[iY * (tX + 1) + iX]
         scr[sPos + iY * (w + 1) + iX] = wrC
 
-proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], chkD: array[4, int], map: string, msg: string): array[2, string] =
+proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[4, int], chkD: array[4, int], map: string, msg: string): array[2, string] =
   var w1: string
   for i in 1 .. wht[0]:
     w1 = w1 & "/"
@@ -60,7 +60,7 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
       scr = scr & "\n"
 
   var vis: array[2, string] = adjustVisible(v, xy, level, [&"{chkD[2]}", map], [wht[2], wht[3]])
-  vis = entities(vis[0], [&"{chkD[2]}", vis[1]], xy)
+  if gXYH[3] == 1: vis = entities(vis[0], [&"{chkD[2]}", vis[1]], xy)
   var rows = vis[0].splitLines
 
   for i in 1 .. 2:
