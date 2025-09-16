@@ -25,17 +25,14 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
     for i in 0 .. eloc.len - 1:
       var eX: int = eloc[i][0]
       var eY: int = eloc[i][1]
-      if eX > xy[0]:
-        if m[eY * mW + eX + 1] == '*':
+      map[eY * mW + ex] = '*'
+      if eX < xy[0] and m[eY * mW + eX + 1] == '*':
           eX += 1
-      elif eX < xy[0]:
-        if m[eY * mW + eX - 1] == '*':
+      elif eX > xy[0] and m[eY * mW + eX - 1] == '*':
           eX -= 1 
-      elif eY < xy[1]:
-        if m[(eY + 1) * mW + eX] == '*':
+      elif eY < xy[1] and m[(eY + 1) * mW + eX] == '*':
           eY += 1
-      elif eY > xy[1]:
-        if m[(eY - 1) * mW + eX] == '*':
+      elif eY > xy[1] and m[(eY - 1) * mW + eX] == '*':
           eY -= 1
       else:
         let mv = sample([-eY, eY, -1, 1])
@@ -44,7 +41,6 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
           if mv == eY: eY += 1
           if mv == -1: eX -= 1
           if mv == 1: eX += 1
-      map[eY * mW + ex] = '*'
       eloc[i][0] = eX
       eloc[i][1] = eY
       map[eY * mW + eX] = 'E'

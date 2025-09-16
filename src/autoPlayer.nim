@@ -245,8 +245,8 @@ proc main() =
 
     if up == true:
       m[y * mW + x] = 'S'
-      update()
       m = moveEntities([x, y], m, mW)
+      update()
       let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC], m, msg)
       m = rSc[0]
       bg = rSc[1]
