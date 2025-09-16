@@ -19,6 +19,37 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
     if eloc.contains([wx, wy, i]):
       return &"entity/{eTypes[i]}"
 
+proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
+  var map: string = m
+  if eloc.len > 0:
+    for i in 0 .. eloc.len - 1:
+      var eX: int = eloc[i][0]
+      var eY: int = eloc[i][1]
+      if eX > xy[0]:
+        if m[eY * mW + eX + 1] == '*':
+          eX += 1
+      elif eX < xy[0]:
+        if m[eY * mW + eX - 1] == '*':
+          eX -= 1 
+      elif eY < xy[1]:
+        if m[(eY + 1) * mW + eX] == '*':
+          eY += 1
+      elif eY > xy[1]:
+        if m[(eY - 1) * mW + eX] == '*':
+          eY -= 1
+      else:
+        let mv = sample([-eY, eY, -1, 1])
+        if m[eY * mW + eX + mv] == '*':
+          if mv == -eY: eY -= 1
+          if mv == eY: eY += 1
+          if mv == -1: eX -= 1
+          if mv == 1: eX += 1
+      map[eY * mW + ex] = '*'
+      eloc[i][0] = eX
+      eloc[i][1] = eY
+      map[eY * mW + eX] = 'E'
+  return map
+
 proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, string] =
   var visible: string = v
   var rows = v.splitLines

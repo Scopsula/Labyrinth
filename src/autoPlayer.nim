@@ -1,5 +1,5 @@
 import terminal, strutils, strformat, random, os
-import screen, autoGen, style, openMap, openInv
+import screen, autoGen, style, openMap, openInv, entities
 
 const
   tX: int = 10
@@ -246,6 +246,7 @@ proc main() =
     if up == true:
       m[y * mW + x] = 'S'
       update()
+      m = moveEntities([x, y], m, mW)
       let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0], [xD, yD, mW, mYC], m, msg)
       m = rSc[0]
       bg = rSc[1]
