@@ -13,6 +13,7 @@ The default tile set is loosely based on the backrooms.
 Made on Linux, may work on other systems
 
 Building on Linux:
+- Depends on illwill (non-blocking input for entities to move live)
 - build.sh will create the required directories and compile everything needed
 
 Configuration:
