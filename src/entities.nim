@@ -4,6 +4,11 @@ var
   eloc: seq[array[3, int]]
   eTypes: array[2, string] = ["smiler", "duller"]
 
+proc resetEntities*() =
+  eloc.add([0,0,0])
+  eloc = eloc[0 .. 0]
+  eloc.del(0)
+
 proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   let rows = v.splitLines
   var coords: array[2, int]
@@ -25,15 +30,17 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
     for i in 0 .. eloc.len - 1:
       var eX: int = eloc[i][0]
       var eY: int = eloc[i][1]
-      map[eY * mW + ex] = '*'
-      if eX < xy[0] and m[eY * mW + eX + 1] == '*':
-          eX += 1
+      map[eY * mW + eX] = '*'
+      if (eY + 1) * mW + eX + 1 > map.len - 1: discard
+      elif (eY - 1) * mW + eX - 1 < 0: discard
+      elif eX < xy[0] and m[eY * mW + eX + 1] == '*':
+        eX += 1
       elif eX > xy[0] and m[eY * mW + eX - 1] == '*':
-          eX -= 1 
+        eX -= 1 
       elif eY < xy[1] and m[(eY + 1) * mW + eX] == '*':
-          eY += 1
+        eY += 1
       elif eY > xy[1] and m[(eY - 1) * mW + eX] == '*':
-          eY -= 1
+        eY -= 1
       else:
         let mv = sample([-eY, eY, -1, 1])
         if m[eY * mW + eX + mv] == '*':
@@ -67,6 +74,6 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
             let wy: int = xy[1] - coords[1] + y
             eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])
             visible[y * (lw + 1) + x] = 'E'
-            map[wy * mW + wx] = 'E'
+            map[wY * mW + wx] = 'E'
 
   return [visible, map]
