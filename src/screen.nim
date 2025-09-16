@@ -76,13 +76,16 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[3, int], 
         rows[i][0 .. ^1] = rows[i][0 .. ^2]
 
   var nV: string
+  for i in 0 .. rows.len - 1:
+    nV = nV & rows[i]
+    if i != rows.len - 1:
+      nV = nV & "\n"
+
   for r in 0 .. rows.len - 1:
-    nV = nV & rows[r]
     for rX in 0 .. rows[r].len - 1:
       let t: char = rows[r][rX]
       let c: string = match(t, nV, xy, [rX, r])
       writeChar(r, rx, wht[2], wht[3], wht[0], c)
-    nV = nV & "\n"
 
   let bg: string = scr
 
