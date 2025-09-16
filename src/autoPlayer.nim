@@ -1,4 +1,4 @@
-import terminal, strutils, strformat, random, os
+import illwill, strutils, strformat, random, os, times
 import screen, autoGen, style, openMap, openInv, entities
 
 const
@@ -43,6 +43,7 @@ if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
 
 randomize()
+illwillInit()
 hideCursor()
 
 var lv: int = 0
@@ -110,6 +111,7 @@ proc main() =
 
     loadChunk(lYB,uYB,lXB,uXB)
 
+  #[
   proc getKey(): string =
     let fC = getch()
     if fC == '\e':
@@ -122,6 +124,7 @@ proc main() =
         else: discard
     else:
       return $fC
+  ]#
 
   var 
     up: bool = true
@@ -130,6 +133,7 @@ proc main() =
     steps: int = 0
     bg: string
     msg: string
+    time = cpuTime()
 
   while true:
     msg = ""
@@ -243,6 +247,10 @@ proc main() =
 
       msg = "Opened crate, check inventory"
 
+    if cpuTime() - time >= 0.001:
+      time = cpuTime()
+      up = true
+
     if up == true:
       m[y * mW + x] = 'S'
       if h2 == 1: m = moveEntities([x, y], m, mW)
@@ -251,63 +259,78 @@ proc main() =
       m = rSc[0]
       bg = rSc[1]
       up = false
+
     if bypass == true:
       bypass = false
       if refresh() == true or closeMenu == true:
         closeMenu = false
         up = true
+
     else:
       let input = getKey()
       case input
-      of "a", "h", "left":
+      #of "a", "h", "left":
+      of Key.Left:
         if x - 1 >= 0:
           if m[y * mW + x - 1] != ' ':
             m[y * mW + x] = '9'
             x -= 1
             steps += 1
             up = true
-      of "d", "l", "right":
+      #of "d", "l", "right":
+      of Key.Right:
         if x + 1 <= mW - 1:
           if m[y * mW + x + 1] != ' ':
             m[y * mW + x] = '9'
             x += 1
             steps += 1
             up = true
-      of "w", "k", "up":
+      #of "w", "k", "up":
+      of Key.Up:
         if (y - 1) * mW + x >= 0:
           if m[(y - 1) * mW + x] != ' ':
             m[y * mW + x] = '9'
             y -= 1
             steps += 1
             up = true
-      of "s", "j", "down":
+      of Key.Down:
+      #of "s", "j", "down":
         if (y + 1) * mW + x < m.len:
           if m[(y + 1) * mW + x] != ' ':
             m[y * mW + x] = '9'
             y += 1
             steps += 1
             up = true
-      of "m":
+      #of "m":
+      of Key.M:
         openMap([w, h], [x, y], m, mW, h0, bg, sMap)
         while true:
-          if getch() == 'm':
+          if getKey() == Key.M:
             break
+          #if getch() == 'm':
+            #break
         bypass = true
         closeMenu = true
-      of "i":
+      #of "i":
+      of Key.I:
         oInv(bg)
         bypass = true
         closeMenu = true
-      of "r":
+      of Key.R:
+      #of "r":
         lv -= 1
         break
-      of "n":
+      of Key.N:
+      #of "n":
         break
-      of "q":
+      of Key.Q:
+      #of "q":
         showCursor()
         quit(0)
       else: discard
       if m[y * mW + x] == 'X': break
+    sleep(5)
+
   lv += 1
   bypass = true
   resetEntities()
