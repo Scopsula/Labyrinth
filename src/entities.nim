@@ -1,4 +1,4 @@
-import strformat, strutils, random, os
+import strformat, strutils, random
 
 var 
   eloc: seq[array[3, int]]
@@ -15,16 +15,9 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   let wx: int = xy[0] - coords[0] + exy[0]
   let wy: int = xy[1] - coords[1] + exy[1]
 
-  var rS: string
   for i in 0 .. eTypes.len - 1:
     if eloc.contains([wx, wy, i]):
-      rS = &"entity/{eTypes[i]}"
-
-  echo rS
-  echo wX
-  echo wY
-  sleep(10000)
-  return rS
+      return &"entity/{eTypes[i]}"
 
 proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, string] =
   var visible: string = v
@@ -49,5 +42,4 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
             visible[y * (lw + 1) + x] = 'E'
             map[wy * mW + wx] = 'E'
 
-  writeFile("../debug", &"{eloc}")
   return [visible, map]
