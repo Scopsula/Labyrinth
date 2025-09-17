@@ -41,6 +41,7 @@ else:
   thirst = stats.splitLines[1].split(' ')[1].parseInt
 if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
+let sV: int = conf[7].split(' ')[1].parseInt
 
 randomize()
 illwillInit()
@@ -247,13 +248,17 @@ proc main() =
 
       msg = "Opened crate, check inventory"
 
-    if cpuTime() - time >= 0.001:
-      time = cpuTime()
-      up = true
+    if h2 == 1:
+      if m[y * mW + x] == 'E':
+        # battle()
+        deleteEntity([x, y])
+      if cpuTime() - time >= 0.1 / sV.toFloat:
+        m = moveEntities([x, y], m, mW)
+        time = cpuTime()
+        up = true
 
     if up == true:
       m[y * mW + x] = 'S'
-      if h2 == 1: m = moveEntities([x, y], m, mW)
       update()
       let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0, h2], [xD, yD, mW, mYC], m, msg)
       m = rSc[0]
@@ -329,7 +334,7 @@ proc main() =
         quit(0)
       else: discard
       if m[y * mW + x] == 'X': break
-    sleep(5)
+    sleep(sV)
 
   lv += 1
   bypass = true
