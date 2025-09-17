@@ -5,10 +5,11 @@ levelSize 10000
 coordinates true
 resetStats true
 thirstDrain true
-entities false
+entities true
 items true
 itemsOnMap false
 sleep 5
+entitySpeed 0.6
 """
 
 if fileExists("../config"):
