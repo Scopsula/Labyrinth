@@ -8,6 +8,7 @@ thirstDrain true
 entities false
 items true
 itemsOnMap false
+sleep 5
 """
 
 if fileExists("../config"):
