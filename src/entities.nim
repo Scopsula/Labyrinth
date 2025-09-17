@@ -3,6 +3,7 @@ import strformat, strutils, random
 var 
   eloc: seq[array[3, int]]
   eTypes: array[1, string] = ["smiler"]
+  deadZone: seq[array[2, int]]
 
 proc resetEntities*() =
   eloc.add([0,0,0])
@@ -32,29 +33,45 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
 
 proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
   var map: string = m
-  let eM: string = m.replace("E", " ")
+  var eM: string = m.replace("E", " ")
+  if deadZone.len > 0:
+    if deadZone.contains(xy):
+      deadZone.setLen(0)
+    else:
+      for i in 0 .. deadZone.len - 1:
+        eM[deadZone[i][1] * mW + deadZone[i][0]] = ' '
+
   if eloc.len > 0:
     for i in 0 .. eloc.len - 1:
       var eX: int = eloc[i][0]
       var eY: int = eloc[i][1]
+      let chk: int = eY * mW + eX
       map[eY * mW + eX] = '*'
       if (eY + 1) * mW + eX + 1 > map.len - 1: discard
       elif (eY - 1) * mW + eX - 1 < 0: discard
-      elif eX < xy[0] and eM[eY * mW + eX + 1] != ' ':
+      elif eX < xy[0] and eM[chk + 1] != ' ':
         eX += 1
-      elif eX > xy[0] and eM[eY * mW + eX - 1] != ' ':
+      elif eX > xy[0] and eM[chk - 1] != ' ':
         eX -= 1 
-      elif eY < xy[1] and eM[(eY + 1) * mW + eX] != ' ':
+      elif eY < xy[1] and eM[chk + mW] != ' ':
         eY += 1
-      elif eY > xy[1] and m[(eY - 1) * mW + eX] != ' ':
+      elif eY > xy[1] and eM[chk - mW] != ' ':
         eY -= 1
       else:
+        if eM[chk + 1] == ' ':
+          if eM[chk - 1] == ' ':
+            if eM[chk + mW] == ' ':
+              if eM[chk - mW] == ' ':
+                deadZone.setLen(0)
+
+        deadZone.add([eX, eY]) 
         let mv = sample([-mW, mW, -1, 1])
-        if eM[eY * mW + eX + mv] != ' ':
+        if eM[chk + mv] != ' ':
           if mv == -mW: eY -= 1
           if mv == mW: eY += 1
           if mv == -1: eX -= 1
           if mv == 1: eX += 1
+
       eloc[i][0] = eX
       eloc[i][1] = eY 
       map[eY * mW + eX] = 'E'
