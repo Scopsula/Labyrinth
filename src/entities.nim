@@ -33,7 +33,7 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
 
 proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
   var map: string = m
-  var eM: string = m.replace("E", " ")
+  var eM: string = map.replace("E", " ")
   if deadZone.len > 0:
     if deadZone.contains(xy):
       deadZone.setLen(0)
@@ -75,6 +75,7 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
       eloc[i][0] = eX
       eloc[i][1] = eY 
       map[eY * mW + eX] = 'E'
+      eM = map.replace("E", " ")
   return map
 
 proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, string] =
