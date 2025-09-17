@@ -1,4 +1,4 @@
-import illwill, strutils, strformat, random, os, times
+import illwill, strutils, strformat, random, os, times, std/monotimes
 import screen, autoGen, style, openMap, openInv, entities
 
 const
@@ -42,6 +42,7 @@ else:
 if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
 let sV: int = conf[7].split(' ')[1].parseInt
+let eT: float = conf[8].split(' ')[1].parseFloat
 
 randomize()
 illwillInit()
@@ -112,21 +113,6 @@ proc main() =
 
     loadChunk(lYB,uYB,lXB,uXB)
 
-  #[
-  proc getKey(): string =
-    let fC = getch()
-    if fC == '\e':
-      if getch() == '[':
-        case getch()
-        of 'C': return "right"
-        of 'D': return "left"
-        of 'A': return "up"
-        of 'B': return "down"
-        else: discard
-    else:
-      return $fC
-  ]#
-
   var 
     up: bool = true
     bypass: bool = true
@@ -134,7 +120,7 @@ proc main() =
     steps: int = 0
     bg: string
     msg: string
-    time = cpuTime()
+    time = getMonoTime()
 
   while true:
     msg = ""
@@ -249,13 +235,13 @@ proc main() =
       msg = "Opened crate, check inventory"
 
     if h2 == 1:
+      if (getMonoTime() - time).inMilliseconds().toFloat >= eT * 1000:
+        m = moveEntities([x, y], m, mW)
+        time = getMonoTime()
+        up = true
       if m[y * mW + x] == 'E':
         # battle()
         deleteEntity([x, y])
-      if cpuTime() - time >= 0.1 / sV.toFloat:
-        m = moveEntities([x, y], m, mW)
-        time = cpuTime()
-        up = true
 
     if up == true:
       m[y * mW + x] = 'S'
@@ -274,7 +260,6 @@ proc main() =
     else:
       let input = getKey()
       case input
-      #of "a", "h", "left":
       of Key.Left:
         if x - 1 >= 0:
           if m[y * mW + x - 1] != ' ':
@@ -282,7 +267,6 @@ proc main() =
             x -= 1
             steps += 1
             up = true
-      #of "d", "l", "right":
       of Key.Right:
         if x + 1 <= mW - 1:
           if m[y * mW + x + 1] != ' ':
@@ -290,7 +274,6 @@ proc main() =
             x += 1
             steps += 1
             up = true
-      #of "w", "k", "up":
       of Key.Up:
         if (y - 1) * mW + x >= 0:
           if m[(y - 1) * mW + x] != ' ':
@@ -299,42 +282,36 @@ proc main() =
             steps += 1
             up = true
       of Key.Down:
-      #of "s", "j", "down":
         if (y + 1) * mW + x < m.len:
           if m[(y + 1) * mW + x] != ' ':
             m[y * mW + x] = '9'
             y += 1
             steps += 1
             up = true
-      #of "m":
       of Key.M:
         openMap([w, h], [x, y], m, mW, h0, bg, sMap)
         while true:
           if getKey() == Key.M:
             break
-          #if getch() == 'm':
-            #break
         bypass = true
         closeMenu = true
-      #of "i":
       of Key.I:
         oInv(bg)
         bypass = true
         closeMenu = true
       of Key.R:
-      #of "r":
         lv -= 1
         break
       of Key.N:
-      #of "n":
         break
       of Key.Q:
-      #of "q":
         showCursor()
         quit(0)
       else: discard
       if m[y * mW + x] == 'X': break
-    sleep(sV)
+
+    if bypass == false:
+      sleep(sV)
 
   lv += 1
   bypass = true
