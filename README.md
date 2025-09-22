@@ -3,11 +3,12 @@
 This is a small Backrooms / Labyrinth game with theming options using illwill.
 
 Tiles are 10x5 and additional matching can be created in chars/{level}/match.
-Logic for level specific themeing (e.g ceillings) can be editted in src/style.nim.
+Logic for level specific themeing (e.g ceilings) can be editted in src/style.nim.
 New levels can be created without any code:
 - Create a directory with the proceeding level number
 - Add files path and wall with your 10x5 tiles
 - Optinally add match file to match an internal character with a tile
+- Adding ceilings will soon be possible without adding the level number to style.nim
 - Entities will eventually be able to be added without any code modifications
 
 The default tile set is loosely based on the backrooms.
@@ -34,25 +35,11 @@ Suggested Values for Level Iterations/Size:
 
 autoPlayer:
 - Automatically generates and switches to the next sequencial level
-- Starts at and cycles back to 0
-- Has a goal marked by a spiral
-- Has a map, can be opened with m
-- Has an inventory system
-- Has thirst (survivial mechanic)
+- Has a level exit marked by a spiral
+- Has a map, can be opened with [m]
+- Has an inventory system, opened with [i]
+- Has thirst (deletes with steps, restored with almond water)
 - Has entities, they currently get deleted on contact (planned to have turned based combat)
 - For testing purpose:
 - - [r] can be used to regenerate levels
 - - [n] can be used to cycle levels
-
-player:
-- LEGACY MAY NOT WORK AND IS OUTDATED
-- Slower placement times (if not present on map)
-- Loads the current map in ../loadedLevel/map
-- Uses the level number set in ../loadedLevel/level
-- Has a goal same as autoPlayer but it disappeares on contact instead
-- Same map as autoPlayer
-
-genMap:
-- LEGACY OUTDATED GENERATION
-- Generates and writes a map to ../loadedLevel/map
-- Doesn't use the config value for level size
