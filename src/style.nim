@@ -7,6 +7,8 @@ proc refresh*(): bool =
     of "1": return true
     else: discard
 
+let loot: string = readFile("../config").splitLines[5].split(' ')[1]
+
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
   var map = mS[1]
@@ -65,7 +67,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             let cx: string = &"{xy[0] - coords[0] + x}"
             let cy: string = &"{xy[1] - coords[1] + y}"
             if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
-              if rand(1 .. 500) == 1:
+              if loot == "true" and rand(1 .. 500) == 1:
                 visible[y * (lw + 1) + x] = 'R'
               else:
                 visible[y * (lw + 1) + x] = '*'

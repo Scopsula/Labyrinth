@@ -184,6 +184,7 @@ proc main() =
         while true:
           if getKey() == Key.M:
             break
+          sleep(sV)
         bypass = true
         closeMenu = true
       of Key.I:

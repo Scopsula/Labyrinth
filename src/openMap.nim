@@ -1,9 +1,11 @@
 import os, strutils
 
+let iOM: string = readFile("../config").splitLines[6].split(' ')[1]
+
 proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int, bg: string, sMap: string) =
   var paths: string = sMap
   let mYC = paths.splitLines.len
-  if readFile("../config").splitLines[6].split(' ')[1] == "true":
+  if iOM == "true":
     paths = paths.replace("\n", "")
   else:
     paths = paths.multiReplace(("\n", ""), ("A", "*"), ("B", "*"), ("F", "*"))
