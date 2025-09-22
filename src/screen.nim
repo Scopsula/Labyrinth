@@ -48,7 +48,7 @@ proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
         let wrC: char = cH[iY * (tX + 1) + iX]
         scr[sPos + iY * (w + 1) + iX] = wrC
 
-proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[4, int], chkD: array[4, int], map: string, msg: string): array[2, string] =
+proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[5, int], chkD: array[4, int], map: string, msg: string): array[2, string] =
   var w1: string
   for i in 1 .. wht[0]:
     w1 = w1 & "/"
@@ -92,37 +92,41 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[4, int], 
   proc wrLine(line: string, num: int) =
     scr[num * (wht[0] + 1) .. num * (wht[0] + 1) + line.len - 1] = line
 
-  let stats = readFile("../data/stats").splitLines
-  let dHealth = stats[0].split(' ')[1].parseInt div 10
-  let dThirst = stats[1].split(' ')[1].parseInt div 10
+  if gXYH[4] == 1:
+    let stats = readFile("../data/stats").splitLines
+    let dHealth = stats[0].split(' ')[1].parseInt div 10
+    let dThirst = stats[1].split(' ')[1].parseInt div 10
 
-  var hBar: string = "H: "
-  for i in 1 .. dHealth:
-    hBar = hBar & "O-"
-  for i in dHealth + 1 .. 5:
-    hBar = hBar & "|-"
-  hBar[^1] = ' '
+    var hBar: string = "H: "
+    for i in 1 .. dHealth:
+      hBar = hBar & "O-"
+    for i in dHealth + 1 .. 5:
+      hBar = hBar & "|-"
+    hBar[^1] = ' '
 
-  var tBar: string = "T: "
-  for i in 1 .. dThirst:
-    tBar = tBar & "O-"
-  for i in dThirst + 1 .. 5:
-    tBar = tBar & "|-"
-  tBar[^1] = ' '
+    var tBar: string = "T: "
+    for i in 1 .. dThirst:
+      tBar = tBar & "O-"
+    for i in dThirst + 1 .. 5:
+      tBar = tBar & "|-"
+    tBar[^1] = ' '
 
-  wrLine(hBar, 0)
-  wrLine(tBar, 1)
+    wrLine(hBar, 0)
+    wrLine(tBar, 1)
 
-  var lC: int = 0
-  if gXYH[2] == 1: 
-    wrLine(&"pX: {xy[0]} pY: {xy[1]} ", 2)
-    wrLine(&"gX: {gXYH[0]} gY: {gXYH[1]} ", 3)
-    lC = 2
+    var lC: int = 0
+    if gXYH[2] == 1: 
+      wrLine(&"pX: {xy[0]} pY: {xy[1]} ", 2)
+      wrLine(&"gX: {gXYH[0]} gY: {gXYH[1]} ", 3)
+      lC = 2
 
-  wrLine("[m] to open map ", 2 + lC)
-  wrLine("[i] to open inv ", 3 + lC)
-  wrLine("[q] to quit ", 4 + lC)
-  wrLine(msg, 5 + lC)
+    wrLine("[m] to open map ", 2 + lC)
+    wrLine("[i] to open inv ", 3 + lC)
+    wrLine("[q] to quit ", 4 + lC)
+    wrLine(msg, 5 + lC)
+  elif gXYH[2] == 1: 
+    wrLine(&"pX: {xy[0]} pY: {xy[1]} ", 0)
+    wrLine(&"gX: {gXYH[0]} gY: {gXYH[1]} ", 1)
 
   discard execShellCmd("clear")
   echo scr
