@@ -92,7 +92,7 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[4, int], 
   proc wrLine(line: string, num: int) =
     scr[num * (wht[0] + 1) .. num * (wht[0] + 1) + line.len - 1] = line
 
-  let stats = readFile("../data").splitLines
+  let stats = readFile("../data/stats").splitLines
   let dHealth = stats[0].split(' ')[1].parseInt div 10
   let dThirst = stats[1].split(' ')[1].parseInt div 10
 

@@ -1,27 +1,16 @@
 import os, strutils, strformat, terminal
 
-proc checkCount*(): array[3, int] =
-  let inv = readFile("../data").splitLines[2].split(' ')
+proc checkCount*(c: char): int = #array[3, int] =
+  if not fileExists(&"../data/items/{c}"):
+    writeFile(&"../data/items/{c}", "0")
+  return readFile(&"../data/items/{c}").parseInt
 
-  var 
-    aCount: int = 0
-    hCount: int = 0
-    fCount: int = 0
-
-  for i in 0 .. inv.len - 1:
-    if inv[i].len > 0:
-      if inv[i][0] == 'A': aCount += 1
-      elif inv[i][0] == 'C': hCount += 1
-      elif inv[i][0] == 'F': fCount += 1
-
-  return [aCount, hCount, fCount]
 
 proc oInv*(bg: string) =
   let 
-    oC: array[3, int] = checkCount()
-    a: int = oC[0]
-    h: int = oC[1]
-    f: int = oC[2]
+    a: int = checkCount('A')
+    h: int = checkCount('B')
+    f: int = checkCount('F')
 
   let dInv: string = &"""
 | -Essential Items- |
@@ -64,26 +53,15 @@ proc oInv*(bg: string) =
   var input = getch()
   while true:
     if input == 'a' and a > 0:
-      var stats = readFile("../data")
+      var stats = readFile("../data/stats")
       var thirst = stats.splitLines[1].split(' ')[1].parseInt
       if thirst < 50:
-        var chk: bool = false
-        for i in 0 .. stats.len - 1:
-          if chk == false:
-            if stats[i .. i + 2] == "inv":
-              chk = true
-          else:
-            if stats[i] == 'A':
-              stats[i] = '!'
-              break
-
-        stats = stats.replace("!", "")
-
+        writeFile("../data/items/A", &"{a - 1}")
         let t1 = &"thirst {thirst}"
         if thirst > 45: thirst = 45
         let t2 = &"thirst {thirst + 5}"
         stats = stats.replace(t1, t2)
-        writeFile("../data", stats)
+        writeFile("../data/stats", stats)
         break
 
       else:
@@ -91,26 +69,15 @@ proc oInv*(bg: string) =
         pBg[^1] = 'x'
 
     elif input == 'b' and h > 0:
-      var stats = readFile("../data")
+      var stats = readFile("../data/stats")
       var health = stats.splitLines[0].split(' ')[1].parseInt
       if health < 50:
-        var chk: bool = false
-        for i in 0 .. stats.len - 1:
-          if chk == false:
-            if stats[i .. i + 2] == "inv":
-              chk = true
-          else:
-            if stats[i] == 'C':
-              stats[i] = '!'
-              break
-
-        stats = stats.replace("!", "")
-
+        writeFile("../data/items/B", &"{h - 1}")
         let t1 = &"health {health}"
         if health > 45: health = 45
         let t2 = &"health {health + 5}"
         stats = stats.replace(t1, t2)
-        writeFile("../data", stats)
+        writeFile("../data/stats", stats)
         break
 
       else:
