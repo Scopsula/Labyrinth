@@ -6,27 +6,25 @@ const
   tY: int = 5
 
 var 
-  w: int = terminalWidth()
-  h: int = terminalHeight() - 1
   x: int = 0
   y: int = 0
+  h0: int = 0
+  h1: int = 0
+  h2: int = 0
+  h3: int = 0
 
 let
-  scX = w div tX
-  scY = h div tY
-  yD = (scY - 1) div 2 + 2
-  xD = (scX - 1) div 2 + 2
+  w: int = terminalWidth()
+  h: int = terminalHeight() - 1
+  scX: int = w div tX
+  scY: int = h div tY
+  yD: int = (scY - 1) div 2 + 2
+  xD: int = (scX - 1) div 2 + 2
 
 var stats = """
 health 50
 thirst 50
 """
-
-var
-  h0: int = 0
-  h1: int = 0
-  h2: int = 0
-  h3: int = 0
 
 let conf = readFile("../config").splitLines
 let n = conf[0].split(' ')[1].parseInt
@@ -56,10 +54,8 @@ proc main() =
   let mYC: int = map.splitLines.len
   let mW: int = map.splitlines[0].len
 
-  var 
-    gX: int
-    gY: int
-
+  var gX: int
+  var gY: int
   for i in 1 .. 2:
     var 
       po: array[2, int] = sample(valPoint)
