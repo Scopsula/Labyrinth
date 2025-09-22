@@ -26,6 +26,7 @@ var
   h0: int = 0
   h1: int = 0
   h2: int = 0
+  h3: int = 0
 
 let conf = readFile("../config").splitLines
 let n = conf[0].split(' ')[1].parseInt
@@ -36,6 +37,7 @@ if conf[2].split(' ')[1] == "true" or not dirExists("../data"):
   writeFile("../data/stats", stats)
 if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
+if conf[9].split(' ')[1] == "true": h3 = 1
 let sV: int = conf[7].split(' ')[1].parseInt
 let eT: float = conf[8].split(' ')[1].parseFloat
 
@@ -139,7 +141,7 @@ proc main() =
     if up == true:
       m[y * mW + x] = 'S'
       update()
-      let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0, h2], [xD, yD, mW, mYC], m, msg)
+      let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0, h2, h3], [xD, yD, mW, mYC], m, msg)
       m = rSc[0]
       bg = rSc[1]
       up = false
