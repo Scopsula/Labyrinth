@@ -59,13 +59,11 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         if rows[y][x] == ' ':
-          let nx: string = &"{(xy[0] - coords[0] + x) div (t[0] * t[1])}"
+          let nx: string = &"{(xy[0] - coords[0] + x + 1) div (t[0] * t[1] + 1)}"
           let ny: string = &"{(xy[1] - coords[1] + y) div (t[1] * t[1])}"
           if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
             let cx: string = &"{xy[0] - coords[0] + x}"
             let cy: string = &"{xy[1] - coords[1] + y}"
-            if not "13579".contains(&"{(cx.parseInt + 1) div (t[0] * t[1])}"):
-              visible[y * (lw + 1) + x] = '*'
             if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
               if rand(1 .. 500) == 1:
                 visible[y * (lw + 1) + x] = 'R'
