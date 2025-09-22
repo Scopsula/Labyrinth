@@ -1,6 +1,6 @@
 import os, strutils, strformat, terminal
 
-proc checkCount*(c: char): int = #array[3, int] =
+proc checkCount*(c: char): int =
   if not fileExists(&"../data/items/{c}"):
     writeFile(&"../data/items/{c}", "0")
   return readFile(&"../data/items/{c}").parseInt
