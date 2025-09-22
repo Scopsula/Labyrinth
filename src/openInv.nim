@@ -5,7 +5,6 @@ proc checkCount*(c: char): int =
     writeFile(&"../data/items/{c}", "0")
   return readFile(&"../data/items/{c}").parseInt
 
-
 proc oInv*(bg: string) =
   let 
     a: int = checkCount('A')
