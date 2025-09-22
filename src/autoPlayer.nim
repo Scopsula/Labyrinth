@@ -1,5 +1,5 @@
 import illwill, strutils, strformat, random, os, times, std/monotimes
-import screen, autoGen, style, openMap, openInv, entities
+import screen, autoGen, style, openMap, openInv, entities, upStats
 
 const
   tX: int = 10
@@ -20,12 +20,9 @@ let
 var stats = """
 health 50
 thirst 50
-inventory
 """
 
 var
-  health: int = 50
-  thirst: int = 50
   h0: int = 0
   h1: int = 0
   h2: int = 0
@@ -33,12 +30,10 @@ var
 let conf = readFile("../config").splitLines
 let n = conf[0].split(' ')[1].parseInt
 if conf[1].split(' ')[1] == "true": h0 = 1 
-if conf[2].split(' ')[1] == "true" or not fileExists("../data"): 
-  writeFile("../data", stats)
-else:
-  stats = readFile("../data")
-  health = stats.splitLines[0].split(' ')[1].parseInt
-  thirst = stats.splitLines[1].split(' ')[1].parseInt
+if conf[2].split(' ')[1] == "true" or not dirExists("../data"):
+  removeDir("../data")
+  createDir("../data/items")
+  writeFile("../data/stats", stats)
 if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
 let sV: int = conf[7].split(' ')[1].parseInt
@@ -126,113 +121,11 @@ proc main() =
     msg = ""
     if h1 == 1:
       if steps == tX * tY or steps == 3:
-        stats = readFile("../data")
-        health = stats.splitLines[0].split(' ')[1].parseInt
-        thirst = stats.splitLines[1].split(' ')[1].parseInt
+        let tUpdate: array[2, string] = tDrain(steps, tY * tX)
+        msg = tUpdate[0]
+        steps = tUpdate[1].parseInt
 
-        if thirst > 0 and steps == tX * tY:
-          let t1: string = &"thirst {thirst}"
-          let t2: string = &"thirst {thirst - 1}"
-          stats = stats.replace(t1, t2)
-          writeFile("../data", stats)
-          thirst -= 1
-          steps = 0
-          msg = "Lost hydration"
-
-        elif thirst == 0 and steps == 3 and health > 0:
-          let h1: string = &"health {health}"
-          let h2: string = &"health {health - 1}"
-          stats = stats.replace(h1, h2)
-          writeFile("../data", stats)
-          health -= 1
-          steps = 0
-          msg = "Dying to dehydration"
-
-      elif health == 0:
-        quit(0)
-
-    if m[y * mW + x] == 'A':
-      if thirst == 50:
-        if checkCount()[0] < 6:
-          stats = readFile("../data")
-          let inv = stats.splitLines[2]
-          stats = stats.replace(inv, &"{inv} A")
-          writeFile("../data", stats)
-          msg = "Picked up almond water"
-        else:
-          msg = "Out of room, destroyed"
-
-      elif thirst < 50:
-        stats = readFile("../data")
-        thirst = stats.splitLines[1].split(' ')[1].parseInt
-        let t1: string = &"thirst {thirst}"
-        if thirst + 5 > 50: thirst = 45
-        let t2: string = &"thirst {thirst + 5}"
-        stats = stats.replace(t1, t2)
-        writeFile("../data", stats)
-        thirst += 5
-        msg = "Drank almond water"
-      
-    if m[y * mW + x] == 'B':
-      if health == 50:
-        if checkCount()[1] < 6:
-          stats = readFile("../data")
-          let inv = stats.splitLines[2]
-          stats = stats.replace(inv, &"{inv} C")
-          writeFile("../data", stats)
-          msg = "Picked up canned food"
-        else:
-          msg = "Out of room, destroyed"
-
-      elif health < 50:
-        stats = readFile("../data")
-        health = stats.splitLines[0].split(' ')[1].parseInt
-        let t1: string = &"health {health}"
-        if thirst + 5 > 50: thirst = 45
-        let t2: string = &"health {health + 5}"
-        stats = stats.replace(t1, t2)
-        writeFile("../data", stats)
-        health += 5
-        msg = "Ate canned food"
-
-    if m[y * mW + x] == 'F':
-      if checkCount()[2] < 3:
-        stats = readFile("../data")
-        let inv = stats.splitLines[2]
-        stats = stats.replace(inv, &"{inv} F")
-        writeFile("../data", stats)
-        msg = "Picked up flashlight"
-      else:
-        msg = "Out of room, destroyed"
-
-    if m[y * mW + x] == 'R':
-      let 
-        r1: int = rand(4)
-        r2: int = rand(4)
-        r3: int = rand(1)
-
-      stats = readFile("../data")
-
-      if r1 > 0:
-        for i in 1 .. r1:
-          if checkCount()[0] < 6:
-            let inv = stats.splitLines[2]
-            stats = stats.replace(inv, &"{inv} A")
-            writeFile("../data", stats)
-      if r2 > 0:
-        for i in 1 .. r2:
-          if checkCount()[1] < 6:
-            let inv = stats.splitLines[2]
-            stats = stats.replace(inv, &"{inv} C")
-            writeFile("../data", stats)
-      if r3 > 0:
-        for i in 1 .. r3:
-          if checkCount()[2] < 3:
-            let inv = stats.splitLines[2]
-            stats = stats.replace(inv, &"{inv} F")
-            writeFile("../data", stats)
-
-      msg = "Opened crate, check inventory"
+    msg = iUpdate(m[y * mW + x])
 
     if h2 == 1:
       if (getMonoTime() - time).inMilliseconds().toFloat >= eT * 1000:

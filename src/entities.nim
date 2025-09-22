@@ -6,9 +6,7 @@ var
   deadZone: seq[array[2, int]]
 
 proc resetEntities*() =
-  eloc.add([0,0,0])
-  eloc = eloc[0 .. 0]
-  eloc.del(0)
+  eloc.setLen(0)
 
 proc deleteEntity*(xy: array[2, int]) =
   for i in 0 .. eTypes.len - 1:
