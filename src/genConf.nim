@@ -18,5 +18,4 @@ if fileExists("../config"):
 else:
   echo "\nCreating config..."
   writeFile("../config", defConf)
-
-echo "File written"
+  echo "File written"
