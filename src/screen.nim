@@ -6,9 +6,7 @@ var lv: string
 var level: int
 
 proc newLevel*() =
-  if not fileExists("../loadedLevel/level"):
-    writeFile("../loadedLevel/level", "0")
-  lv = readFile("../loadedLevel/level").splitLines[0]
+  lv = readFile("../data/level").splitLines[0]
   level = lv.parseInt
 
 proc match(t: char, v: string, xy: array[2, int], exy: array[2, int]): string =

@@ -1,11 +1,10 @@
-import strutils, strformat, random, os
+import strutils, strformat, random
 
 proc refresh*(): bool =
-  if fileExists("../loadedLevel/level"):
-    let level: string = readFile("../loadedLevel/level")
-    case level
-    of "1": return true
-    else: discard
+  let level: string = readFile("../data/level")
+  case level
+  of "1": return true
+  else: discard
 
 let loot: string = readFile("../config").splitLines[5].split(' ')[1]
 
