@@ -46,10 +46,10 @@ hideCursor()
 var lv: int = 0
 proc main() =
   if not dirExists(&"../chars/{lv}"): lv = 0
-  writeFile("../loadedLevel/level", &"{lv}")
+  writeFile("../data/level", &"{lv}")
   newLevel()
   let valPoint: seq[array[2, int]] = autoGenLv(n)
-  var map: string = readFile("../loadedLevel/map")
+  var map: string = readFile("../data/map")
   let sMap: string = map
   let mYC: int = map.splitLines.len
   let mW: int = map.splitlines[0].len

@@ -73,6 +73,6 @@ proc autoGenLv*(n: int): seq[array[2, int]] =
       mP += (path[i][1] - sY) * (w + 1)
       map[mP] = '*'
 
-  writeFile("../loadedLevel/map", map)
+  writeFile("../data/map", map)
   path.add([sX,sY])
   return path
