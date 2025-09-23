@@ -31,8 +31,7 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
 
 proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
   var map: string = m
-  var eM: string = map.multiReplace(("E", " "), ("X", " "))
-
+  var eM: string = map.multiReplace(("E", " "))
 
   if eloc.len > 0:
     for i in 0 .. eloc.len - 1:
@@ -63,7 +62,7 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
             if eM[chk + mW] == ' ':
               if eM[chk - mW] == ' ':
                 let mv = sample([-mW, mW, -1, 1])
-                if map[chk + mv] != ' ':
+                if map[chk + mv] != ' ' and map[chk + mv] != 'E':
                   deadZone.add([eX, eY]) 
                   if mv == -mW: eY -= 1
                   if mv == mW: eY += 1
@@ -100,7 +99,7 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
     for x in 0 .. lw - 1:
       if y == 0 or y == rows.len - 1 or x == 0 or x == lw - 1:
         if rows[y][x] == '*':
-          if rand(1 .. 1000) == 1:
+          if rand(1 .. 10000) == 1:
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
             eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])
