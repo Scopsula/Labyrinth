@@ -56,10 +56,10 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
       elif eY > xy[1] and eM[chk - mW] != ' ':
         eY -= 1
       else:
-        if eM[chk + 1] == ' ':
-          if eM[chk - 1] == ' ':
-            if eM[chk + mW] == ' ':
-              if eM[chk - mW] == ' ':
+        if eM[chk + 1] == ' ' and map[chk + 1] != 'E':
+          if eM[chk - 1] == ' ' and map[chk - 1] != 'E':
+            if eM[chk + mW] == ' ' and map[chk + mW] != 'E':
+              if eM[chk - mW] == ' ' and map[chk + mW] != 'E':
                 deadZone.setLen(0)
 
         deadZone.add([eX, eY]) 
