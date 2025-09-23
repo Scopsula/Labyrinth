@@ -128,6 +128,9 @@ proc main() =
     if h2 == 1:
       if (getMonoTime() - time).inMilliseconds().toFloat >= eT * 1000:
         m = moveEntities([x, y], m, mW)
+        if m[gY * mW + gX] != 'X':
+          m[gY * mW + gX] = 'X'
+          deleteEntity([gX, gY])
         time = getMonoTime()
         up = true
       if m[y * mW + x] == 'E':
