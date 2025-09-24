@@ -64,13 +64,15 @@ proc screen(sS: array[6, int], eType: string) =
         elif x == sS[0] - (scX * 4/16).toInt - 1 and y == (scY * 3/7).toInt - 1:
           writeChar(eType, [x, y], s3S)
         elif y == sS[1] - (scY * 2/7).toInt:
-          if x == (sS[0] - 2) div 4 * 1: 
+          let n = (((sS[0] - 2) mod 5)) div 2 + 1
+
+          if x == (sS[0] - 2) div 5 * 1 + n: 
             writeChar("battle/1", [x, y], s3S)
-          elif x == (sS[0] - 2) div 4 * 2:
+          elif x == (sS[0] - 2) div 5 * 2 + n:
             writeChar("battle/2", [x, y], s3S)
-          elif x == (sS[0] - 2) div 4 * 3:
+          elif x == (sS[0] - 2) div 5 * 3 + n:
             writeChar("battle/3", [x, y], s3S)
-          elif x == (sS[0] - 2) div 4 * 4:
+          elif x == (sS[0] - 2) div 5 * 4 + n:
             writeChar("battle/4", [x, y], s3S)
           else: 
             writeChar("battle/top", [x, y], s3S)
