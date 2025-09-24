@@ -5,6 +5,30 @@ proc checkCount*(c: char): int =
     writeFile(&"../data/items/{c}", "0")
   return readFile(&"../data/items/{c}").parseInt
 
+proc cInv*(bg: string, t: array[2, int]): string =
+  let f: int = checkCount('F')
+  var scr: string = bg
+  let sW: int = bg.splitLines[0].len
+
+  proc wrLine(line: string, num: int) =
+    scr[num * (sW + 1) + t[0] .. num * (sW + 1) + line.len - 1 + t[0]] = line
+
+  wrLine("|-----------------|", t[1])
+  wrLine("| -Usuable Items- |", t[1] + 1)
+  wrLine(&"| -{f} [F]lashlight |", t[1] + 2)
+  wrLine("|-----------------|", t[1] + 3)
+
+  discard execShellCmd("clear")
+  echo scr  
+
+  let input = getch()
+  case input
+  of 'f':
+    if f > 0:
+      writeFile("../data/items/F", &"{f - 1}")
+      return "flashlight"
+  else: discard
+
 proc oInv*(bg: string) =
   let 
     a: int = checkCount('A')
@@ -85,6 +109,6 @@ proc oInv*(bg: string) =
 
     else: break
 
-  if input != 'i':
+  if input != 'i' and input != '3':
     oInv(pBg)
 

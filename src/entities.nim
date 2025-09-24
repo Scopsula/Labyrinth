@@ -14,6 +14,11 @@ proc deleteEntity*(xy: array[2, int]) =
       let d: int = find(eloc, [xy[0], xy[1], i])
       eloc.delete(d)
 
+proc absoluteFindEntity*(xy: array[2, int]): string =
+  for i in 0 .. eTypes.len - 1:
+    if eloc.contains([xy[0], xy[1], i]):
+      return &"entities/{eTypes[i]}"
+
 proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   let rows = v.splitLines
   var coords: array[2, int]
@@ -25,9 +30,8 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   let wx: int = xy[0] - coords[0] + exy[0]
   let wy: int = xy[1] - coords[1] + exy[1]
 
-  for i in 0 .. eTypes.len - 1:
-    if eloc.contains([wx, wy, i]):
-      return &"entity/{eTypes[i]}"
+  let r: string = absoluteFindEntity([wx, wy])
+  return r
 
 proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
   var map: string = m
@@ -99,7 +103,7 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
     for x in 0 .. lw - 1:
       if y == 0 or y == rows.len - 1 or x == 0 or x == lw - 1:
         if rows[y][x] == '*':
-          if rand(1 .. 10000) == 1:
+          if rand(1 .. 100) == 1:
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
             eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])

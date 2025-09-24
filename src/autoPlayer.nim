@@ -1,5 +1,5 @@
 import illwill, strutils, strformat, random, os, times, std/monotimes
-import screen, autoGen, style, openMap, openInv, entities, upStats
+import screen, autoGen, style, openMap, openInv, entities, upStats, battle
 
 const
   tX: int = 10
@@ -30,7 +30,7 @@ let conf = readFile("../config").splitLines
 let n = conf[0].split(' ')[1].parseInt
 if conf[1].split(' ')[1] == "true": h0 = 1 
 if conf[2].split(' ')[1] == "true" or not dirExists("../data"):
-  removeDir("../data")
+  removeDir("../data/items")
   createDir("../data/items")
   writeFile("../data/stats", stats)
 if conf[3].split(' ')[1] == "true": h1 = 1
@@ -134,7 +134,7 @@ proc main() =
         time = getMonoTime()
         up = true
       if m[y * mW + x] == 'E':
-        # battle()
+        initBattle([x, y], [scX, scY, w, tX, tY, lV], bg)
         deleteEntity([x, y])
 
     if up == true:
