@@ -65,7 +65,6 @@ proc screen(sS: array[6, int], eType: string) =
           writeChar(eType, [x, y], s3S)
         elif y == sS[1] - (scY * 2/7).toInt:
           let n = (((sS[0] - 2) mod 5)) div 2 + 1
-
           if x == (sS[0] - 2) div 5 * 1 + n: 
             writeChar("battle/1", [x, y], s3S)
           elif x == (sS[0] - 2) div 5 * 2 + n:
