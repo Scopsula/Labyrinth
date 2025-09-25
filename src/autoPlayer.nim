@@ -134,7 +134,13 @@ proc main() =
         time = getMonoTime()
         up = true
       if m[y * mW + x] == 'E':
-        initBattle([x, y], [scX, scY, w, tX, tY, lV], bg)
+        var sSx: int = scX
+        var sSy: int = scY
+        if scX mod 2 == 0:
+          sSx -= 1
+        if scY mod 2 == 0:
+          sSy -= 1
+        initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg)
         deleteEntity([x, y])
 
     if up == true:
