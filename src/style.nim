@@ -6,7 +6,7 @@ proc refresh*(): bool =
   of "1": return true
   else: discard
 
-let loot: string = readFile("../config").splitLines[5].split(' ')[1]
+let loot: string = readFile("../data/config").splitLines[5].split(' ')[1]
 
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 

@@ -1,6 +1,6 @@
 import os, strutils
 
-let iOM: string = readFile("../config").splitLines[6].split(' ')[1]
+let iOM: string = readFile("../data/config").splitLines[6].split(' ')[1]
 
 proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int, bg: string, sMap: string) =
   var paths: string = sMap

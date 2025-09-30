@@ -26,7 +26,7 @@ health 50
 thirst 50
 """
 
-let conf = readFile("../config").splitLines
+let conf = readFile("../data/config").splitLines
 let n = conf[0].split(' ')[1].parseInt
 if conf[1].split(' ')[1] == "true": h0 = 1 
 if conf[2].split(' ')[1] == "true" or not dirExists("../data"):
@@ -45,7 +45,7 @@ hideCursor()
 
 var lv: int = 0
 proc main() =
-  if not dirExists(&"../chars/{lv}"): lv = 0
+  if not dirExists(&"../data/chars/{lv}"): lv = 0
   writeFile("../data/level", &"{lv}")
   newLevel()
   let valPoint: seq[array[2, int]] = autoGenLv(n)
