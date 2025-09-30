@@ -21,8 +21,8 @@ proc match(t: char, v: string, xy: array[2, int], exy: array[2, int]): string =
   of 'S': return "player"
   of 'X': return "goal"
   of 'E': return findEntity(v, xy, exy)
-  elif fileExists(&"../chars/{level}/match"):
-    let mF = readFile(&"../chars/{level}/match").splitLines
+  elif fileExists(&"../data/chars/{level}/match"):
+    let mF = readFile(&"../data/chars/{level}/match").splitLines
     for i in 0 .. mF.len - 1:
       if mF[i][0] == t:
         let lMatch: string = mF[i].split(' ')[1]
@@ -32,10 +32,10 @@ proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
   var cBH: string
   var cH : string
   if not c.contains(&"{level}"):
-    cBH = readFile(&"../chars/{level}/path")
-    cH = readFile(&"../chars/{c}")
+    cBH = readFile(&"../data/chars/{level}/path")
+    cH = readFile(&"../data/chars/{c}")
   else:
-    cH = readFile(&"../chars/{c}")
+    cH = readFile(&"../data/chars/{c}")
   let sPos = (y * tY) * (w + 1) + (x * tX) 
   for iY in 0 .. tY - 1:
     for iX in 0 .. tX - 1:

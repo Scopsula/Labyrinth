@@ -52,7 +52,7 @@ proc autoGenLv*(n: int): seq[array[2, int]] =
 
   map = map & m1
 
-  if readFile("../config").splitLines[5].split(' ')[1] == "true":
+  if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
     for i in 0 .. path.len - 1:
       var mP: int
       mP += path[i][0] - sX

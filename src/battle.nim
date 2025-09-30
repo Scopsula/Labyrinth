@@ -31,7 +31,7 @@ proc setStats(eType: string): bool =
     return true
 
 proc writeChar(c: string, xy: array[2, int], sS: array[3, int]) =
-  let ch: string = readFile(&"../chars/{c}")
+  let ch: string = readFile(&"../data/chars/{c}")
   for cy in 0 .. sS[1] - 1:
     for cx in 0 .. sS[0] - 1:
       let wCh: char = ch[cy * (sS[0] + 1) + cx]
