@@ -132,7 +132,9 @@ proc main() =
           m[gY * mW + gX] = 'X'
           deleteEntity([gX, gY])
         time = getMonoTime()
-        up = true
+        update()
+        if visible.contains('E'):
+          up = true
       if m[y * mW + x] == 'E':
         var sSx: int = scX
         var sSy: int = scY
