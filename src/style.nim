@@ -42,30 +42,35 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
                   else: 
                     visible[y * (lw + 1) + x] = 'q'
 
-    #[
     if visible[y * (lw + 1) + x] == '7':
-      if y - 2 >= 0 and y + 2 <= rows.len - 1:
-        if x - 2 >= 0 and x + 1 < rows[y].len - 1:
-          var incr: int = 0
-          if rows[y + 2][x] != ' ':
-            incr += 1
-          if rows[y][x - 2] != ' ':
-            incr += 2
-          if rows[y][x + 2] != ' ':
-            incr += 4
-          if rows[y - 2][x] != ' ':
-            incr += 8
-          if rows[y + 1][x - 1] != ' ':
-            incr = 16 
-          elif rows[y + 1][x + 1] != ' ':
-            incr = 16
-          elif rows[y - 1][x - 1] != ' ':
-            incr = 16
-          elif rows[y - 1][x + 1] != ' ':
-            incr = 16
-          let c = "abcdefghijklmnopq"[incr]
-          visible[y * (lw + 1) + x] = c
-    ]#
+      if y + 3 < rows.len and rand(100) == 1:
+        if rows[y + 3][x] == '*' or rows[y + 3][x] == 'S':
+          visible[(y + 1) * (lw + 1) + x] = '*'
+          visible[(y + 2) * (lw + 1) + x] = '*'
+      elif x + 3 < rows[y].len - 1 and rand(100) == 1:
+        if rows[y][x + 3] == '*' or rows[y][x + 3] == 'S':
+          visible[y * (lw + 1) + x + 1] = '*'
+          visible[y * (lw + 1) + x + 2] = '*'
+      elif x - 3 >= 0 and rand(100) == 1:
+        if rows[y][x - 3] == '*' or rows[y][x - 3] == 'S':
+          visible[y * (lw + 1) + x - 1] = '*'
+          visible[y * (lw + 1) + x - 2] = '*'
+
+    var coords: array[2, int]
+    for y in 0 .. rows.len - 1:
+      for x in 0 .. lw - 1:
+        if rows[y][x] == 'S':
+          coords = [x, y]
+          break
+
+    let mW = mS[0].parseInt
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        let uC: char = visible[y * (lw + 1) + x]
+        if uC == '*':
+          let wx: int = xy[0] - coords[0] + x
+          let wy: int = xy[1] - coords[1] + y
+          map[wy * mW + wx] = uC
 
   case level
   of 0, 4, 5:
