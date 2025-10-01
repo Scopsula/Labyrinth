@@ -13,12 +13,45 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
   var map = mS[1]
   var rows = v.splitLines
   let lw = rows[0].len
+
+  proc lvFive(x: int, y: int) =
+    if rows[y][x] == ' ':
+      if rows[y - 1][x] == ' ':
+        if rows[y + 1][x] == ' ':
+          if rows[y][x - 1] == ' ':
+            if rows[y][x + 1] == ' ':
+              visible[y * (lw + 1) + x] = '7'
+    if visible[y * (lw + 1) + x] == '7':
+      if y - 2 >= 0 and y + 2 <= rows.len - 1:
+        if x - 2 >= 0 and x + 1 < rows[y].len - 1:
+          var incr: int = 0
+          if rows[y + 2][x] != ' ':
+            incr += 1
+          if rows[y][x - 2] != ' ':
+            incr += 2
+          if rows[y][x + 2] != ' ':
+            incr += 4
+          if rows[y - 2][x] != ' ':
+            incr += 8
+          if rows[y + 1][x - 1] != ' ':
+            incr = 16 
+          elif rows[y + 1][x + 1] != ' ':
+            incr = 16
+          elif rows[y - 1][x - 1] != ' ':
+            incr = 16
+          elif rows[y - 1][x + 1] != ' ':
+            incr = 16
+          let c = "abcdefghijklmnopq"[incr]
+          visible[y * (lw + 1) + x] = c
+
   case level
   of 0, 4, 5:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
+        if level == 5:
+          lvFive(x,y)
         var incr: int = 0
-        if rows[y][x] == ' ':
+        if rows[y][x] == ' ' and visible[y * (lw + 1) + x] == ' ':
           if rows[y + 1][x] == ' ':
             if y == rows.len - 2:
               incr += 1
