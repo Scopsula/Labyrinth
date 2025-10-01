@@ -14,7 +14,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
   var rows = v.splitLines
   let lw = rows[0].len
   case level
-  of 0, 4:
+  of 0, 4, 5:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         var incr: int = 0
