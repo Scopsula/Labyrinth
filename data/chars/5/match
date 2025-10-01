@@ -14,6 +14,7 @@ m cel/tright
 n cel/tbright
 o cel/tleftright 
 p cel/tbleftright
+q cor
 0 walls/thinLeft
 1 walls/thinRight
 2 walls/thinWall
@@ -21,4 +22,5 @@ p cel/tbleftright
 4 walls/left
 5 walls/right
 6 walls/LR
-q walls/cor
+7 cel/blank
+

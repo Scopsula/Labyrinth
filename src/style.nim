@@ -15,12 +15,34 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
   let lw = rows[0].len
 
   proc lvFive(x: int, y: int) =
-    if rows[y][x] == ' ':
-      if rows[y - 1][x] == ' ':
-        if rows[y + 1][x] == ' ':
-          if rows[y][x - 1] == ' ':
-            if rows[y][x + 1] == ' ':
-              visible[y * (lw + 1) + x] = '7'
+    if y + 2 < rows.len:
+      if rows[y][x] == ' ':
+        if rows[y - 1][x] == ' ':
+          if rows[y + 1][x] == ' ':
+            if rows[y + 2][x] == ' ':
+              if rows[y][x - 1] == ' ':
+                if rows[y][x + 1] == ' ':
+                  if rows[y + 1][x + 1] == ' ':
+                    if rows[y + 1][x - 1] == ' ':
+                      if rows[y + 2][x + 1] == ' ':
+                        if rows[y + 2][x - 1] == ' ':
+                          if rows[y - 1][x + 1] == ' ':
+                            if rows[y - 1][x - 1] == ' ':
+                              visible[y * (lw + 1) + x] = '7'
+                            else: 
+                              visible[y * (lw + 1) + x] = 'q'
+                          else: 
+                            visible[y * (lw + 1) + x] = 'q'
+                        else: 
+                          visible[y * (lw + 1) + x] = 'q'
+                      else: 
+                        visible[y * (lw + 1) + x] = 'q'
+                    else: 
+                      visible[y * (lw + 1) + x] = 'q'
+                  else: 
+                    visible[y * (lw + 1) + x] = 'q'
+
+    #[
     if visible[y * (lw + 1) + x] == '7':
       if y - 2 >= 0 and y + 2 <= rows.len - 1:
         if x - 2 >= 0 and x + 1 < rows[y].len - 1:
@@ -43,6 +65,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             incr = 16
           let c = "abcdefghijklmnopq"[incr]
           visible[y * (lw + 1) + x] = c
+    ]#
 
   case level
   of 0, 4, 5:
