@@ -12,6 +12,7 @@ var
   h1: int = 0
   h2: int = 0
   h3: int = 0
+  h4: int = 0
 
 let
   w: int = terminalWidth()
@@ -36,6 +37,7 @@ if conf[2].split(' ')[1] == "true" or not dirExists("../data"):
 if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
 if conf[9].split(' ')[1] == "true": h3 = 1
+if conf[10].split(' ')[1] == "true": h4 = 1
 let sV: int = conf[7].split(' ')[1].parseInt
 let eT: float = conf[8].split(' ')[1].parseFloat
 
@@ -164,28 +166,28 @@ proc main() =
       case input
       of Key.Left:
         if x - 1 >= 0:
-          if m[y * mW + x - 1] != ' ':
+          if m[y * mW + x - 1] != ' ' or h4 == 1:
             m[y * mW + x] = '9'
             x -= 1
             steps += 1
             up = true
       of Key.Right:
         if x + 1 <= mW - 1:
-          if m[y * mW + x + 1] != ' ':
+          if m[y * mW + x + 1] != ' ' or h4 == 1:
             m[y * mW + x] = '9'
             x += 1
             steps += 1
             up = true
       of Key.Up:
         if (y - 1) * mW + x >= 0:
-          if m[(y - 1) * mW + x] != ' ':
+          if m[(y - 1) * mW + x] != ' ' or h4 == 1:
             m[y * mW + x] = '9'
             y -= 1
             steps += 1
             up = true
       of Key.Down:
         if (y + 1) * mW + x < m.len:
-          if m[(y + 1) * mW + x] != ' ':
+          if m[(y + 1) * mW + x] != ' ' or h4 == 1:
             m[y * mW + x] = '9'
             y += 1
             steps += 1
