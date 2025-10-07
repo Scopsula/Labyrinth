@@ -35,7 +35,7 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
     let lY: int = i * mW
     for c in lXB .. uXB:
       if m[c + lY] == '9': 
-        paths[c + lY] = 'C'
+        paths[c + lY] = '|'
       if m[c + lY] == 'S':
         paths[c + lY] = 'S'
       if h0 == 1:
@@ -71,7 +71,7 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
 
   wrLine("| Unique areas may be unmarked |", 1)
   wrLine("| S: Player                    |", 2)
-  wrLine("| C: Tiles Visited             |", 3)
+  wrLine("| |: Tiles Visited             |", 3)
   wrLine("| :: [m] to close map          |", 4)
 
   discard execShellCmd("clear")
