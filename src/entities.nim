@@ -74,8 +74,6 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
                   if map[chk + mv[1] * mW + mv[0]] != 'E':
                     eXY[0] += mv[0]
                     eXY[1] += mv[1]
-                  else:
-                    deadZones[i].setLen(0)
 
         deadZones[i].add([eXY[0], eXY[1]]) 
         let mv: array[2, int] = sample(dir)
