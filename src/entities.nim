@@ -72,6 +72,7 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
                 let mv: array[2, int] = sample(dir)
                 if map[chk + mv[1] * mW + mv[0]] != ' ':
                   if map[chk + mv[1] * mW + mv[0]] != 'E':
+                    deadZones[i].add([eXY[0], eXY[1]]) 
                     eXY[0] += mv[0]
                     eXY[1] += mv[1]
 
@@ -103,7 +104,7 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
     for x in 0 .. lw - 1:
       if y == 0 or y == rows.len - 1 or x == 0 or x == lw - 1:
         if rows[y][x] == '*':
-          if rand(1 .. 1000) == 1:
+          if rand(1 .. 5000) == 1:
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
             eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])
