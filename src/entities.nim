@@ -1,5 +1,7 @@
 import strformat, strutils, random
 
+const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
+
 var 
   eloc: seq[array[3, int]]
   eTypes: array[1, string] = ["smiler"]
@@ -48,48 +50,43 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
             for r in 0 .. deadZone[i].len - 1:
               eM[deadZone[i][r][1] * mW + deadZone[i][r][0]] = ' '
 
-      var eX: int = eloc[i][0]
-      var eY: int = eloc[i][1]
+      var eXY: array[2, int] = [eloc[i][0], eloc[i][1]]
 
-      let chk: int = eY * mW + eX
+      let chk: int = eXY[1] * mW + eXY[0]
       if map[chk] != 'X': map[chk] = '*'
-      if (eY + 1) * mW + eX + 1 > map.len - 1: discard
-      elif (eY - 1) * mW + eX - 1 < 0: discard
-      elif eX < xy[0] and eM[chk + 1] != ' ':
-        eX += 1
-      elif eX > xy[0] and eM[chk - 1] != ' ':
-        eX -= 1 
-      elif eY < xy[1] and eM[chk + mW] != ' ':
-        eY += 1
-      elif eY > xy[1] and eM[chk - mW] != ' ':
-        eY -= 1
+      if (eXY[1] + 1) * mW + eXY[0] + 1 > map.len - 1: discard
+      elif (eXY[1] - 1) * mW + eXY[0] - 1 < 0: discard
+      elif eXY[0] < xy[0] and eM[chk + 1] != ' ':
+        eXY[0] += 1
+      elif eXY[0] > xy[0] and eM[chk - 1] != ' ':
+        eXY[0] -= 1 
+      elif eXY[1] < xy[1] and eM[chk + mW] != ' ':
+        eXY[1] += 1
+      elif eXY[1] > xy[1] and eM[chk - mW] != ' ':
+        eXY[1] -= 1
       else:
         if eM[chk + 1] == ' ':
           if eM[chk - 1] == ' ':
             if eM[chk + mW] == ' ':
               if eM[chk - mW] == ' ':
-                let mv = sample([-mW, mW, -1, 1])
-                if map[chk + mv] != ' ':
-                  if map[chk + mv] != 'E':
-                    if mv == -mW: eY -= 1
-                    if mv == mW: eY += 1
-                    if mv == -1: eX -= 1
-                    if mv == 1: eX += 1
+                let mv: array[2, int] = sample(dir)
+                if map[chk + mv[1] * mW + mv[0]] != ' ':
+                  if map[chk + mv[1] * mW + mv[0]] != 'E':
+                    eXY[0] += mv[0]
+                    eXY[1] += mv[1]
                   else:
                     deadZone[i].setLen(0)
 
-        deadZone[i].add([eX, eY]) 
-        let mv = sample([-mW, mW, -1, 1])
-        if eM[chk + mv] != ' ':
-          if mv == -mW: eY -= 1
-          if mv == mW: eY += 1
-          if mv == -1: eX -= 1
-          if mv == 1: eX += 1
+        deadZone[i].add([eXY[0], eXY[1]]) 
+        let mv: array[2, int] = sample(dir)
+        if eM[chk + mv[1] * mW + mv[0]] != ' ':
+          eXY[0] += mv[0]
+          eXY[1] += mv[1]
 
-      eloc[i][0] = eX
-      eloc[i][1] = eY
+      eloc[i][0] = eXY[0]
+      eloc[i][1] = eXY[1]
 
-      map[eY * mW + eX] = 'E'
+      map[eXY[1] * mW + eXY[0]] = 'E'
   return map
 
 proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, string] =
