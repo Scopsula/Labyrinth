@@ -23,8 +23,17 @@ let
   xD: int = (scX - 1) div 2 + 2
 
 var stats = """
+physical
+magic
 health 50
+strength 50
+magic 50
+speed 50
+stamina 50
+resists light
+weaknesses dark
 thirst 50
+level 0
 """
 
 let conf = readFile("../data/config").splitLines

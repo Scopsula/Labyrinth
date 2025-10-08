@@ -59,9 +59,9 @@ proc screen(sS: array[6, int], eType: string) =
     let scY: float = sS[1].toFloat
     for y in 1 .. sS[1] - 2:
       for x in 1 .. sS[0] - 2:
-        if x == (scX * 4/16).toInt and y == sS[1] - (scY * 3/7).toInt - 1:
+        if x == (scX / 4).toInt and y == sS[1] - (scY * 3/7).toInt - 1:
           writeChar("player", [x, y], s3S)
-        elif x == sS[0] - (scX * 4/16).toInt - 1 and y == (scY * 3/7).toInt - 1:
+        elif x == sS[0] - (scX / 4).toInt - 1 and y == (scY * 3/7).toInt - 1:
           writeChar(eType, [x, y], s3S)
         elif y == sS[1] - (scY * 2/7).toInt:
           let n = (((sS[0] - 2) mod 5)) div 2 + 1
