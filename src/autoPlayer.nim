@@ -30,8 +30,8 @@ strength 50
 magic 50
 speed 50
 stamina 50
-resists light
-weaknesses dark
+resists light|25 physical|5
+weaknesses dark|50
 thirst 50
 level 0
 """
