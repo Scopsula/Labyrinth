@@ -3,16 +3,19 @@ import strformat, strutils, random
 var 
   eloc: seq[array[3, int]]
   eTypes: array[1, string] = ["smiler"]
-  deadZone: seq[array[2, int]]
+  deadZone: seq[seq[array[2, int]]]
 
 proc resetEntities*() =
   eloc.setLen(0)
 
 proc deleteEntity*(xy: array[2, int]) =
+  if deadZone.len == 0:
+    deadZone.setLen(eloc.len)
   for i in 0 .. eTypes.len - 1:
     if eloc.contains([xy[0], xy[1], i]):
       let d: int = find(eloc, [xy[0], xy[1], i])
       eloc.delete(d)
+      deadZone.delete(d)
 
 proc absoluteFindEntity*(xy: array[2, int]): string =
   for i in 0 .. eTypes.len - 1:
@@ -34,20 +37,32 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
 
 proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
   var map: string = m
-  var eM: string = map.multiReplace(("E", " "))
+  var eX: int
+  var eY: int
 
+  proc rMove(mv: int) =
+    if mv == -mW: eY -= 1
+    if mv == mW: eY += 1
+    if mv == -1: eX -= 1
+    if mv == 1: eX += 1
+
+  deadZone.setLen(eloc.len)
   if eloc.len > 0:
     for i in 0 .. eloc.len - 1:
-      if deadZone.len > 0:
-        if deadZone.contains(xy):
-          deadZone.setLen(0)
-        else:
-          for i in 0 .. deadZone.len - 1:
-            eM[deadZone[i][1] * mW + deadZone[i][0]] = ' '
-      var eX: int = eloc[i][0]
-      var eY: int = eloc[i][1]
-      let chk: int = eY * mW + eX
+      var eM: string = map.replace("E", " ")
 
+      if deadZone.len > 0:
+        if deadZone[i].len > 0:
+          if deadZone[i].contains(xy):
+            deadZone[i].setLen(0)
+          else:
+            for r in 0 .. deadZone[i].len - 1:
+              eM[deadZone[i][r][1] * mW + deadZone[i][r][0]] = ' '
+
+      eX = eloc[i][0]
+      eY = eloc[i][1]
+
+      let chk: int = eY * mW + eX
       if map[chk] != 'X': map[chk] = '*'
       if (eY + 1) * mW + eX + 1 > map.len - 1: discard
       elif (eY - 1) * mW + eX - 1 < 0: discard
@@ -65,25 +80,21 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
             if eM[chk + mW] == ' ':
               if eM[chk - mW] == ' ':
                 let mv = sample([-mW, mW, -1, 1])
-                if map[chk + mv] != ' ' and map[chk + mv] != 'E':
-                  deadZone.add([eX, eY]) 
-                  if mv == -mW: eY -= 1
-                  if mv == mW: eY += 1
-                  if mv == -1: eX -= 1
-                  if mv == 1: eX += 1
+                if map[chk + mv] != ' ':
+                  if map[chk + mv] != 'E':
+                    rMove(mv)
+                  else:
+                    deadZone[i].setLen(0)
 
-        deadZone.add([eX, eY]) 
+        deadZone[i].add([eX, eY]) 
         let mv = sample([-mW, mW, -1, 1])
         if eM[chk + mv] != ' ':
-          if mv == -mW: eY -= 1
-          if mv == mW: eY += 1
-          if mv == -1: eX -= 1
-          if mv == 1: eX += 1
+          rMove(mv)
 
       eloc[i][0] = eX
-      eloc[i][1] = eY 
+      eloc[i][1] = eY
+
       map[eY * mW + eX] = 'E'
-      eM = map.replace("E", " ")
   return map
 
 proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, string] =
@@ -102,7 +113,7 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
     for x in 0 .. lw - 1:
       if y == 0 or y == rows.len - 1 or x == 0 or x == lw - 1:
         if rows[y][x] == '*':
-          if rand(1 .. 100) == 1:
+          if rand(1 .. 1000) == 1:
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
             eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])
