@@ -37,14 +37,6 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
 
 proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
   var map: string = m
-  var eX: int
-  var eY: int
-
-  proc rMove(mv: int) =
-    if mv == -mW: eY -= 1
-    if mv == mW: eY += 1
-    if mv == -1: eX -= 1
-    if mv == 1: eX += 1
 
   deadZone.setLen(eloc.len)
   if eloc.len > 0:
@@ -59,8 +51,8 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
             for r in 0 .. deadZone[i].len - 1:
               eM[deadZone[i][r][1] * mW + deadZone[i][r][0]] = ' '
 
-      eX = eloc[i][0]
-      eY = eloc[i][1]
+      var eX: int = eloc[i][0]
+      var eY: int = eloc[i][1]
 
       let chk: int = eY * mW + eX
       if map[chk] != 'X': map[chk] = '*'
@@ -82,14 +74,15 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
                 let mv = sample([-mW, mW, -1, 1])
                 if map[chk + mv] != ' ':
                   if map[chk + mv] != 'E':
-                    rMove(mv)
-                  else:
                     deadZone[i].setLen(0)
 
         deadZone[i].add([eX, eY]) 
         let mv = sample([-mW, mW, -1, 1])
         if eM[chk + mv] != ' ':
-          rMove(mv)
+          if mv == -mW: eY -= 1
+          if mv == mW: eY += 1
+          if mv == -1: eX -= 1
+          if mv == 1: eX += 1
 
       eloc[i][0] = eX
       eloc[i][1] = eY
