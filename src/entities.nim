@@ -5,17 +5,18 @@ const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
 var 
   eloc: seq[array[3, int]]
   eTypes: array[1, string] = ["smiler"]
-  deadZone: seq[seq[array[2, int]]]
+  deadZones: seq[seq[array[2, int]]]
 
 proc resetEntities*() =
   eloc.setLen(0)
+  deadZones.setLen(0)
 
 proc deleteEntity*(xy: array[2, int]) =
   for i in 0 .. eTypes.len - 1:
     if eloc.contains([xy[0], xy[1], i]):
       let d: int = find(eloc, [xy[0], xy[1], i])
       eloc.delete(d)
-      deadZone.delete(d)
+      deadZones.delete(d)
 
 proc absoluteFindEntity*(xy: array[2, int]): string =
   for i in 0 .. eTypes.len - 1:
@@ -42,13 +43,12 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
     for i in 0 .. eloc.len - 1:
       var eM: string = map.replace("E", " ")
 
-      if deadZone.len > 0:
-        if deadZone[i].len > 0:
-          if deadZone[i].contains(xy):
-            deadZone[i].setLen(0)
-          else:
-            for r in 0 .. deadZone[i].len - 1:
-              eM[deadZone[i][r][1] * mW + deadZone[i][r][0]] = ' '
+      if deadZones[i].len > 0:
+        if deadZones[i].contains(xy):
+          deadZones[i].setLen(0)
+        else:
+          for r in 0 .. deadZones[i].len - 1:
+            eM[deadZones[i][r][1] * mW + deadZones[i][r][0]] = ' '
 
       var eXY: array[2, int] = [eloc[i][0], eloc[i][1]]
 
@@ -75,9 +75,9 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
                     eXY[0] += mv[0]
                     eXY[1] += mv[1]
                   else:
-                    deadZone[i].setLen(0)
+                    deadZones[i].setLen(0)
 
-        deadZone[i].add([eXY[0], eXY[1]]) 
+        deadZones[i].add([eXY[0], eXY[1]]) 
         let mv: array[2, int] = sample(dir)
         if eM[chk + mv[1] * mW + mv[0]] != ' ':
           eXY[0] += mv[0]
@@ -109,8 +109,8 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
             eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])
+            deadZones.setLen(eloc.len)
             visible[y * (lw + 1) + x] = 'E'
             map[wY * mW + wx] = 'E'
 
-  deadZone.setLen(eloc.len)
   return [visible, map]
