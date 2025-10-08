@@ -9,8 +9,6 @@ proc resetEntities*() =
   eloc.setLen(0)
 
 proc deleteEntity*(xy: array[2, int]) =
-  if deadZone.len == 0:
-    deadZone.setLen(eloc.len)
   for i in 0 .. eTypes.len - 1:
     if eloc.contains([xy[0], xy[1], i]):
       let d: int = find(eloc, [xy[0], xy[1], i])
@@ -38,7 +36,6 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
 proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
   var map: string = m
 
-  deadZone.setLen(eloc.len)
   if eloc.len > 0:
     for i in 0 .. eloc.len - 1:
       var eM: string = map.replace("E", " ")
@@ -74,6 +71,11 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
                 let mv = sample([-mW, mW, -1, 1])
                 if map[chk + mv] != ' ':
                   if map[chk + mv] != 'E':
+                    if mv == -mW: eY -= 1
+                    if mv == mW: eY += 1
+                    if mv == -1: eX -= 1
+                    if mv == 1: eX += 1
+                  else:
                     deadZone[i].setLen(0)
 
         deadZone[i].add([eX, eY]) 
@@ -113,4 +115,5 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
             visible[y * (lw + 1) + x] = 'E'
             map[wY * mW + wx] = 'E'
 
+  deadZone.setLen(eloc.len)
   return [visible, map]
