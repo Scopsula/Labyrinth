@@ -30,8 +30,7 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   let wx: int = xy[0] - coords[0] + exy[0]
   let wy: int = xy[1] - coords[1] + exy[1]
 
-  let r: string = absoluteFindEntity([wx, wy])
-  return r
+  return absoluteFindEntity([wx, wy])
 
 proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
   var map: string = m
