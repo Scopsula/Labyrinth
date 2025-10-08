@@ -1,7 +1,9 @@
-null
-null
+physical bite chase
+magic darkEnergyExpansion
 health 50
 strength 50
 magic 50
 speed 50
 stamina 50
+resists dark
+weaknesses light fire

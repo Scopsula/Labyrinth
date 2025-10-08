@@ -5,8 +5,8 @@ proc tDrain*(steps: int, tM: int): array[2, string] =
   var msg: string
   var ste: string = &"{steps}"
   var stats = readFile("../data/stats")
-  let health: int = stats.splitLines[0].split(' ')[1].parseInt
-  let thirst: int = stats.splitLines[1].split(' ')[1].parseInt
+  let health: int = stats.splitLines[2].split(' ')[1].parseInt
+  let thirst: int = stats.splitLines[9].split(' ')[1].parseInt
 
   if thirst > 0 and steps == tM:
     let t1: string = &"thirst {thirst}"
@@ -37,7 +37,7 @@ proc iUpdate*(item: char): string =
   var msg: string
   if item == 'A':
     var stats: string = readFile("../data/stats")
-    var thirst: int = stats.splitLines[1].split(' ')[1].parseInt
+    var thirst: int = stats.splitLines[9].split(' ')[1].parseInt
     if thirst == 50:
       if iCount(item, 6) == true:
         msg = "Picked up almond water"
@@ -54,7 +54,7 @@ proc iUpdate*(item: char): string =
       
   elif item == 'B':
     var stats: string = readFile("../data/stats")
-    let health: int = stats.splitLines[0].split(' ')[1].parseInt
+    let health: int = stats.splitLines[2].split(' ')[1].parseInt
     if health == 50:
       if iCount(item, 6) == true:
         msg = "Picked up canned food"

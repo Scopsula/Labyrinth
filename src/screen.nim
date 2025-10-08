@@ -92,8 +92,8 @@ proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[5, int], 
 
   if gXYH[4] == 1:
     let stats = readFile("../data/stats").splitLines
-    let dHealth = stats[0].split(' ')[1].parseInt div 10
-    let dThirst = stats[1].split(' ')[1].parseInt div 10
+    let dHealth = stats[2].split(' ')[1].parseInt div 10
+    let dThirst = stats[9].split(' ')[1].parseInt div 10
 
     var hBar: string = "H: "
     for i in 1 .. dHealth:

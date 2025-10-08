@@ -77,7 +77,7 @@ proc oInv*(bg: string) =
   while true:
     if input == 'a' and a > 0:
       var stats = readFile("../data/stats")
-      var thirst = stats.splitLines[1].split(' ')[1].parseInt
+      var thirst = stats.splitLines[9].split(' ')[1].parseInt
       if thirst < 50:
         writeFile("../data/items/A", &"{a - 1}")
         let t1 = &"thirst {thirst}"
@@ -93,7 +93,7 @@ proc oInv*(bg: string) =
 
     elif input == 'b' and h > 0:
       var stats = readFile("../data/stats")
-      var health = stats.splitLines[0].split(' ')[1].parseInt
+      var health = stats.splitLines[2].split(' ')[1].parseInt
       if health < 50:
         writeFile("../data/items/B", &"{h - 1}")
         let t1 = &"health {health}"
