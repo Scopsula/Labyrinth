@@ -39,7 +39,7 @@ autoPlayer:
 - Has a map, can be opened with [m]
 - Has an inventory system, opened with [i]
 - Has thirst (deletes with steps, restored with almond water)
-- Has entities, they currently get deleted on contact (planned to have turned based combat)
+- Has entities, turn based combat in the works, press q to proceed out of battle
 - For testing purpose:
 - - [r] can be used to regenerate levels
 - - [n] can be used to cycle levels
