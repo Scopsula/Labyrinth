@@ -27,14 +27,16 @@ proc setStats(eType: string): bool =
   spe = stats.splitLines[5].split(' ')[1].parseInt
   spo = stats.splitLines[6].split(' ')[1].parseInt
 
+  atk.setLen(0)
   let normal = stats.splitLines[0].split(' ')
-  for i in 1  .. normal.len - 2:
+  for i in 1  .. normal.len - 1:
     if normal[i] == "null":
       break
     atk.add(normal[i])
 
+  mag.setLen(0)
   let magic = stats.splitLines[1].split(' ')
-  for i in 1  .. normal.len - 2:
+  for i in 1  .. magic.len - 1:
     if magic[i] == "null":
       break
     mag.add(magic[i])
@@ -47,14 +49,16 @@ proc setStats(eType: string): bool =
     eSe = stats.splitLines[5].split(' ')[1].parseInt
     eSp = stats.splitLines[6].split(' ')[1].parseInt
 
+    eAt.setLen(0)
     let normal = stats.splitLines[0].split(' ')
-    for i in 1  .. normal.len - 2:
+    for i in 1  .. normal.len - 1:
       if normal[i] == "null":
         break
       eAt.add(normal[i])
 
+    eMa.setLen(0)
     let magic = stats.splitLines[1].split(' ')
-    for i in 1  .. normal.len - 2:
+    for i in 1  .. magic.len - 1:
       if magic[i] == "null":
         break
       eMa.add(magic[i])
@@ -135,8 +139,12 @@ proc combat(eType: string, sS: array[6, int]) =
   screen(sS, eType)
   let input = getch()
   case input
+  of '1': 
+    let move: string = cInv(sCr, [sS[3], sS[4]], "move", atk)
+  of '2': 
+    let move: string = cInv(sCr, [sS[3], sS[4]], "move", mag)
   of '3', 'i': 
-    let up: string = cInv(sCr, [sS[3], sS[4]])
+    let item: string = cInv(sCr, [sS[3], sS[4]], "item", @["", ""])
   else: discard
   if input != 'q': 
     combat(eType, sS)

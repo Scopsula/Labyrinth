@@ -5,7 +5,7 @@ proc checkCount*(c: char): int =
     writeFile(&"../data/items/{c}", "0")
   return readFile(&"../data/items/{c}").parseInt
 
-proc cInv*(bg: string, t: array[2, int]): string =
+proc cInv*(bg: string, t: array[2, int], inv: string, data: seq[string]): string =
   let f: int = checkCount('F')
   var scr: string = bg
   let sW: int = bg.splitLines[0].len
@@ -13,18 +13,40 @@ proc cInv*(bg: string, t: array[2, int]): string =
   proc wrLine(line: string, num: int) =
     scr[num * (sW + 1) + t[0] .. num * (sW + 1) + line.len - 1 + t[0]] = line
 
-  wrLine("|-----------------|", t[1])
-  wrLine("| -Usuable Items- |", t[1] + 1)
-  wrLine(&"| -{f} [F]lashlight |", t[1] + 2)
-  wrLine("|-----------------|", t[1] + 3)
+  case inv
+  of "item":
+    wrLine(" Unique Items:", t[1] + 1)
+    wrLine(&" {f} [F]lashlight", t[1] + 1 )
+    wrLine(" -------------- ", t[1] + 2)
+    wrLine(" Combat Items:", t[1] + 3)
+    for i in 0 .. data.len - 1:      
+      wrLine(&" {i + 1}. " & data[i], t[1] + 4 + i)
+  
+  of "move":
+    for i in 0 .. data.len - 1:      
+      wrLine(&" {i + 1}. " & data[i], t[1] + 1 + i)
 
   discard execShellCmd("clear")
+  echo data
   echo scr  
 
   let input = getch()
+  let chkInp: string = &"{input}"
+  
+  var count: int = 0
+  for i in 0 .. chkInp.len - 1:
+    for r in 0 .. 9:
+      if &"{chkInp[i]}" == &"{r}": 
+        count += 1
+  
+  if count == chkInp.len:
+    let opt: int = chkInp.parseInt
+    if data.len >= opt:
+      return data[opt - 1]
+
   case input
   of 'f':
-    if f > 0:
+    if f > 0 and inv == "item":
       writeFile("../data/items/F", &"{f - 1}")
       return "flashlight"
   else: discard
