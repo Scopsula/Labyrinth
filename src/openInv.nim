@@ -15,16 +15,16 @@ proc cInv*(bg: string, t: array[2, int], inv: string, data: seq[string]): string
 
   case inv
   of "item":
-    wrLine(" Unique Items:", t[1] + 1)
-    wrLine(&" {f} [F]lashlight", t[1] + 1 )
-    wrLine(" -------------- ", t[1] + 2)
-    wrLine(" Combat Items:", t[1] + 3)
-    for i in 0 .. data.len - 1:      
-      wrLine(&" {i + 1}. " & data[i], t[1] + 4 + i)
+    wrLine("  Unique Items:", t[1] + 1)
+    wrLine(&"  F. Flashlight | {f}", t[1] + 1 )
+    # wrLine(" --------------- ", t[1] + 2)
+    # wrLine(" Combat Items:", t[1] + 3)
+    # for i in 0 .. data.len - 1:      
+      # wrLine(&" {i + 1}. " & data[i], t[1] + 4 + i)
   
   of "move":
     for i in 0 .. data.len - 1:      
-      wrLine(&" {i + 1}. " & data[i], t[1] + 1 + i)
+      wrLine(&"  {i + 1}. " & data[i], t[1] + 1 + i)
 
   discard execShellCmd("clear")
   echo data
