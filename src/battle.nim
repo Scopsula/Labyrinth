@@ -28,13 +28,13 @@ proc setStats(eType: string): bool =
   spo = stats.splitLines[6].split(' ')[1].parseInt
 
   let normal = stats.splitLines[0].split(' ')
-  for i in 1  .. normal.len - 1:
+  for i in 1  .. normal.len - 2:
     if normal[i] == "null":
       break
     atk.add(normal[i])
 
   let magic = stats.splitLines[1].split(' ')
-  for i in 1  .. normal.len - 1:
+  for i in 1  .. normal.len - 2:
     if magic[i] == "null":
       break
     mag.add(magic[i])
@@ -48,16 +48,17 @@ proc setStats(eType: string): bool =
     eSp = stats.splitLines[6].split(' ')[1].parseInt
 
     let normal = stats.splitLines[0].split(' ')
-    for i in 1  .. normal.len - 1:
+    for i in 1  .. normal.len - 2:
       if normal[i] == "null":
         break
       eAt.add(normal[i])
 
     let magic = stats.splitLines[1].split(' ')
-    for i in 1  .. normal.len - 1:
+    for i in 1  .. normal.len - 2:
       if magic[i] == "null":
         break
       eMa.add(magic[i])
+
     return true
 
 proc writeChar(c: string, xy: array[2, int], sS: array[3, int]) =
@@ -76,8 +77,10 @@ proc screen(sS: array[6, int], eType: string) =
         if y == 0 or y == sS[1] - 1: 
           writeChar("battle/cor", [x, y], s3S)
       elif y == 0 or y == sS[1] - 1: 
-        writeChar("battle/tb", [x, y], s3S) 
+        writeChar("battle/tb", [x, y], s3S)
 
+  let scX: float = sS[0].toFloat
+  let scY: float = sS[1].toFloat
   if animation == true:
     sleep(100)
     for y in 1 .. sS[1] - 2:
@@ -85,8 +88,7 @@ proc screen(sS: array[6, int], eType: string) =
         writeChar(&"{sS[5]}/wall", [x, y], s3S)
         discard execShellCmd("clear")
         echo sCr
-    let scX: float = sS[0].toFloat
-    let scY: float = sS[1].toFloat
+
     for y in 1 .. sS[1] - 2:
       for x in 1 .. sS[0] - 2:
         if x == (scX / 4).toInt and y == sS[1] - (scY * 3/7).toInt - 1:
@@ -110,6 +112,21 @@ proc screen(sS: array[6, int], eType: string) =
         discard execShellCmd("clear")
         echo sCr
     animation = false
+  
+  proc wrLine(line: string, num: int, xD: int, ovr: int) =
+    var cD: int = ovr * (sS[2] + 1)
+    if line.len < sS[3]:
+      cD += (sS[3] - line.len) div 2
+    let lB: int = (num * sS[4]) * (sS[2] + 1) + (xD * sS[3]) + cD
+    let uB: int = lB + line.len - 1
+    scr[lB .. uB] = line
+  
+  wrLine(&"HP: {hpo}", sS[1] - (scY * 3/7).toInt - 1, (scX / 4).toInt, -2)
+  wrLine(&"SP: {spo}", sS[1] - (scY * 3/7).toInt - 1, (scX / 4).toInt, -1)
+  wrLine(&"HP: {eHp}", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -2)
+
+  # Show enemy SP for testing
+  wrLine(&"SP: {eSp}", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -1)
 
   discard execShellCmd("clear")
   echo sCr
