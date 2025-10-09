@@ -23,11 +23,11 @@ let
   xD: int = (scX - 1) div 2 + 2
 
 var stats = """
-physical
-magic
+normal swing
+magic null
 health 50
 strength 50
-magic 50
+mStrength 50
 speed 50
 stamina 50
 resists light|25 physical|5
