@@ -3,31 +3,61 @@ import entities, openInv
 
 var 
   animation: bool = false
+  sCr: string
   eAt: seq[string]
   eMa: seq[string]
-  sCr: string
   eHp: int
   eSt: int
   eMs: int
   eSe: int
   eSp: int
+  atk: seq[string]
+  mag: seq[string]
+  hpo: int
+  str: int
+  mSt: int
+  spe: int
+  spo: int
 
 proc setStats(eType: string): bool =
+  let stats = readFile(&"../data/stats")
+  hpo = stats.splitLines[2].split(' ')[1].parseInt
+  str = stats.splitLines[3].split(' ')[1].parseInt
+  mSt = stats.splitLines[4].split(' ')[1].parseInt
+  spe = stats.splitLines[5].split(' ')[1].parseInt
+  spo = stats.splitLines[6].split(' ')[1].parseInt
+
+  let normal = stats.splitLines[0].split(' ')
+  for i in 1  .. normal.len - 1:
+    if normal[i] == "null":
+      break
+    atk.add(normal[i])
+
+  let magic = stats.splitLines[1].split(' ')
+  for i in 1  .. normal.len - 1:
+    if magic[i] == "null":
+      break
+    mag.add(magic[i])
+
   if fileExists(&"../data/{eType}/stats"):
     let stats = readFile(&"../data/{eType}/stats")
-    let sMoves = stats.splitLines[0].split(' ')
-    for i in 0 .. sMoves.len - 1:
-      if sMoves[i] == "null": break
-      eAt.add(sMoves[i])
-    let mMoves = stats.splitLines[1].split(' ')
-    for i in 0 .. mMoves.len - 1:
-      if mMoves[i] == "null": break
-      eMa.add(mMoves[i])
     eHp = stats.splitLines[2].split(' ')[1].parseInt
     eSt = stats.splitLines[3].split(' ')[1].parseInt
     eMs = stats.splitLines[4].split(' ')[1].parseInt
     eSe = stats.splitLines[5].split(' ')[1].parseInt
     eSp = stats.splitLines[6].split(' ')[1].parseInt
+
+    let normal = stats.splitLines[0].split(' ')
+    for i in 1  .. normal.len - 1:
+      if normal[i] == "null":
+        break
+      eAt.add(normal[i])
+
+    let magic = stats.splitLines[1].split(' ')
+    for i in 1  .. normal.len - 1:
+      if magic[i] == "null":
+        break
+      eMa.add(magic[i])
     return true
 
 proc writeChar(c: string, xy: array[2, int], sS: array[3, int]) =
