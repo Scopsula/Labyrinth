@@ -21,7 +21,7 @@ proc deleteEntity*(xy: array[2, int]) =
 proc absoluteFindEntity*(xy: array[2, int]): string =
   for i in 0 .. eTypes.len - 1:
     if eloc.contains([xy[0], xy[1], i]):
-      return &"entities/{eTypes[i]}"
+      return &"entities/{eTypes[i]}/map"
 
 proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   let rows = v.splitLines

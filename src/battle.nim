@@ -94,7 +94,7 @@ proc screen(sS: array[6, int], eType: string) =
         if x == (scX / 4).toInt and y == sS[1] - (scY * 3/7).toInt - 1:
           writeChar("player", [x, y], s3S)
         elif x == sS[0] - (scX / 4).toInt - 1 and y == (scY * 3/7).toInt - 1:
-          writeChar(eType, [x, y], s3S)
+          writeChar(&"{eType}/map", [x, y], s3S)
         elif y == sS[1] - (scY * 2/7).toInt:
           let n = (((sS[0] - 2) mod 5)) div 2 + 1
           if x == (sS[0] - 2) div 5 * 1 + n: 
@@ -142,7 +142,7 @@ proc combat(eType: string, sS: array[6, int]) =
     combat(eType, sS)
 
 proc initBattle*(xy: array[2, int], sS: array[6, int], bg: string) =
-  let eType: string = absoluteFindEntity(xy)
+  let eType: string = absoluteFindEntity(xy)[0 .. ^4]
   if setStats(eType) == true:
     sCr = bg
     animation = true
