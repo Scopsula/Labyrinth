@@ -1,1 +1,3 @@
-pursue speed -5
+pursue speed -5 n
+burn health -5 3
+bleed health -10 5
