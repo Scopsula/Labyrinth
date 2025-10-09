@@ -1,3 +1,3 @@
-bite|%enemy% bites into your flesh for %dmg% %type% damage.|10|0|physical|null|null
-chase|%enemy% chases you down.|0|0|physical|speed|pursue
-darkEnergyExpansion|%enemy% releases an aura of dark energy for %dmg% %type% damage.|0|20|dark|null|null
+bite|%user% bites into %target%'s flesh for %dmg% %type% damage.|10|0|physical|null|null
+chase|%user% chases %target% down.|0|0|physical|speed|pursue
+darkEnergyExpansion|%user% releases an aura of dark energy for %dmg% %type% damage.|0|20|dark|null|null
