@@ -171,9 +171,6 @@ proc screen(sS: array[6, int], eType: string) =
   discard execShellCmd("clear")
   echo sCr
 
-proc enemyMove(eType: string) =
-  discard
-
 proc playerMove(cat: array[2, string], eType: string) =
   var mvData: string
   case cat[1]
@@ -222,6 +219,15 @@ proc playerMove(cat: array[2, string], eType: string) =
   let magDam: int = (mat * mMult).toInt + rand(-mRds .. mRds)
   let phyDam: int = (nat * pMult).toInt + rand(-pRds .. pRds)
 
+  var damage: int = magDam + phyDam
+  if damage < 0: damage = 0
+
+  if rand(1 .. 100) < acr:
+    eHp -= damage
+
+proc enemyMove(eType: string) =
+  discard
+
 proc combat(eType: string, sS: array[6, int]) =
   proc event(cat: array[2, string]) =
     if eSe > spe or eSe == spe and rand(1) == 1:
@@ -241,7 +247,7 @@ proc combat(eType: string, sS: array[6, int]) =
   of '3', 'i': 
     event([cInv(sCr, [sS[3], sS[4]], "item", @["", ""]), "item"])
   else: discard
-  if input != 'q': 
+  if input != 'q' and eHp > 0: 
     combat(eType, sS)
 
 proc initBattle*(xy: array[2, int], sS: array[6, int], bg: string) =
