@@ -176,7 +176,7 @@ proc screen(sS: array[6, int], eType: string) =
   discard execShellCmd("clear")
   echo sCr
 
-proc playerMove(cat: array[2, string], eType: string) =
+proc calcMove(cat: array[2, string], eType: string, player: bool) =
   var mvData: string
   case cat[1]
   of "flashlight":
@@ -200,26 +200,42 @@ proc playerMove(cat: array[2, string], eType: string) =
 
   let mSv = mvData.split('|')
   let dType: string = mSv[4]
-  var mMult: float
-  for i in 1 .. 100:
-    if eWe.contains([dType, &"{i}"]):
-      mMult = 1 - (i / 100)
-      break
 
-  let nat: float = mSv[2].parseFloat
-  let mat: float = mSv[2].parseFloat
-  let acr: int = mSv[7].parseInt
-  let pRds: int = mSv[10].parseInt
-  let mRds: int = mSv[11].parseInt
+  var wSet: seq[array[2, string]]
+  var rSet: seq[array[2, string]]
 
-  var pMult: float
-  if mat > 0 and nat > 0:
-    for i in 1 .. 100:
-      if eWe.contains(["physical", &"{i}"]):
-        pMult = 1 - (i / 100)
-        break
+  if player == true:
+    wSet = eWe
+    rSet = eRe
   else:
-    pMult = mMult
+    wSet = wea
+    rSet = res
+
+  let 
+    nat: float = mSv[2].parseFloat
+    mat: float = mSv[2].parseFloat
+    acr: int = mSv[7].parseInt
+    pRds: int = mSv[10].parseInt
+    mRds: int = mSv[11].parseInt
+
+  var mMult: float
+  var pMult: float
+  for i in 1 .. 100:
+    if wSet.contains([dType, &"{i}"]):
+      mMult = 1 + (i / 100)
+      break
+    if rSet.contains([dType, &"{i}"]):
+      mMult = 1 + (i / 100)
+      break
+    if mat > 0 and nat > 0:
+      if wSet.contains(["physical", &"{i}"]):
+        pMult = 1 + (i / 100)
+        break
+      if rSet.contains(["physical", &"{i}"]):
+        pMult -= (i / 100)
+        break
+    else:
+      pMult = mMult
 
   let magDam: int = (mat * mMult).toInt + rand(-mRds .. mRds)
   let phyDam: int = (nat * pMult).toInt + rand(-pRds .. pRds)
@@ -228,7 +244,10 @@ proc playerMove(cat: array[2, string], eType: string) =
   if damage < 0: damage = 0
 
   if rand(1 .. 100) < acr:
-    eHp -= damage
+    if player == true:
+      eHp -= damage
+    else:
+      hpo -= damage
 
 proc enemyMove(eType: string) =
   discard
@@ -237,9 +256,9 @@ proc combat(eType: string, sS: array[6, int]) =
   proc event(cat: array[2, string]) =
     if eSe > spe or eSe == spe and rand(1) == 1:
       enemyMove(eType)
-      playerMove(cat, eType)
+      calcMove(cat, eType, true)
     else:
-      playerMove(cat, eType)
+      calcMove(cat, eType, true)
       enemyMove(eType)
 
   screen(sS, eType)
