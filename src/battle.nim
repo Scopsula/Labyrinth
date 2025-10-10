@@ -160,12 +160,17 @@ proc screen(sS: array[6, int], eType: string) =
     let lB: int = (num * sS[4]) * (sS[2] + 1) + (xD * sS[3]) + cD
     let uB: int = lB + line.len - 1
     scr[lB .. uB] = line
-  
+ 
+  wrLine(&"          ", sS[1] - (scY * 3/7).toInt - 1, (scX / 4).toInt, -2)
+  wrLine(&"          ", sS[1] - (scY * 3/7).toInt - 1, (scX / 4).toInt, -1)
+  wrLine(&"          ", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -2)
+
   wrLine(&"HP: {hpo}", sS[1] - (scY * 3/7).toInt - 1, (scX / 4).toInt, -2)
   wrLine(&"SP: {spo}", sS[1] - (scY * 3/7).toInt - 1, (scX / 4).toInt, -1)
   wrLine(&"HP: {eHp}", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -2)
 
-  # Show enemy SP for testing
+  # Show enemy SP for testin
+  wrLine(&"          ", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -1)
   wrLine(&"SP: {eSp}", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -1)
 
   discard execShellCmd("clear")
