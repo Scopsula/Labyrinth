@@ -11,6 +11,8 @@ var
   eMs: int
   eSe: int
   eSp: int
+  eRe: seq[array[2, string]]
+  eWe: seq[array[2, string]]
   atk: seq[string]
   mag: seq[string]
   hpo: int
@@ -18,6 +20,8 @@ var
   mSt: int
   spe: int
   spo: int
+  res: seq[array[2, string]]
+  wea: seq[array[2, string]]
 
 proc setStats(eType: string): bool =
   let stats = readFile(&"../data/stats")
@@ -41,6 +45,22 @@ proc setStats(eType: string): bool =
       break
     mag.add(magic[i])
 
+  res.setLen(0)
+  let resist = stats.splitLines[7].split(' ')
+  for i in 1  .. resist.len - 1:
+    if resist[i] == "null":
+      break
+    let rV = resist[i].split('|')
+    res.add([rV[0], rV[1]])
+
+  wea.setLen(0)
+  let weak = stats.splitLines[8].split(' ')
+  for i in 1  .. weak.len - 1:
+    if weak[i] == "null":
+      break
+    let wV = weak[i].split('|')
+    wea.add([wV[0], wV[1]])
+
   if fileExists(&"../data/{eType}/stats"):
     let stats = readFile(&"../data/{eType}/stats")
     eHp = stats.splitLines[2].split(' ')[1].parseInt
@@ -62,6 +82,22 @@ proc setStats(eType: string): bool =
       if magic[i] == "null":
         break
       eMa.add(magic[i])
+
+    eRe.setLen(0)
+    let resist = stats.splitLines[7].split(' ')
+    for i in 1  .. resist.len - 1:
+      if resist[i] == "null":
+        break
+      let rV = resist[i].split('|')
+      eRe.add([rV[0], rV[1]])
+
+    eWe.setLen(0)
+    let weak = stats.splitLines[8].split(' ')
+    for i in 1  .. weak.len - 1:
+      if weak[i] == "null":
+        break
+      let wV = weak[i].split('|')
+      eWe.add([wV[0], wV[1]])
 
     return true
 
@@ -161,6 +197,30 @@ proc playerMove(cat: array[2, string], eType: string) =
           break
 
   let mSv = mvData.split('|')
+  let dType: string = mSv[4]
+  var mMult: float
+  for i in 1 .. 100:
+    if eWe.contains([dType, &"{i}"]):
+      mMult = 1 - (i / 100)
+      break
+
+  let nat: float = mSv[2].parseFloat
+  let mat: float = mSv[2].parseFloat
+  let acr: int = mSv[7].parseInt
+  let pRds: int = mSv[10].parseInt
+  let mRds: int = mSv[11].parseInt
+
+  var pMult: float
+  if mat > 0 and nat > 0:
+    for i in 1 .. 100:
+      if eWe.contains(["physical", &"{i}"]):
+        pMult = 1 - (i / 100)
+        break
+  else:
+    pMult = mMult
+
+  let magDam: int = (mat * mMult).toInt + rand(-mRds .. mRds)
+  let phyDam: int = (nat * pMult).toInt + rand(-pRds .. pRds)
 
 proc combat(eType: string, sS: array[6, int]) =
   proc event(cat: array[2, string]) =
