@@ -26,8 +26,8 @@ var stats = """
 normal swing
 magic null
 health 50
-strength 50
-mStrength 50
+strength 3 
+mStrength 3
 speed 50
 stamina 50
 resists light|25 physical|5

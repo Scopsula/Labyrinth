@@ -24,6 +24,9 @@ var
   wea: seq[array[2, string]]
 
 proc setStats(eType: string): bool =
+  if not fileExists(&"../data/{eType}/stats"):
+    return false
+
   let stats = readFile(&"../data/stats")
   hpo = stats.splitLines[2].split(' ')[1].parseInt
   str = stats.splitLines[3].split(' ')[1].parseInt
@@ -201,15 +204,22 @@ proc calcMove(cat: array[2, string], eType: string, player: bool) =
   let mSv = mvData.split('|')
   let dType: string = mSv[4]
 
-  var wSet: seq[array[2, string]]
-  var rSet: seq[array[2, string]]
+  var 
+    wSet: seq[array[2, string]]
+    rSet: seq[array[2, string]]
+    dPSt : int
+    dMSt: int
 
   if player == true:
     wSet = eWe
     rSet = eRe
+    dPSt = str
+    dMSt = dMSt
   else:
     wSet = wea
     rSet = res
+    dPSt = eSt
+    dMSt = eMs
 
   let 
     nat: float = mSv[2].parseFloat
@@ -237,10 +247,10 @@ proc calcMove(cat: array[2, string], eType: string, player: bool) =
     else:
       pMult = mMult
 
-  let magDam: int = (mat * mMult).toInt + rand(-mRds .. mRds)
-  let phyDam: int = (nat * pMult).toInt + rand(-pRds .. pRds)
+  let phyDam: int = (nat * pMult).toInt + rand(-pRds .. pRds) + dPSt
+  let magDam: int = (mat * mMult).toInt + rand(-mRds .. mRds) + dMSt
 
-  var damage: int = magDam + phyDam
+  var damage: int = phyDam + magDam
   if damage < 0: damage = 0
 
   if rand(1 .. 100) < acr:
