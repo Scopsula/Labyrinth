@@ -169,7 +169,7 @@ proc screen(sS: array[6, int], eType: string) =
   wrLine(&"SP: {spo}", sS[1] - (scY * 3/7).toInt - 1, (scX / 4).toInt, -1)
   wrLine(&"HP: {eHp}", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -2)
 
-  # Show enemy SP for testin
+  # Show enemy SP for testing
   wrLine(&"          ", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -1)
   wrLine(&"SP: {eSp}", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -1)
 
