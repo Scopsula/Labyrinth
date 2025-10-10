@@ -1,8 +1,8 @@
 normal bite chase
 magic darkEnergyExpansion
 health 50
-strength 50
-mStrength 50
+strength 5
+mStrength 5
 speed 50
 stamina 50
 resists dark|50
