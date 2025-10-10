@@ -1,4 +1,4 @@
-import os, strformat, strutils, terminal
+import os, strformat, strutils, terminal, random
 import entities, openInv
 
 var 
@@ -135,16 +135,51 @@ proc screen(sS: array[6, int], eType: string) =
   discard execShellCmd("clear")
   echo sCr
 
+proc enemyMove(eType: string) =
+  discard
+
+proc playerMove(cat: array[2, string], eType: string) =
+  var mvData: string
+  case cat[1]
+  of "flashlight":
+    if eType == "entities/smiler":
+      discard  
+  of "iMove":
+    let set = readFile("../data/moves/items").splitLines
+    for i in 0 .. set.len - 1:
+      if set[i].split('|')[0] == cat[0]:
+        mvData = set[i]
+  of "move":
+    for i in 0 .. 9:
+      if fileExists(&"../data/moves/set{i}"):
+        let set = readFile(&"../data/moves/set{i}").splitLines
+        for r in 0 .. set.len - 1:
+          if set[r].split('|')[0] == cat[0]:
+            mvData = set[i]
+            break
+        if mvData == set[i]:
+          break
+
+  let mSv = mvData.split('|')
+
 proc combat(eType: string, sS: array[6, int]) =
+  proc event(cat: array[2, string]) =
+    if eSe > spe or eSe == spe and rand(1) == 1:
+      enemyMove(eType)
+      playerMove(cat, eType)
+    else:
+      playerMove(cat, eType)
+      enemyMove(eType)
+
   screen(sS, eType)
   let input = getch()
   case input
   of '1': 
-    let move: string = cInv(sCr, [sS[3], sS[4]], "move", atk)
+    event([cInv(sCr, [sS[3], sS[4]], "move", atk), "move"])
   of '2': 
-    let move: string = cInv(sCr, [sS[3], sS[4]], "move", mag)
+    event([cInv(sCr, [sS[3], sS[4]], "move", mag), "move"])
   of '3', 'i': 
-    let item: string = cInv(sCr, [sS[3], sS[4]], "item", @["", ""])
+    event([cInv(sCr, [sS[3], sS[4]], "item", @["", ""]), "item"])
   else: discard
   if input != 'q': 
     combat(eType, sS)
