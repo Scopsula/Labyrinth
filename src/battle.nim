@@ -122,8 +122,14 @@ proc screen(sS: array[6, int], eType: string) =
       elif y == 0 or y == sS[1] - 1: 
         writeChar("battle/tb", [x, y], s3S)
 
-  let scX: float = sS[0].toFloat
-  let scY: float = sS[1].toFloat
+  let 
+    scX: float = sS[0].toFloat
+    scY: float = sS[1].toFloat
+    pLN: int = sS[1] - (scY * 3/7).toInt - 1
+    pLX: int = (scX / 4).toInt 
+    eLN: int = (scY * 3/7).toInt - 1
+    eLX: int = sS[0] - (scX / 4).toInt - 1
+
   if animation == true:
     sleep(100)
     for y in 1 .. sS[1] - 2:
@@ -134,9 +140,9 @@ proc screen(sS: array[6, int], eType: string) =
 
     for y in 1 .. sS[1] - 2:
       for x in 1 .. sS[0] - 2:
-        if x == (scX / 4).toInt and y == sS[1] - (scY * 3/7).toInt - 1:
+        if x == pLX and y == pLN:
           writeChar("player", [x, y], s3S)
-        elif x == sS[0] - (scX / 4).toInt - 1 and y == (scY * 3/7).toInt - 1:
+        elif x == eLX and y == eLN:
           writeChar(&"{eType}/map", [x, y], s3S)
         elif y == sS[1] - (scY * 2/7).toInt:
           let n = (((sS[0] - 2) mod 5)) div 2 + 1
@@ -164,19 +170,17 @@ proc screen(sS: array[6, int], eType: string) =
     let uB: int = lB + line.len - 1
     scr[lB .. uB] = line
 
-  let wLN: int = sS[1] - (scY * 3/7).toInt - 1
-  let wLX: int = (scX / 4).toInt 
-  wrLine(&"          ", wLN, wLX, -2)
-  wrLine(&"          ", wLN, wLX, -1)
-  wrLine(&"HP: {hpo}", wLN, wLX, -2)
-  wrLine(&"SP: {spo}", wLN, wLX, -1)
+  wrLine(&"          ", pLN, pLX, -2)
+  wrLine(&"          ", pLN, pLX, -1)
+  wrLine(&"HP: {hpo}", pLN, pLX, -2)
+  wrLine(&"SP: {spo}", pLN, pLX, -1)
 
-  wrLine(&"          ", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -2)
-  wrLine(&"HP: {eHp}", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -2)
+  wrLine(&"          ", eLN, eLX, -2)
+  wrLine(&"HP: {eHp}", eLN, eLX, -2)
 
   # Show enemy SP for testing
-  wrLine(&"          ", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -1)
-  wrLine(&"SP: {eSp}", (scY * 3/7).toInt - 1,sS[0] - (scX / 4).toInt - 1, -1)
+  wrLine(&"          ", eLN, eLX, -1)
+  wrLine(&"SP: {eSp}", eLN, eLX, -1)
 
   discard execShellCmd("clear")
   echo sCr
