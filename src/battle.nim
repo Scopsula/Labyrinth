@@ -4,6 +4,7 @@ import entities, openInv, setMove
 var 
   animation: bool = false
   count: int = 0
+  msg: string
   sCr: string
   eAt: seq[string]
   eMa: seq[string]
@@ -112,7 +113,7 @@ proc writeChar(c: string, xy: array[2, int], sS: array[3, int]) =
       let wCh: char = ch[cy * (sS[0] + 1) + cx]
       sCr[(sS[1] * xy[1] + cy) * (sS[2] + 1) + (sS[0] * xy[0] + cx)] = wCh
 
-proc screen(sS: array[6, int], eType: string) =
+proc screen(sS: array[6, int], eType: string, msg: string) =
   let s3S: array[3, int] = [sS[3], sS[4], sS[2]]
   for y in 0 .. sS[1] - 1:
     for x in 0 .. sS[0] - 1:
@@ -171,6 +172,10 @@ proc screen(sS: array[6, int], eType: string) =
     let uB: int = lB + line.len - 1
     scr[lB .. uB] = line
 
+  let message = msg.splitLines()
+  for i in 0 .. message.len - 1:
+    wrLine("  " & message[i], 1, 1, i + 1)
+
   wrLine(&"          ", pLN, pLX, -2)
   wrLine(&"          ", pLN, pLX, -1)
   wrLine(&"HP: {hpo}", pLN, pLX, -2)
@@ -186,7 +191,7 @@ proc screen(sS: array[6, int], eType: string) =
   discard execShellCmd("clear")
   echo sCr
 
-proc calcMove(cat: array[2, string], eType: string, player: bool) =
+proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var mvData: string
   case cat[1]
   of "flashlight":
@@ -266,7 +271,19 @@ proc calcMove(cat: array[2, string], eType: string, player: bool) =
     else:
       hpo -= damage
 
-proc enemyMove(eType: string) =
+  var rMS: string = mSv[1]
+  if player == true:
+    rMS = rMS.replace("%user%", "You")
+    rMS = rMS.replace("%target%", eType[9 .. ^2])
+  else:
+    rMS = rMS.replace("%user%", eType[9 .. ^2])
+    rMS = rMS.replace("%target%", "you")
+
+  rMS = rMS.replace("%dmg%", &"{damage}")
+
+  return rMS
+
+proc enemyMove(eType: string): string =
   var mvData: seq[string]
   for i in 0 .. eMa.len + eAt.len - 2:
     for j in 0 .. 9:
@@ -288,8 +305,6 @@ proc enemyMove(eType: string) =
   for i in 0 .. mvData.len - 1:
     let mV = mvData[i].split('|') 
     if eSp >= mV[11].parseInt:
-      echo move
-      echo mV[0]
       if mV[0] == move:
         cat[0] = move
         cat[1] = mvData[i]
@@ -327,24 +342,25 @@ proc enemyMove(eType: string) =
       cat[0] = rM[0]
       cat[1] = mvData[randSel]
 
-  calcMove(cat, eType, false)
+  return calcMove(cat, eType, false)
 
 proc combat(eType: string, sS: array[6, int]) =
   proc event(cat: array[2, string]) =
     count += 1
     if eSe > spe or eSe == spe and rand(1) == 1:
-      enemyMove(eType)
-      calcMove(cat, eType, true)
+      msg = enemyMove(eType)
+      msg = &"{msg}\n{calcMove(cat, eType, true)}"
     else:
-      calcMove(cat, eType, true)
-      enemyMove(eType)
+      msg = calcMove(cat, eType, true)
+      msg = &"{msg}\n{enemyMove(eType)}"
 
-  screen(sS, eType)
+  screen(sS, eType, msg)
+  msg = ""
   let input = getch()
   case input
   of '1': 
     event([cInv(sCr, [sS[3], sS[4]], "move", atk), "move"])
-  of '2': 
+  of '2':
     event([cInv(sCr, [sS[3], sS[4]], "move", mag), "move"])
   of '3', 'i': 
     event([cInv(sCr, [sS[3], sS[4]], "item", @["", ""]), "item"])
