@@ -7,4 +7,3 @@ speed 50
 stamina 50
 resists dark|50
 weaknesses light|50 fire|50
-ai 50|25|25

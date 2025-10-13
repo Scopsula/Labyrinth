@@ -1,8 +1,9 @@
 import os, strformat, strutils, terminal, random
-import entities, openInv
+import entities, openInv, setMove
 
 var 
   animation: bool = false
+  count: int = 0
   sCr: string
   eAt: seq[string]
   eMa: seq[string]
@@ -202,10 +203,10 @@ proc calcMove(cat: array[2, string], eType: string, player: bool) =
         let set = readFile(&"../data/moves/set{i}").splitLines
         for r in 0 .. set.len - 1:
           if set[r].split('|')[0] == cat[0]:
-            mvData = set[i]
+            mvData = set[r]
             break
-        if mvData == set[i]:
-          break
+  else:
+    mvData = cat[1]
 
   let mSv = mvData.split('|')
   let dType: string = mSv[4]
@@ -266,10 +267,71 @@ proc calcMove(cat: array[2, string], eType: string, player: bool) =
       hpo -= damage
 
 proc enemyMove(eType: string) =
-  discard
+  var mvData: seq[string]
+  for i in 0 .. eMa.len + eAt.len - 2:
+    for j in 0 .. 9:
+      if fileExists(&"../data/moves/set{j}"):
+        let set = readFile(&"../data/moves/set{j}").splitLines
+        for k in 0 .. set.len - 1:
+          if i <= eMa.len - 1:
+            if set[k].split('|')[0] == eMa[i]:
+              if not mvData.contains(set[k]):
+                mvData.add(set[k])
+          if i <= eAt.len - 1:
+            if set[k].split('|')[0] == eAt[i]:
+              if not mvData.contains(set[k]):
+                mvData.add(set[k])
+
+  var cat: array[2, string] = ["", ""]
+
+  let move: string = selEMove(eType, count) 
+  for i in 0 .. mvData.len - 1:
+    let mV = mvData[i].split('|') 
+    if eSp >= mV[11].parseInt:
+      echo move
+      echo mV[0]
+      if mV[0] == move:
+        cat[0] = move
+        cat[1] = mvData[i]
+
+  if cat[0] == "":
+    for i in 0 .. mvData.len - 1:
+      let mV = mvData[i].split('|')
+      if eSp >= mV[11].parseInt:
+        for r in 1 .. 100:
+          if wea.contains([mV[4], &"{r}"]):
+            cat[0] = mV[0]
+            cat[1] = mvData[i]
+            break
+
+  if cat[0] == "":
+    var chk: seq[int]
+    for i in 0 .. mvData.len - 1:
+      var randSel: int = rand(0 .. mvData.len - 1)
+      while chk.contains(randSel):
+        randSel = rand(0 .. mvData.len - 1)
+      
+      chk.add(randSel)
+      let rM = mvData[randSel].split('|')
+      if eSp >= rM[11].parseInt:
+        for r in 1 .. 100:
+          if not res.contains([rM[4], &"{r}"]):
+            cat[0] = rM[0]
+            cat[1] = mvData[randSel]
+            break
+
+  if cat[0] == "":
+    let randSel: int = rand(0 .. mvData.len - 1)
+    let rM = mvData[randSel].split('|')
+    if eSp >= rM[11].parseInt:
+      cat[0] = rM[0]
+      cat[1] = mvData[randSel]
+
+  calcMove(cat, eType, false)
 
 proc combat(eType: string, sS: array[6, int]) =
   proc event(cat: array[2, string]) =
+    count += 1
     if eSe > spe or eSe == spe and rand(1) == 1:
       enemyMove(eType)
       calcMove(cat, eType, true)
