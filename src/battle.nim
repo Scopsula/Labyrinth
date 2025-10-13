@@ -172,6 +172,12 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
     let uB: int = lB + line.len - 1
     scr[lB .. uB] = line
 
+  var clLine: string
+  for i in 0 .. sS[3] * (sS[0] - 2) - 1:
+    clLine = &"{clLine} "
+  for i in 0 .. 1:
+    wrLine(clLine, 1, 1, i + 1)
+
   let message = msg.splitLines()
   for i in 0 .. message.len - 1:
     wrLine("  " & message[i], 1, 1, i + 1)
@@ -359,10 +365,13 @@ proc combat(eType: string, sS: array[6, int]) =
   let input = getch()
   case input
   of '1': 
+    screen(sS, eType, msg)
     event([cInv(sCr, [sS[3], sS[4]], "move", atk), "move"])
   of '2':
+    screen(sS, eType, msg)
     event([cInv(sCr, [sS[3], sS[4]], "move", mag), "move"])
   of '3', 'i': 
+    screen(sS, eType, msg)
     event([cInv(sCr, [sS[3], sS[4]], "item", @["", ""]), "item"])
   else: discard
   if input != 'q' and eHp > 0: 
