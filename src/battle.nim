@@ -233,6 +233,7 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
     rSet = eRe
     dPSt = str
     dMSt = mSt
+
   else:
     wSet = wea
     rSet = res
@@ -267,6 +268,11 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   else:
     pMult = mMult
 
+  if nat == 0:
+    pMult = 0
+  if mat == 0:
+    mMult = 0
+
   let phyDam: int = ((nat + rand(-pRds .. pRds).toFloat + dPSt) * pMult).toInt
   let magDam: int = ((mat + rand(-mRds .. mRds).toFloat + dMSt) * mMult).toInt
 
@@ -279,20 +285,24 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
     else:
       hpo -= damage
 
-  var rMS: string = mSv[1]
-  if player == true:
-    spo -= mSv[12].parseInt
-    rMS = rMS.replace("%user%", "You")
-    rMS = rMS.replace("%target%", eType[9 .. ^2])
+    var rMS: string = mSv[1]
+    if player == true:
+      spo -= mSv[12].parseInt
+      rMS = rMS.replace("%user%", "You")
+      rMS = rMS.replace("%target%", eType[9 .. ^2])
+    else:
+      eSp -= mSv[12].parseInt
+      rMS = rMS.replace("%user%", eType[9 .. ^2])
+      rMS = rMS.replace("%target%", "you")
+
+    rMS = rMS.replace("%dmg%", &"{damage}")
+    rMS = rMS.replace("%type%", dType)
+    return rMS
   else:
-    eSp -= mSv[12].parseInt
-    rMS = rMS.replace("%user%", eType[9 .. ^2])
-    rMS = rMS.replace("%target%", "you")
-
-  rMS = rMS.replace("%dmg%", &"{damage}")
-  rMS = rMS.replace("%type%", dType)
-
-  return rMS
+    if player == true:
+      return "You missed"
+    else:
+      return &"{eType[9 .. ^2] missed}"
 
 proc enemyMove(eType: string): string =
   var mvData: seq[string]
