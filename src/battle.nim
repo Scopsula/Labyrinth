@@ -387,5 +387,7 @@ proc initBattle*(xy: array[2, int], sS: array[6, int], bg: string) =
   if setStats(eType) == true:
     sCr = bg
     animation = true
+    msg = ""
+    count = 0
     combat(eType, sS)
 
