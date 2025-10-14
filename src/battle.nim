@@ -255,15 +255,17 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
     if rSet.contains([dType, &"{i}"]):
       mMult -= (i / 100)
       break
-    if mat > 0 and nat > 0:
+    
+  if mat > 0 and nat > 0:
+    for i in 1 .. 100:
       if wSet.contains(["physical", &"{i}"]):
         pMult += (i / 100)
         break
       if rSet.contains(["physical", &"{i}"]):
         pMult -= (i / 100)
         break
-    else:
-      pMult = mMult
+  else:
+    pMult = mMult
 
   let phyDam: int = ((nat + rand(-pRds .. pRds).toFloat + dPSt) * pMult).toInt
   let magDam: int = ((mat + rand(-mRds .. mRds).toFloat + dMSt) * mMult).toInt
