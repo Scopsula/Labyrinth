@@ -183,8 +183,9 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
       writeChar(&"{eType}/t6", [eLX + 3, eLN + 1], s3S)
       writeChar(&"{eType}/t7", [eLX + 2, eLN + 2], s3S)
       writeChar(&"{eType}/t8", [eLX + 3, eLN + 2], s3S)
+
     animation = false
-  
+
   proc wrLine(line: string, num: int, xD: int, ovr: int) =
     var cD: int = ovr * (sS[2] + 1)
     if line.len < sS[3]:
