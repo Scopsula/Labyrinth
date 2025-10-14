@@ -279,6 +279,9 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var damage: int = phyDam + magDam
   if damage < 0: damage = 0
 
+  var eName: string = eType[9 .. ^2]
+  eName[0] = eName[0].toUpperAscii
+
   if rand(1 .. 100) < acr:
     if player == true:
       eHp -= damage
@@ -286,13 +289,14 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
       hpo -= damage
 
     var rMS: string = mSv[1]
+
     if player == true:
       spo -= mSv[12].parseInt
       rMS = rMS.replace("%user%", "You")
-      rMS = rMS.replace("%target%", eType[9 .. ^2])
+      rMS = rMS.replace("%target%", eName)
     else:
       eSp -= mSv[12].parseInt
-      rMS = rMS.replace("%user%", eType[9 .. ^2])
+      rMS = rMS.replace("%user%", eName)
       rMS = rMS.replace("%target%", "you")
 
     rMS = rMS.replace("%dmg%", &"{damage}")
@@ -302,7 +306,7 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
     if player == true:
       return "You missed"
     else:
-      return &"{eType[9 .. ^2]} missed"
+      return &"{eName} missed"
 
 proc enemyMove(eType: string): string =
   var mvData: seq[string]
