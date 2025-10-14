@@ -302,7 +302,7 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
     if player == true:
       return "You missed"
     else:
-      return &"{eType[9 .. ^2] missed}"
+      return &"{eType[9 .. ^2]} missed"
 
 proc enemyMove(eType: string): string =
   var mvData: seq[string]
