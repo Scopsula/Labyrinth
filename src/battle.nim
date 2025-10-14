@@ -371,13 +371,14 @@ proc enemyMove(eType: string): string =
 
 proc combat(eType: string, sS: array[6, int]) =
   proc event(cat: array[2, string]) =
-    count += 1
-    if eSe > spe or eSe == spe and rand(1) == 1:
-      msg = enemyMove(eType)
-      msg = &"{msg}\n{calcMove(cat, eType, true)}"
-    else:
-      msg = calcMove(cat, eType, true)
-      msg = &"{msg}\n{enemyMove(eType)}"
+    if cat[0] != "":
+      count += 1
+      if eSe > spe or eSe == spe and rand(1) == 1:
+        msg = enemyMove(eType)
+        msg = &"{msg}\n{calcMove(cat, eType, true)}"
+      else:
+        msg = calcMove(cat, eType, true)
+        msg = &"{msg}\n{enemyMove(eType)}"
 
   screen(sS, eType, msg)
   msg = ""
