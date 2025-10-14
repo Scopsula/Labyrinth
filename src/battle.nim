@@ -15,6 +15,7 @@ var
   eSp: int
   eRe: seq[array[2, string]]
   eWe: seq[array[2, string]]
+  eMo: seq[array[4, string]]
   atk: seq[string]
   mag: seq[string]
   hpo: int
@@ -24,6 +25,7 @@ var
   spo: int
   res: seq[array[2, string]]
   wea: seq[array[2, string]]
+  pMo: seq[array[4, string]]
 
 proc setStats(eType: string): bool =
   if not fileExists(&"../data/{eType}/stats"):
@@ -219,6 +221,131 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
   discard execShellCmd("clear")
   echo sCr
 
+proc calcModifier(data: seq[string], player: bool): string =
+  var mMs: string
+
+  var disp: int = 0
+  for i in 0 .. pMo.len - 1:
+    if pMo[i + disp][3] == "0":
+      pMo.delete(i)
+      disp -= 1
+
+  var eDisp: int = 0
+  for i in 0 .. eMo.len - 1:
+    if eMo[i + eDisp][3] == "0":
+      eMo.delete(i)
+      eDisp -= 1
+
+  for m in 0 .. pMo.len - 1:
+    case pMo[m][1]:
+    of "health":
+      hpo += pMo[m][2].parseInt
+    of "strength":
+      str += pMo[m][2].parseFloat
+    of "mStrength":
+      mSt += pMo[m][2].parseFloat
+    of "speed":
+      spe += pMo[m][2].parseInt
+    of "stamina":
+      spo += pMo[m][2].parseInt
+    let dur: int =pMo[m][3].parseInt
+    pMo[m][3] = &"{dur - 1}"
+    if pMo[m][2].parseInt < 0:
+      mMs = &"{mMs}\nYou lost {pMo[m][2]} {pMo[m][1]} due to {pMo[m][0]}"
+    else: 
+      mMs = &"{mMs}\nYou gained {pMo[m][2]} {pMo[m][1]} due to {pMo[m][0]}"
+
+  for m in 0 .. eMo.len - 1:
+    case eMo[m][1]:
+    of "health":
+      eHp += eMo[m][2].parseInt
+    of "strength":
+      eSt += eMo[m][2].parseFloat
+    of "mStrength":
+      eMs += eMo[m][2].parseFloat
+    of "speed":
+      eSe += eMo[m][2].parseInt
+    of "stamina":
+      eSp += eMo[m][2].parseInt
+    let dur: int = eMo[m][3].parseInt
+    eMo[m][3] = &"{dur - 1}"
+    if eMo[m][2].parseInt < 0:
+      mMs = &"{mMs}\nEntity lost {eMo[m][2]} {eMo[m][1]} due to {eMo[m][0]}"
+    else:
+      mMs = &"{mMs}\nEntity gained {eMo[m][2]} {eMo[m][1]} due to {eMo[m][0]}"
+
+  if data != @[]:
+    case data[1]:
+    of "health":
+      if player == true:
+        hpo += data[2].parseInt
+      else:
+        eHp += data[2].parseInt
+    of "strength":
+      if player == true:
+        str += data[2].parseFloat
+      else:
+        eSt += data[2].parseFloat
+    of "mStrength":
+      if player == true:
+        mSt += data[2].parseFloat
+      else:
+        eMs += data[2].parseFloat
+    of "speed":
+      if player == true:
+        spe += data[2].parseInt
+      else:
+        eSe += data[2].parseInt
+    of "stamina":
+      if player == true:
+        spo += data[2].parseInt
+      else:
+        eSp += data[2].parseInt
+    if player == true:
+      if data[2].parseInt < 0:
+        mMs = &"{mMs}\nYou lost {data[2]} {data[1]} due to {data[0]}"
+      else:
+        mMs = &"{mMs}\nYou lost gained {data[2]} {data[1]} due to {data[0]}"
+    else:
+      if data[2].parseInt < 0:
+        mMs = &"{mMs}\nEntity lost {data[2]} {data[1]} due to {data[0]}"
+      else:
+        mMs = &"{mMs}\nEntity gained {data[2]} {data[1]} due to {data[0]}"
+
+  return mMs
+
+proc addModifier(id: string, player: bool): string =
+  var mData: seq[string]
+  let buffs = readFile("../data/moves/buff").splitLines
+  for i in 0 .. buffs.len - 1:
+    if buffs[i].split(' ')[0] == id:
+      mData = buffs[i].split(' ')
+      break
+  if mData == @[]:
+    let debuffs = readFile("../data/moves/debuff").splitLines
+    for i in 0 .. buffs.len - 1:
+      if debuffs[i].split(' ')[0] == id:
+        mData = debuffs[i].split(' ')
+        break
+  
+  if mData[3] == "n":
+    return calcModifier(mData, player)
+
+  elif player == true:
+    if pMo.len > 0:
+      for i in 0 .. pMo.len - 1:
+        if pMo[i][0] == id:
+          pMo.delete(i)
+          break
+    pMo.add([id, mData[1], mData[2], mData[3]])
+
+  elif eMo.len > 0:
+    for i in 0 .. eMo.len - 1:
+      if eMo[i][0] == id:
+        eMo.delete(i)
+        break
+    eMo.add([id, mData[1], mData[2], mData[3]])
+
 proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var mvData: string
   case cat[1]
@@ -265,7 +392,6 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   let 
     nat: float = mSv[2].parseFloat
     mat: float = mSv[3].parseFloat
-    acr: int = mSv[7].parseInt
     pRds: int = mSv[10].parseInt
     mRds: int = mSv[11].parseInt
 
@@ -304,13 +430,30 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var eName: string = eType[9 .. ^2]
   eName[0] = eName[0].toUpperAscii
 
-  if rand(1 .. 100) < acr:
+  var opposite: bool = false
+  if player == false:
+    opposite = true
+
+  var rMs: string
+
+  if mSv[5] != "null":
+    if nat + mat == 0:
+      if rand(1 .. 100) < mSv[7].parseInt:
+        rMs = &"{msg}\n{addModifier(mSv[5], player)}"
+    elif rand(1 .. 100) < mSv[8].parseInt:
+      rMs = &"{msg}\n{addModifier(mSv[5], player)}"
+
+  if mSv[6] != "null":
+    if rand(1 .. 100) < mSv[8].parseInt:
+      rMs = &"{msg}\n{addModifier(mSv[6], opposite)}"
+
+  if rand(1 .. 100) < mSv[7].parseInt:
     if player == true:
       eHp -= damage
     else:
       hpo -= damage
 
-    var rMS: string = mSv[1]
+    rMs = &"{mSv[1]}\n{rMs}"
 
     if player == true:
       spo -= mSv[12].parseInt
