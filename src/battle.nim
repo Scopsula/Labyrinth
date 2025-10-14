@@ -197,9 +197,9 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
     scr[lB .. uB] = line
 
   var clLine: string
-  for i in 0 .. (sS[3] div 2) * (sS[0] - 2) - 1:
+  for i in 0 .. (sS[3] div 3) * (sS[0] - 2) - 1:
     clLine = &"{clLine} "
-  for i in 0 .. sS[0]:
+  for i in 0 .. sS[4]:
     wrLine(clLine, 1, 1, i + 1)
 
   let message = msg.splitLines()
@@ -263,17 +263,26 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
         mMs = &"{eName} gained {data[2][1 .. ^1]} {data[1]} due to {data[0]}"
     return mMs
 
-  var disp: int = 0
-  for i in 0 .. pMo.len - 1:
-    if pMo[i + disp][3] == "0":
-      pMo.delete(i)
-      disp -= 1
+  if pMo.len > 0:
+    var disp: int = 0
+    for i in 0 .. pMo.len - 1:
+      if pMo[i + disp][3] == "0":
+        pMo.delete(i)
+        disp -= 1
+    if pMo.len == 0:
+      return ""
 
-  var eDisp: int = 0
-  for i in 0 .. eMo.len - 1:
-    if eMo[i + eDisp][3] == "0":
-      eMo.delete(i)
-      eDisp -= 1
+  elif eMo.len > 0:
+    var eDisp: int = 0
+    for i in 0 .. eMo.len - 1:
+      if eMo[i + eDisp][3] == "0":
+        eMo.delete(i)
+        eDisp -= 1
+    if eMo.len == 0:
+      return ""
+
+  else:
+    return ""
 
   for m in 0 .. pMo.len - 1:
     case pMo[m][1]:
@@ -309,9 +318,9 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
     let dur: int = eMo[m][3].parseInt
     eMo[m][3] = &"{dur - 1}"
     if eMo[m][2].parseInt < 0:
-      mMs = &"{mMs}\nEntity lost {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
+      mMs = &"{mMs}\n{eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
     else:
-      mMs = &"{mMs}\nEntity gained {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
+      mMs = &"{mMs}\n{eName} gained {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
 
   return mMs[1 .. ^1]
 
@@ -340,12 +349,15 @@ proc addModifier(id: string, player: bool, eName: string): string =
           break
     pMo.add([id, mData[1], mData[2], mData[3]])
 
-  elif eMo.len > 0:
-    for i in 0 .. eMo.len - 1:
-      if eMo[i][0] == id:
-        eMo.delete(i)
-        break
+  else:
+    if eMo.len > 0:
+      for i in 0 .. eMo.len - 1:
+        if eMo[i][0] == id:
+          eMo.delete(i)
+          break
     eMo.add([id, mData[1], mData[2], mData[3]])
+
+  return ""
 
 proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var mvData: string
@@ -431,24 +443,22 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var eName: string = eType[9 .. ^2]
   eName[0] = eName[0].toUpperAscii
 
-  var opposite: bool = false
-  if player == false:
-    opposite = true
+  if rand(1 .. 100) <= mSv[7].parseInt:  
+    var opposite: bool = false
+    if player == false:
+      opposite = true
 
-  var rMs: string
+    var rMs: string
+    if mSv[5] != "null":
+      if rand(1 .. 100) <= mSv[8].parseInt:
+        rMs = &"{addModifier(mSv[5], player, eName)}"
 
-  if mSv[5] != "null":
-    if nat + mat == 0:
-      if rand(1 .. 100) < mSv[7].parseInt:
-        rMs = &"{msg}{addModifier(mSv[5], player, eName)}"
-    elif rand(1 .. 100) < mSv[8].parseInt:
-      rMs = &"{msg}{addModifier(mSv[5], player, eName)}"
+    if mSv[6] != "null":
+      if rand(1 .. 100) <= mSv[9].parseInt:
+        let MOD2U: string = addModifier(mSv[6], opposite, eName)
+        if MOD2U != "":
+          rMs = &"{rMs}\n{MOD2U}"
 
-  if mSv[6] != "null":
-    if rand(1 .. 100) < mSv[8].parseInt:
-      rMs = &"{msg}{rMs}\n{addModifier(mSv[6], opposite, eName)}"
-
-  if rand(1 .. 100) < mSv[7].parseInt:
     if player == true:
       eHp -= damage
     else:
@@ -548,6 +558,10 @@ proc combat(eType: string, sS: array[6, int]) =
       else:
         msg = calcMove(cat, eType, true)
         msg = &"{msg}\n{enemyMove(eType)}"
+
+      var eName: string = eType[9 .. ^2]
+      eName[0] = eName[0].toUpperAscii
+      msg = &"{msg}\n{calcModifier(@[], false, eName)}"
 
   screen(sS, eType, msg)
   msg = ""
