@@ -30,7 +30,7 @@ strength 3
 mStrength 3
 speed 50
 stamina 50
-resists light|25 physical|5
+resists light|25 physical|100
 weaknesses dark|50
 thirst 50
 level 0
