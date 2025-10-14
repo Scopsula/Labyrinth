@@ -1,2 +1,2 @@
 swing|%user% swing at %target% for %dmg% %type% damage|10|0|physical|null|null|60|0|0|10|0|5
-riser|%user% boostes their attacks|0|0|special|riser|null|100|100|0|0|0|30
+riser|%user% boost attack strength|0|0|special|riser|null|100|100|0|0|0|30
