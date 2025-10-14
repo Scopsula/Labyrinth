@@ -325,37 +325,40 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
   return mMs[1 .. ^1]
 
 proc addModifier(id: string, player: bool, eName: string): string =
-  var mData: seq[string]
+  var mData: seq[seq[string]]
   let buffs = readFile("../data/moves/buff").splitLines
   for i in 0 .. buffs.len - 1:
     if buffs[i].split(' ')[0] == id:
-      mData = buffs[i].split(' ')
-      break
+      mData.add(buffs[i].split(' '))
   if mData == @[]:
     let debuffs = readFile("../data/moves/debuff").splitLines
     for i in 0 .. buffs.len - 1:
       if debuffs[i].split(' ')[0] == id:
-        mData = debuffs[i].split(' ')
-        break
+        mData.add(debuffs[i].split(' '))
   
-  if mData[3] == "n":
-    return calcModifier(mData, player, eName)
+  if mData.len > 0:
+    var n: string
+    for m in 0 .. mData.len - 1:
+      if mData[m][3] == "n":
+        n = &"{n}{calcModifier(mData[m], player, eName)}\n"
+        if m == mData.len - 1:
+          return n[0 .. ^2]
 
-  elif player == true:
-    if pMo.len > 0:
-      for i in 0 .. pMo.len - 1:
-        if pMo[i][0] == id:
-          pMo.delete(i)
-          break
-    pMo.add([id, mData[1], mData[2], mData[3]])
+      elif player == true:
+        if pMo.len > 0:
+          for i in 0 .. pMo.len - 1:
+            if pMo[i][0] == id:
+              pMo.delete(i)
+              break
+        pMo.add([id, mData[m][1], mData[m][2], mData[m][3]])
 
-  else:
-    if eMo.len > 0:
-      for i in 0 .. eMo.len - 1:
-        if eMo[i][0] == id:
-          eMo.delete(i)
-          break
-    eMo.add([id, mData[1], mData[2], mData[3]])
+      else:
+        if eMo.len > 0:
+          for i in 0 .. eMo.len - 1:
+            if eMo[i][0] == id:
+              eMo.delete(i)
+              break
+        eMo.add([id, mData[m][1], mData[m][2], mData[m][3]])
 
   return ""
 

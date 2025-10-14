@@ -23,7 +23,7 @@ let
   xD: int = (scX - 1) div 2 + 2
 
 var stats = """
-normal swing
+normal swing riser
 magic null
 health 50
 strength 3 
