@@ -1,4 +1,4 @@
-import os, strformat, strutils, terminal, random
+import os, strformat, strutils, terminal, random, sequtils
 import entities, openInv, setMove
 
 var 
@@ -408,10 +408,10 @@ proc combat(eType: string, sS: array[6, int]) =
   case input
   of '1': 
     screen(sS, eType, msg)
-    event([cInv(sCr, [sS[3], sS[4]], "move", atk), "move"])
+    event([cInv(sCr, [sS[3], sS[4]], "move", concat(atk, mag)), "move"])
   of '2':
     screen(sS, eType, msg)
-    event([cInv(sCr, [sS[3], sS[4]], "move", mag), "move"])
+    event(["guard", "move"])
   of '3', 'i': 
     screen(sS, eType, msg)
     event([cInv(sCr, [sS[3], sS[4]], "item", @["", ""]), "item"])
