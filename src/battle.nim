@@ -9,8 +9,8 @@ var
   eAt: seq[string]
   eMa: seq[string]
   eHp: int
-  eSt: int
-  eMs: int
+  eSt: float
+  eMs: float
   eSe: int
   eSp: int
   eRe: seq[array[2, string]]
@@ -18,8 +18,8 @@ var
   atk: seq[string]
   mag: seq[string]
   hpo: int
-  str: int
-  mSt: int
+  str: float
+  mSt: float
   spe: int
   spo: int
   res: seq[array[2, string]]
@@ -31,8 +31,8 @@ proc setStats(eType: string): bool =
 
   let stats = readFile(&"../data/stats")
   hpo = stats.splitLines[2].split(' ')[1].parseInt
-  str = stats.splitLines[3].split(' ')[1].parseInt
-  mSt = stats.splitLines[4].split(' ')[1].parseInt
+  str = stats.splitLines[3].split(' ')[1].parseFloat
+  mSt = stats.splitLines[4].split(' ')[1].parseFloat
   spe = stats.splitLines[5].split(' ')[1].parseInt
   spo = stats.splitLines[6].split(' ')[1].parseInt
 
@@ -69,8 +69,8 @@ proc setStats(eType: string): bool =
   if fileExists(&"../data/{eType}/stats"):
     let stats = readFile(&"../data/{eType}/stats")
     eHp = stats.splitLines[2].split(' ')[1].parseInt
-    eSt = stats.splitLines[3].split(' ')[1].parseInt
-    eMs = stats.splitLines[4].split(' ')[1].parseInt
+    eSt = stats.splitLines[3].split(' ')[1].parseFloat
+    eMs = stats.splitLines[4].split(' ')[1].parseFloat
     eSe = stats.splitLines[5].split(' ')[1].parseInt
     eSp = stats.splitLines[6].split(' ')[1].parseInt
 
@@ -225,14 +225,14 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var 
     wSet: seq[array[2, string]]
     rSet: seq[array[2, string]]
-    dPSt : int
-    dMSt: int
+    dPSt: float
+    dMSt: float
 
   if player == true:
     wSet = eWe
     rSet = eRe
     dPSt = str
-    dMSt = dMSt
+    dMSt = mSt
   else:
     wSet = wea
     rSet = res
@@ -241,23 +241,23 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
 
   let 
     nat: float = mSv[2].parseFloat
-    mat: float = mSv[2].parseFloat
+    mat: float = mSv[3].parseFloat
     acr: int = mSv[7].parseInt
     pRds: int = mSv[10].parseInt
     mRds: int = mSv[11].parseInt
 
-  var mMult: float
-  var pMult: float
+  var mMult: float = 1.0
+  var pMult: float = 1.0
   for i in 1 .. 100:
     if wSet.contains([dType, &"{i}"]):
-      mMult = 1 + (i / 100)
+      mMult += (i / 100)
       break
     if rSet.contains([dType, &"{i}"]):
-      mMult = 1 + (i / 100)
+      mMult -= (i / 100)
       break
     if mat > 0 and nat > 0:
       if wSet.contains(["physical", &"{i}"]):
-        pMult = 1 + (i / 100)
+        pMult += (i / 100)
         break
       if rSet.contains(["physical", &"{i}"]):
         pMult -= (i / 100)
@@ -265,8 +265,8 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
     else:
       pMult = mMult
 
-  let phyDam: int = (nat * pMult).toInt + rand(-pRds .. pRds) + dPSt
-  let magDam: int = (mat * mMult).toInt + rand(-mRds .. mRds) + dMSt
+  let phyDam: int = ((nat + rand(-pRds .. pRds).toFloat + dPSt) * pMult).toInt
+  let magDam: int = ((mat + rand(-mRds .. mRds).toFloat + dMSt) * mMult).toInt
 
   var damage: int = phyDam + magDam
   if damage < 0: damage = 0
@@ -279,13 +279,16 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
 
   var rMS: string = mSv[1]
   if player == true:
+    spo -= mSv[12].parseInt
     rMS = rMS.replace("%user%", "You")
     rMS = rMS.replace("%target%", eType[9 .. ^2])
   else:
+    eSp -= mSv[12].parseInt
     rMS = rMS.replace("%user%", eType[9 .. ^2])
     rMS = rMS.replace("%target%", "you")
 
   rMS = rMS.replace("%dmg%", &"{damage}")
+  rMS = rMS.replace("%type%", dType)
 
   return rMS
 
@@ -310,7 +313,7 @@ proc enemyMove(eType: string): string =
   let move: string = selEMove(eType, count) 
   for i in 0 .. mvData.len - 1:
     let mV = mvData[i].split('|') 
-    if eSp >= mV[11].parseInt:
+    if eSp >= mV[12].parseInt:
       if mV[0] == move:
         cat[0] = move
         cat[1] = mvData[i]
@@ -318,7 +321,7 @@ proc enemyMove(eType: string): string =
   if cat[0] == "":
     for i in 0 .. mvData.len - 1:
       let mV = mvData[i].split('|')
-      if eSp >= mV[11].parseInt:
+      if eSp >= mV[12].parseInt:
         for r in 1 .. 100:
           if wea.contains([mV[4], &"{r}"]):
             cat[0] = mV[0]
@@ -334,7 +337,7 @@ proc enemyMove(eType: string): string =
       
       chk.add(randSel)
       let rM = mvData[randSel].split('|')
-      if eSp >= rM[11].parseInt:
+      if eSp >= rM[12].parseInt:
         for r in 1 .. 100:
           if not res.contains([rM[4], &"{r}"]):
             cat[0] = rM[0]
@@ -344,7 +347,7 @@ proc enemyMove(eType: string): string =
   if cat[0] == "":
     let randSel: int = rand(0 .. mvData.len - 1)
     let rM = mvData[randSel].split('|')
-    if eSp >= rM[11].parseInt:
+    if eSp >= rM[12].parseInt:
       cat[0] = rM[0]
       cat[1] = mvData[randSel]
 

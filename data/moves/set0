@@ -1,4 +1,4 @@
-bite|%user% bites into %target%'s flesh for %dmg% %type% damage.|10|0|physical|null|null|95|0|0|10|0
-chase|%user% chases %target% down.|0|0|physical|speed|pursue|100|100|50|10|0
-darkEnergyExpansion|%user% releases an aura of dark energy for %dmg% %type% damage.|0|20|dark|null|null|80|0|0|0|25
-swing|%user% swings at %target% for %dmg% %type% damage.|5|0|physical|null|null|60|0|0|5|0
+bite|%user% bites into %target%'s flesh for %dmg% %type% damage.|10|0|physical|null|null|95|0|0|10|0|3
+chase|%user% chases %target% down.|0|0|physical|speed|pursue|100|100|50|10|0|1
+darkEnergyExpansion|%user% releases an aura of dark energy for %dmg% %type% damage.|0|20|dark|null|null|80|0|0|0|20|25
+-|-|-|-|-|-|-|-|-|-|-

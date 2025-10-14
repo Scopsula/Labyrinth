@@ -23,8 +23,10 @@ proc cInv*(bg: string, t: array[2, int], inv: string, data: seq[string]): string
       # wrLine(&" {i + 1}. " & data[i], t[1] + 4 + i)
   
   of "move":
-    for i in 0 .. data.len - 1:      
-      wrLine(&"  {i + 1}. " & data[i], t[1] + 1 + i)
+    var d2: seq[string] = data
+    for i in 0 .. data.len - 1:
+      d2[i][0] = d2[i][0].toUpperAscii
+      wrLine(&"  {i + 1}. " & d2[i], t[1] + 1 + i)
 
   discard execShellCmd("clear")
   echo data
