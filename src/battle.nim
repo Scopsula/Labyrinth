@@ -144,7 +144,7 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
       for x in 1 .. sS[0] - 2:
         if x == pLX and y == pLN:
           writeChar("player", [x, y], s3S)
-        elif x == eLX and y == eLN:
+        elif x == eLX and y == eLN + 1:
           writeChar(&"{eType}/map", [x, y], s3S)
         elif y == sS[1] - (scY * 2/7).toInt:
           let n = (((sS[0] - 2) mod 5)) div 2 + 1
@@ -162,6 +162,27 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
           writeChar("battle/blank", [x, y], s3S)
         discard execShellCmd("clear")
         echo sCr
+
+    writeChar(&"{eType}/1", [eLX - 1, eLN + 0], s3S)
+    writeChar(&"{eType}/2", [eLX + 0, eLN + 0], s3S)
+    writeChar(&"{eType}/3", [eLX + 1, eLN + 0], s3S)
+    writeChar(&"{eType}/4", [eLX - 1, eLN + 1], s3S)
+    writeChar(&"{eType}/5", [eLX + 0, eLN + 1], s3S)
+    writeChar(&"{eType}/6", [eLX + 1, eLN + 1], s3S)
+    writeChar(&"{eType}/7", [eLX - 1, eLN + 2], s3S)
+    writeChar(&"{eType}/8", [eLX + 0, eLN + 2], s3S)
+    writeChar(&"{eType}/9", [eLX + 1, eLN + 2], s3S)
+   
+    if fileExists &"../data/chars/{eType}/t0":
+      writeChar(&"{eType}/t0", [eLX + 1, eLN - 1], s3S)
+      writeChar(&"{eType}/t1", [eLX + 2, eLN - 1], s3S)
+      writeChar(&"{eType}/t2", [eLX + 3, eLN - 1], s3S)
+      writeChar(&"{eType}/t3", [eLX + 2, eLN + 0], s3S)
+      writeChar(&"{eType}/t4", [eLX + 3, eLN + 0], s3S)
+      writeChar(&"{eType}/t5", [eLX + 2, eLN + 1], s3S)
+      writeChar(&"{eType}/t6", [eLX + 3, eLN + 1], s3S)
+      writeChar(&"{eType}/t7", [eLX + 2, eLN + 2], s3S)
+      writeChar(&"{eType}/t8", [eLX + 3, eLN + 2], s3S)
     animation = false
   
   proc wrLine(line: string, num: int, xD: int, ovr: int) =
