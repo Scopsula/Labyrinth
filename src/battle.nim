@@ -15,7 +15,7 @@ var
   eSp: int
   eRe: seq[array[2, string]]
   eWe: seq[array[2, string]]
-  eMo: seq[array[4, string]]
+  eMo: seq[seq[string]]
   atk: seq[string]
   mag: seq[string]
   hpo: int
@@ -25,7 +25,7 @@ var
   spo: int
   res: seq[array[2, string]]
   wea: seq[array[2, string]]
-  pMo: seq[array[4, string]]
+  pMo: seq[seq[string]]
 
 proc setStats(eType: string): bool =
   if not fileExists(&"../data/{eType}/stats"):
@@ -197,7 +197,7 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
     scr[lB .. uB] = line
 
   var clLine: string
-  for i in 0 .. (sS[3] div 3) * (sS[0] - 2) - 1:
+  for i in 0 .. (sS[3] div 2) * (sS[0] - 3) - 1:
     clLine = &"{clLine} "
   for i in 0 .. sS[4]:
     wrLine(clLine, 1, 1, i + 1)
@@ -263,21 +263,21 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
         mMs = &"{eName} gained {data[2][1 .. ^1]} {data[1]} due to {data[0]}"
     return mMs
 
-  if pMo.len > 0:
+  elif pMo.len > 0:
     var disp: int = 0
     for i in 0 .. pMo.len - 1:
-      if pMo[i + disp][3] == "0":
+      if pMo[i + disp][3] == "0" or pMo[i + disp][4] == "-1":
         pMo.delete(i)
         disp -= 1
     if pMo.len == 0:
       return ""
 
   elif eMo.len > 0:
-    var eDisp: int = 0
+    var disp: int = 0
     for i in 0 .. eMo.len - 1:
-      if eMo[i + eDisp][3] == "0":
+      if eMo[i + disp][3] == "0" or eMo[i + disp][4] == "-1":
         eMo.delete(i)
-        eDisp -= 1
+        disp -= 1
     if eMo.len == 0:
       return ""
 
@@ -285,44 +285,72 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
     return ""
 
   for m in 0 .. pMo.len - 1:
-    case pMo[m][1]:
-    of "health":
-      hpo += pMo[m][2].parseInt
-    of "strength":
-      str += pMo[m][2].parseFloat
-    of "mStrength":
-      mSt += pMo[m][2].parseFloat
-    of "speed":
-      spe += pMo[m][2].parseInt
-    of "stamina":
-      spo += pMo[m][2].parseInt
-    let dur: int =pMo[m][3].parseInt
-    pMo[m][3] = &"{dur - 1}"
-    if pMo[m][2].parseInt < 0:
-      mMs = &"{mMs}\nYou lost {pMo[m][2][1 .. ^1]} {pMo[m][1]} due to {pMo[m][0]}"
-    else: 
-      mMs = &"{mMs}\nYou gained {pMo[m][2][1 .. ^1]} {pMo[m][1]} due to {pMo[m][0]}"
+    if pMo[m][4] == "n" and pMo[m][3] != "n" or pMo[m][4] == "0":
+      var mV: int = pMo[m][2].parseInt
+      if pMo[m][4] == "0":
+        mV = mV * -1
+      case pMo[m][1]:
+      of "health":
+        hpo += mV
+      of "strength":
+        str += mV.toFloat
+      of "mStrength":
+        mSt += mV.toFloat
+      of "speed":
+        spe += mV
+      of "stamina":
+        spo += mV
+      if pMo[m][3] != "n":
+        let dur: int = pMo[m][3].parseInt
+        pMo[m][3] = &"{dur - 1}"
+      if pMo[m][4] == "0":
+        pMo[m][4] = "-1"
+        if pMo[m][2].parseInt < 0:
+          mMs = &"{mMs}\n{pMo[m][0]} ended, you lost {pMo[m][2][1 .. ^1]} {pMo[m][1]}"
+        else: 
+          mMs = &"{mMs}\n{pMo[m][0]} ended, you gained {pMo[m][2][1 .. ^1]} {pMo[m][1]}"
+      elif pMo[m][2].parseInt < 0:
+        mMs = &"{mMs}\nYou lost {pMo[m][2][1 .. ^1]} {pMo[m][1]} due to {pMo[m][0]}"
+      else: 
+        mMs = &"{mMs}\nYou gained {pMo[m][2][1 .. ^1]} {pMo[m][1]} due to {pMo[m][0]}"
+    elif pMo[m][4] != "n":
+      let dur: int = pMo[m][4].parseInt
+      pMo[m][4] = &"{dur - 1}"
 
   for m in 0 .. eMo.len - 1:
-    case eMo[m][1]:
-    of "health":
-      eHp += eMo[m][2].parseInt
-    of "strength":
-      eSt += eMo[m][2].parseFloat
-    of "mStrength":
-      eMs += eMo[m][2].parseFloat
-    of "speed":
-      eSe += eMo[m][2].parseInt
-    of "stamina":
-      eSp += eMo[m][2].parseInt
-    let dur: int = eMo[m][3].parseInt
-    eMo[m][3] = &"{dur - 1}"
-    if eMo[m][2].parseInt < 0:
-      mMs = &"{mMs}\n{eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
-    else:
-      mMs = &"{mMs}\n{eName} gained {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
+    if eMo[m][4] == "n" and eMo[m][3] != "n" or eMo[m][4] == "0":
+      var mV: int = eMo[m][2].parseInt
+      if eMo[m][4] == "0":
+        mV = mV * -1
+      case eMo[m][1]:
+      of "health":
+        eHp += eMo[m][2].parseInt
+      of "strength":
+        eSt += eMo[m][2].parseFloat
+      of "mStrength":
+        eMs += eMo[m][2].parseFloat
+      of "speed":
+        eSe += eMo[m][2].parseInt
+      of "stamina":
+        eSp += eMo[m][2].parseInt
+      if eMo[m][3] != "n":
+        let dur: int = eMo[m][3].parseInt
+        eMo[m][3] = &"{dur - 1}"
+      if eMo[m][4] == "0":
+        eMo[m][4] = "-1"
+        mMs = &"{mMs}\n{eMo[m][0]} ended, {eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]}"
+      elif eMo[m][2].parseInt < 0:
+        mMs = &"{mMs}\n{eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
+      else:
+        mMs = &"{mMs}\n{eName} gained {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
+    elif eMo[m][4] != "n":
+      let dur: int = eMo[m][4].parseInt
+      eMo[m][4] = &"{dur - 1}"
 
-  return mMs[1 .. ^1]
+  if mMs == "":
+    return mMs
+  else:
+    return mMs[1 .. ^1]
 
 proc addModifier(id: string, player: bool, eName: string): string =
   var mData: seq[seq[string]]
@@ -330,35 +358,62 @@ proc addModifier(id: string, player: bool, eName: string): string =
   for i in 0 .. buffs.len - 1:
     if buffs[i].split(' ')[0] == id:
       mData.add(buffs[i].split(' '))
-  if mData == @[]:
-    let debuffs = readFile("../data/moves/debuff").splitLines
-    for i in 0 .. buffs.len - 1:
-      if debuffs[i].split(' ')[0] == id:
-        mData.add(debuffs[i].split(' '))
+  let debuffs = readFile("../data/moves/debuff").splitLines
+  for i in 0 .. buffs.len - 1:
+    if debuffs[i].split(' ')[0] == id:
+      mData.add(debuffs[i].split(' '))
   
   if mData.len > 0:
     var n: string
     for m in 0 .. mData.len - 1:
       if mData[m][3] == "n":
-        n = &"{n}{calcModifier(mData[m], player, eName)}\n"
-        if m == mData.len - 1:
-          return n[0 .. ^2]
+        if player == true:
+          var c2: int = 0
+          for i in 0 .. pMo.len - 1:
+            if pMo[i][0 .. 1] == mData[m][0 .. 1]:
+              if pMo[i][4] != "-1":
+                c2 += 1
+          if c2 == 0:
+            n = &"{n}{calcModifier(mData[m], player, eName)}\n"
+          else:
+            var mn: string = &"{mData[m][0]} is already active on you, extended"
+            mn[0] = mn[0].toUpperAscii
+            n = &"{n}{mn}\n"
+        else:
+          var c2: int = 0
+          for i in 0 .. eMo.len - 1:
+            if eMo[i][0 .. 1] == mData[m][0 .. 1]:
+              if eMo[i][4] != "-1":
+                c2 += 1
+          if c2 == 0:
+            n = &"{n}{calcModifier(mData[m], player, eName)}\n"
+          else:
+            var mn: string = &"{mData[m][0]} is already active on {eName}, extended"
+            mn[0] = mn[0].toUpperAscii
+            n = &"{n}{mn}\n"
+
+      if mData[m][4] == "n" and mData[m][3] == "n":
+        discard
 
       elif player == true:
         if pMo.len > 0:
           for i in 0 .. pMo.len - 1:
-            if pMo[i][0] == id:
+            if pMo[i][0 .. 1] == mData[m][0 .. 1]:
               pMo.delete(i)
               break
-        pMo.add([id, mData[m][1], mData[m][2], mData[m][3]])
+        pMo.add(mData[m])
 
       else:
         if eMo.len > 0:
           for i in 0 .. eMo.len - 1:
-            if eMo[i][0] == id:
+            if eMo[i][0 .. 1] == mData[m][0 .. 1]:
               eMo.delete(i)
               break
-        eMo.add([id, mData[m][1], mData[m][2], mData[m][3]])
+        eMo.add([mData[m]])
+
+      if mData[m][3] == "n":
+        if m == mData.len - 1:
+          return n[0 .. ^2]
 
   return ""
 
