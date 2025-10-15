@@ -305,7 +305,7 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
         pMo[m][3] = &"{dur - 1}"
       if pMo[m][4] == "0":
         pMo[m][4] = "-1"
-        if pMo[m][2].parseInt < 0:
+        if mV < 0:
           mMs = &"{mMs}\n{pMo[m][0]} ended, you lost {pMo[m][2][1 .. ^1]} {pMo[m][1]}"
         else: 
           mMs = &"{mMs}\n{pMo[m][0]} ended, you gained {pMo[m][2][1 .. ^1]} {pMo[m][1]}"
@@ -324,21 +324,24 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
         mV = mV * -1
       case eMo[m][1]:
       of "health":
-        eHp += eMo[m][2].parseInt
+        eHp += mV
       of "strength":
-        eSt += eMo[m][2].parseFloat
+        eSt += mV.toFloat
       of "mStrength":
-        eMs += eMo[m][2].parseFloat
+        eMs += mV.toFloat
       of "speed":
-        eSe += eMo[m][2].parseInt
+        eSe += mV
       of "stamina":
-        eSp += eMo[m][2].parseInt
+        eSp += mV
       if eMo[m][3] != "n":
         let dur: int = eMo[m][3].parseInt
         eMo[m][3] = &"{dur - 1}"
       if eMo[m][4] == "0":
         eMo[m][4] = "-1"
-        mMs = &"{mMs}\n{eMo[m][0]} ended, {eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]}"
+        if mV < 0:
+          mMs = &"{mMs}\n{eMo[m][0]} ended, {eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]}"
+        else:
+          mMs = &"{mMs}\n{eMo[m][0]} ended, {eName} gained {eMo[m][2][1 .. ^1]} {eMo[m][1]}"
       elif eMo[m][2].parseInt < 0:
         mMs = &"{mMs}\n{eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
       else:
