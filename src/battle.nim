@@ -306,9 +306,13 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
       if pMo[m][4] == "0":
         pMo[m][4] = "-1"
         if mV < 0:
-          mMs = &"{mMs}\n{pMo[m][0]} ended, you lost {pMo[m][2][1 .. ^1]} {pMo[m][1]}"
+          var nm: string = &"{pMo[m][0]} ended, you lost {pMo[m][2][1 .. ^1]} {pMo[m][1]}"
+          nm[0] = nm[0].toUpperAscii
+          mMs = &"{mMs}\n{nm}"
         else: 
-          mMs = &"{mMs}\n{pMo[m][0]} ended, you gained {pMo[m][2][1 .. ^1]} {pMo[m][1]}"
+          var nm: string = &"{pMo[m][0]} ended, you gained {pMo[m][2][1 .. ^1]} {pMo[m][1]}"
+          nm[0] = nm[0].toUpperAscii
+          mMs = &"{mMs}\n{nm}"
       elif pMo[m][2].parseInt < 0:
         mMs = &"{mMs}\nYou lost {pMo[m][2][1 .. ^1]} {pMo[m][1]} due to {pMo[m][0]}"
       else: 
@@ -339,9 +343,13 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
       if eMo[m][4] == "0":
         eMo[m][4] = "-1"
         if mV < 0:
-          mMs = &"{mMs}\n{eMo[m][0]} ended, {eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]}"
+          var nm: string =  &"{eMo[m][0]} ended, {eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]}"
+          nm[0] = nm[0].toUpperAscii
+          mMs = &"{mMs}\n{nm}"
         else:
-          mMs = &"{mMs}\n{eMo[m][0]} ended, {eName} gained {eMo[m][2][1 .. ^1]} {eMo[m][1]}"
+          var nm: string =  &"{eMo[m][0]} ended, {eName} gained {eMo[m][2][1 .. ^1]} {eMo[m][1]}"
+          nm[0] = nm[0].toUpperAscii
+          mMs = &"{mMs}\n{nm}"
       elif eMo[m][2].parseInt < 0:
         mMs = &"{mMs}\n{eName} lost {eMo[m][2][1 .. ^1]} {eMo[m][1]} due to {eMo[m][0]}"
       else:
@@ -648,5 +656,7 @@ proc initBattle*(xy: array[2, int], sS: array[6, int], bg: string) =
     animation = true
     msg = ""
     count = 0
+    pMo.setLen(0)
+    eMo.setLen(0)
     combat(eType, sS)
 
