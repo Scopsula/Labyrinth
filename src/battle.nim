@@ -199,7 +199,7 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
   var clLine: string
   for i in 0 .. (sS[3] div 2) * (sS[0] - 3) - 1:
     clLine = &"{clLine} "
-  for i in 0 .. sS[4]:
+  for i in 0 .. sS[4] + 3:
     wrLine(clLine, 1, 1, i + 1)
 
   let message = msg.splitLines()
@@ -267,7 +267,7 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
     var disp: int = 0
     for i in 0 .. pMo.len - 1:
       if pMo[i + disp][3] == "0" or pMo[i + disp][4] == "-1":
-        pMo.delete(i)
+        pMo.del(i + disp)
         disp -= 1
     if pMo.len == 0:
       return ""
@@ -276,7 +276,7 @@ proc calcModifier(data: seq[string], player: bool, eName: string): string =
     var disp: int = 0
     for i in 0 .. eMo.len - 1:
       if eMo[i + disp][3] == "0" or eMo[i + disp][4] == "-1":
-        eMo.delete(i)
+        eMo.del(i + disp)
         disp -= 1
     if eMo.len == 0:
       return ""
@@ -410,7 +410,7 @@ proc addModifier(id: string, player: bool, eName: string): string =
         if pMo.len > 0:
           for i in 0 .. pMo.len - 1:
             if pMo[i][0 .. 1] == mData[m][0 .. 1]:
-              pMo.delete(i)
+              pMo.del(i)
               break
         pMo.add(mData[m])
 
@@ -418,7 +418,7 @@ proc addModifier(id: string, player: bool, eName: string): string =
         if eMo.len > 0:
           for i in 0 .. eMo.len - 1:
             if eMo[i][0 .. 1] == mData[m][0 .. 1]:
-              eMo.delete(i)
+              eMo.del(i)
               break
         eMo.add([mData[m]])
 
@@ -579,8 +579,7 @@ proc enemyMove(eType: string): string =
     let mV = mvData[i].split('|') 
     if eSp >= mV[12].parseInt:
       if mV[0] == move:
-        cat[0] = move
-        cat[1] = mvData[i]
+        cat = [move, mvData[i]]
 
   if cat[0] == "":
     for i in 0 .. mvData.len - 1:
@@ -588,8 +587,7 @@ proc enemyMove(eType: string): string =
       if eSp >= mV[12].parseInt:
         for r in 1 .. 100:
           if wea.contains([mV[4], &"{r}"]):
-            cat[0] = mV[0]
-            cat[1] = mvData[i]
+            cat = [mV[0], mvData[i]]
             break
 
   if cat[0] == "":
@@ -604,16 +602,23 @@ proc enemyMove(eType: string): string =
       if eSp >= rM[12].parseInt:
         for r in 1 .. 100:
           if not res.contains([rM[4], &"{r}"]):
-            cat[0] = rM[0]
-            cat[1] = mvData[randSel]
+            cat = [rM[0], mvData[randSel]]
             break
 
   if cat[0] == "":
     let randSel: int = rand(0 .. mvData.len - 1)
     let rM = mvData[randSel].split('|')
     if eSp >= rM[12].parseInt:
-      cat[0] = rM[0]
-      cat[1] = mvData[randSel]
+      cat = [rM[0], mvData[randSel]]
+
+  if cat[0] == "":
+    for i in 0 .. mvData.len - 1:
+      let aM = mvData[i].split('|')
+      if eSP >= aM[12].parseInt:
+        cat = [aM[0], mvData[i]]
+
+  if cat[0] == "":
+    cat = ["rest", "move"]
 
   return calcMove(cat, eType, false)
 
