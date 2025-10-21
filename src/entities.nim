@@ -1,4 +1,5 @@
 import strformat, strutils, random
+import custGen
 
 const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
 
@@ -98,13 +99,15 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
       if rows[y][x] == 'S':
         coords = [x, y]
 
+  let rValue: int = cEGen()
+
   var map: string = mS[1]
   let mW: int = mS[0].parseInt
   for y in 0 .. rows.len - 1:
     for x in 0 .. lw - 1:
       if y == 0 or y == rows.len - 1 or x == 0 or x == lw - 1:
         if rows[y][x] == '*':
-          if rand(1 .. 10000) == 1:
+          if rand(1 .. rValue) == 1:
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
             eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])
