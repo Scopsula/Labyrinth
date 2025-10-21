@@ -9,12 +9,25 @@ proc cGen*(lv: int, n: int, t: array[2, int]): seq[array[2, int]] =
   var path: seq[array[2, int]]
 
   path.add(pos)
-  for i in 1 .. n:
-    let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
-    for i in 1 .. rand(1 .. t[0] - d[0] * t[1]):
-      pos[d[0]] += d[1]
-      path.add(pos)
-  return path
+  case lv
+  # Custom generation for level 1 may be removed
+  of 1:
+    for i in 1 .. n div 2:
+      let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+      for i in 1 .. rand(t[1] div 2 .. (t[0] - d[0] * t[1]) * 2):
+        pos[d[0]] += d[1]
+        path.add(pos)
+    return path
+  # Work in progress
+  of 2:
+    for i in 1 .. n div ((t[0] + t[1]) div 2):
+      let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+      for i in 1 .. rand(1 .. (t[0] - d[0] * t[1]) * t[1]):
+        pos[d[0]] += d[1]
+        path.add(pos)
+    return path
+  else:
+    return @[]
 
 proc iGen*(lv: int, p: seq[array[2, int]], m: string, s: array[5, int]): string =
   var map: string = m
