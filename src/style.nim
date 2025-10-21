@@ -102,6 +102,32 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           let wx: int = xy[0] - coords[0] + x
           let wy: int = xy[1] - coords[1] + y
           map[wy * mW + wx] = uC
+  
+  of 2:
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        if rows[y][x] == ' ':
+          var incr: int = 0
+          if rows[y + 1][x] != ' ':
+            incr += 1
+          if rows[y][x - 1] != ' ':
+            incr += 2
+          if rows[y][x + 1] != ' ':
+            incr += 4
+          if rows[y - 1][x] != ' ':
+            incr += 8
+          if incr == 0:
+            if rows[y + 1][x - 1] != ' ':
+              incr = 16 
+            elif rows[y + 1][x + 1] != ' ':
+              incr = 17
+            elif rows[y - 1][x - 1] != ' ':
+              incr = 18
+            elif rows[y - 1][x + 1] != ' ':
+              incr = 19
+          let c = "abcdefghijklmnopqrst"[incr]
+          visible[y * (lw + 1) + x] = c
+
   else: discard
 
   return [visible, map]
