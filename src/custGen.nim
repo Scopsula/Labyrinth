@@ -4,9 +4,8 @@ var items: bool
 if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
   items = true
 
-var lv = readFile("../data/level").splitLines[0]
-
 proc cEGen*(): int =
+  var lv = readFile("../data/level").splitLines[0]
   case lv
   of "1":
     return 5000
@@ -16,6 +15,7 @@ proc cEGen*(): int =
     return 10000
 
 proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
+  var lv = readFile("../data/level").splitLines[0]
   var pos: array[2, int] = [0,0]
   var path: seq[array[2, int]]
 
