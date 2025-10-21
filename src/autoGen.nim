@@ -1,4 +1,5 @@
 import random, strutils
+import custGen
 
 const 
   tX: int = 10
@@ -6,16 +7,20 @@ const
 
 randomize()
 
-proc autoGenLv*(n: int): seq[array[2, int]] =
+proc autoGenLv*(n: int, lv: int): seq[array[2, int]] =
   var pos: array[2, int] = [0,0]
   var path: seq[array[2, int]]
-
-  path.add(pos)
-  for i in 1 .. n:
-    let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
-    for i in 1 .. rand(1 .. tX - d[0] * tY):
-      pos[d[0]] += d[1]
-      path.add(pos)
+  
+  let cPath: seq[array[2, int]] = cGen(lv, n, [tX, tY])
+  if cPath == @[]:
+    path.add(pos)
+    for i in 1 .. n:
+      let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+      for i in 1 .. rand(1 .. tX - d[0] * tY):
+        pos[d[0]] += d[1]
+        path.add(pos)
+  else:
+    path = cPath
 
   var
     sX: int = 0
@@ -52,26 +57,18 @@ proc autoGenLv*(n: int): seq[array[2, int]] =
 
   map = map & m1
 
-  if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
-    for i in 0 .. path.len - 1:
-      var mP: int
-      mP += path[i][0] - sX
-      mP += (path[i][1] - sY) * (w + 1)
-      let iRan: int = rand(1 .. (100 * tY * tX))
-      if iRan == 1:
-        map[mP] = 'F'
-      elif iRan <= 3:
-        map[mP] = 'B'
-      elif iRan <= 10:
-        map[mP] = 'A'
-      else:
+  let m: string = iGen(lv, path, map, [sX, sY, tX, tY, w])
+  if m == map:
+    if readFile("../data/config").splitLines[5].split(' ')[1] != "true":
+      for i in 0 .. path.len - 1:
+        var mP: int
+        mP += path[i][0] - sX
+        mP += (path[i][1] - sY) * (w + 1)
         map[mP] = '*'
+    else:
+      map = m
   else:
-    for i in 0 .. path.len - 1:
-      var mP: int
-      mP += path[i][0] - sX
-      mP += (path[i][1] - sY) * (w + 1)
-      map[mP] = '*'
+    map = m
 
   writeFile("../data/map", map)
   path.add([sX,sY])
