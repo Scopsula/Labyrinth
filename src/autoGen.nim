@@ -7,11 +7,11 @@ const
 
 randomize()
 
-proc autoGenLv*(n: int, lv: int): seq[array[2, int]] =
+proc autoGenLv*(n: int): seq[array[2, int]] =
   var pos: array[2, int] = [0,0]
   var path: seq[array[2, int]]
   
-  let cPath: seq[array[2, int]] = cGen(lv, n, [tX, tY])
+  let cPath: seq[array[2, int]] = cGen(n, [tX, tY])
   if cPath == @[]:
     path.add(pos)
     for i in 1 .. n:
@@ -57,7 +57,7 @@ proc autoGenLv*(n: int, lv: int): seq[array[2, int]] =
 
   map = map & m1
 
-  let m: string = iGen(lv, path, map, [sX, sY, tX, tY, w])
+  let m: string = iGen(path, map, [sX, sY, tX, tY, w])
   if m == map:
     if readFile("../data/config").splitLines[5].split(' ')[1] != "true":
       for i in 0 .. path.len - 1:

@@ -59,7 +59,7 @@ proc main() =
   if not dirExists(&"../data/chars/{lv}"): lv = 0
   writeFile("../data/level", &"{lv}")
   newLevel()
-  let valPoint: seq[array[2, int]] = autoGenLv(n, lv)
+  let valPoint: seq[array[2, int]] = autoGenLv(n)
   var map: string = readFile("../data/map")
   let sMap: string = map
   let mYC: int = map.splitLines.len

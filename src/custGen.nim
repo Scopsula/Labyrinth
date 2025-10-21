@@ -4,14 +4,25 @@ var items: bool
 if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
   items = true
 
-proc cGen*(lv: int, n: int, t: array[2, int]): seq[array[2, int]] =
+var lv = readFile("../data/level").splitLines[0]
+
+proc cEGen*(): int =
+  case lv
+  of "1":
+    return 5000
+  of "2": 
+    return 1000
+  else:
+    return 10000
+
+proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
   var pos: array[2, int] = [0,0]
   var path: seq[array[2, int]]
 
   path.add(pos)
   case lv
   # Custom generation for level 1 may be removed
-  of 1:
+  of "1":
     for i in 1 .. n div 2:
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
       for i in 1 .. rand(t[1] div 2 .. (t[0] - d[0] * t[1]) * 2):
@@ -19,7 +30,7 @@ proc cGen*(lv: int, n: int, t: array[2, int]): seq[array[2, int]] =
         path.add(pos)
     return path
   # Work in progress
-  of 2:
+  of "2":
     for i in 1 .. n div ((t[0] + t[1]) div 2):
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
       for i in 1 .. rand(1 .. (t[0] - d[0] * t[1]) * t[1]):
@@ -29,7 +40,7 @@ proc cGen*(lv: int, n: int, t: array[2, int]): seq[array[2, int]] =
   else:
     return @[]
 
-proc iGen*(lv: int, p: seq[array[2, int]], m: string, s: array[5, int]): string =
+proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
   var map: string = m
   if items == true:
     for i in 0 .. p.len - 1:
