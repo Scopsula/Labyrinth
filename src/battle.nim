@@ -136,14 +136,21 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
 
   if animation == true:
     sleep(100)
+    let skipValue: int = (sS[0] div (sS[4] * sS[4])) + (sS[0] * sS[1] div (sS[3] * sS[3]))
+    var skipCount: int = 0
     for y in 1 .. sS[1] - 2:
       for x in 1 .. sS[0] - 2:
+        skipCount += 1
         writeChar(&"{sS[5]}/wall", [x, y], s3S)
-        discard execShellCmd("clear")
-        echo sCr
+        if skipCount >= skipValue:
+          skipCount = 0
+          discard execShellCmd("clear")
+          echo sCr
 
+    skipCount = 0
     for y in 1 .. sS[1] - 2:
       for x in 1 .. sS[0] - 2:
+        skipCount += 1
         if x == pLX and y == pLN:
           writeChar("player", [x, y], s3S)
         elif x == eLX and y == eLN + 1:
@@ -162,8 +169,10 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
             writeChar("battle/top", [x, y], s3S)
         else:
           writeChar("battle/blank", [x, y], s3S)
-        discard execShellCmd("clear")
-        echo sCr
+        if skipCount >= skipValue:
+          skipCount = 0
+          discard execShellCmd("clear")
+          echo sCr
 
     writeChar(&"{eType}/1", [eLX - 1, eLN + 0], s3S)
     writeChar(&"{eType}/2", [eLX + 0, eLN + 0], s3S)
