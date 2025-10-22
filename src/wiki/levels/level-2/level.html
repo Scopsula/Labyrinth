@@ -25,19 +25,19 @@ tr {
 <a href="../../mechanics/list.html">Mechanics</a>
 <br>
 
-<h2>Level 0 - Paper Void</h2>
+<h2>Level 2 - Pipe Tunnels</h2>
 <table>
   <tr>
     <th style="width:30%">Description</th>
-    <th 
-      style="text-align:right; width:1%" rowspan="99"><img src="levelScreenShot.png" alt="Screenshot of level" width="932" height="470">
+    <th style="text-align:right; width:1%" rowspan="99">
+      <img src="levelScreenShot.png" alt="Screenshot of level" width="932" height="470">
     </th>
   </tr>
   <tr style="height:1px">
     <td>
-      Level 0 is a vast void of nothing besides <br>
-      mono-wallpaper stretched across a random <br>
-      array of walls.
+      Level 2 consists of long tunnels with <br>
+      a multitude of pipes running along <br>
+      the edges of the the tunnel system.
     </td>
   </tr>
   <tr style="height:1px">
@@ -45,9 +45,9 @@ tr {
   </tr>
   <tr style ="height:1px">
     <td>
-      | Almond water : 10 / (100 * tX * tY) <br>
-      | Canned Food : 5 / (100 * tX * tY) <br>
-      | Flashlight : 1 / (100 * tX * tY)
+      | Almond water | 10 / (100 * tX * tY) <br>
+      | Canned Food | 5 / (100 * tX * tY) <br>
+      | Flashlight | 1 / (100 * tX * tY)
     </td>
   </tr>
   <tr style="height:1px">
@@ -55,7 +55,7 @@ tr {
   </tr>
   <tr style ="height:1px">
     <td>
-      | <a href="../../entities/smiler.html">Smiler</a> : 1/10000
+      | <a href="../../entities/smiler.html">Smiler</a> : 1/300
     </td>
   </tr>
   <tr style="height:1px">
@@ -63,11 +63,11 @@ tr {
   </tr>
   <tr style ="height:1px">
     <td>
-      Default generation:<br>
-      | For each iteration<br>
+      Custom generation:<br>
+      | For 0 to total iterations div ((tX + tY) div 2)<br>
       | Pick Random Direction (LRUD)<br>
-      | Clear Between 1 to tX Left or Right<br>
-      | Clear Between 1 to tY Up or Down
+      | Clear Between 1 to tX * tY Left or Right<br>
+      | Clear Between 1 to tY * tY Up or Down
     </td>
   </tr>
   <tr style="height:1px">
@@ -75,8 +75,8 @@ tr {
   </tr>
   <tr style ="height:1px">
     <td>
-      | Dynamic Connected Ceilings<br>
-      | Dynamic Connected Thin-walls
+      | Dynamic Connected Corridors<br>
+      | Clear tiles with 3+ edges
     </td>
   </tr>
 
