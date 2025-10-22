@@ -25,7 +25,7 @@ tr {
 <a href="../../mechanics/list.html">Mechanics</a>
 <br>
 
-<h2>Level 0 - Paper Void</h2>
+<h2>Level 1 - Parking Halls</h2>
 <table>
   <tr>
     <th style="width:30%">Description</th>
@@ -35,9 +35,23 @@ tr {
   </tr>
   <tr style="height:1px">
     <td>
-      Level 0 is a vast void of nothing besides <br>
-      mono-wallpaper stretched across a random <br>
-      array of walls.
+      Level 1 is a series of cold, stone brick <br>
+      corridors with recurring parking halls <br>
+      containing pillars distributed throughout.
+    </td>
+  </tr>
+  <tr style="height:1px">
+    <td><b>Structure</b></td>
+  </tr>
+  <tr style ="height:1px">
+    <td>
+      Corridors: <br>
+      | Paths can be twice as long <br><br>
+      Halls: <br>
+      | Sqaure sections distributed across the level <br>
+      | Upon generation has a 1/500 chance <br>
+      | to spawn a loot crate an empty tile, crates <br>
+      | disappear if moved away from. 
     </td>
   </tr>
   <tr style="height:1px">
@@ -47,7 +61,11 @@ tr {
     <td>
       | Almond water : 10 / (100 * tX * tY) <br>
       | Canned Food : 5 / (100 * tX * tY) <br>
-      | Flashlight : 1 / (100 * tX * tY)
+      | Flashlight : 1 / (100 * tX * tY) <br>
+      | Crates: <br>
+      | | 0 to 4 Almond Water <br>
+      | | 0 to 4 Canned Food <br>
+      | | 0 to 3 Flashlights
     </td>
   </tr>
   <tr style="height:1px">
@@ -55,7 +73,7 @@ tr {
   </tr>
   <tr style ="height:1px">
     <td>
-      | <a href="../../entities/smiler.html">Smiler</a> : 1/10000
+      | <a href="../../entities/smiler.html">Smiler</a> : 1/5000
     </td>
   </tr>
   <tr style="height:1px">
@@ -63,11 +81,11 @@ tr {
   </tr>
   <tr style ="height:1px">
     <td>
-      Default generation:<br>
+      Custom generation:<br>
       | For each iteration<br>
       | Pick Random Direction (LRUD)<br>
-      | Clear Between 1 to tX Left or Right<br>
-      | Clear Between 1 to tY Up or Down
+      | Clear Between 1 to tX * 2 Left or Right<br>
+      | Clear Between 1 to tY * 2 Up or Down
     </td>
   </tr>
   <tr style="height:1px">
@@ -75,8 +93,8 @@ tr {
   </tr>
   <tr style ="height:1px">
     <td>
-      | Dynamic Connected Ceilings<br>
-      | Dynamic Connected Thin-walls
+      | Dynamic Connected Corridors<br>
+      | Dynamic Halls
     </td>
   </tr>
 
