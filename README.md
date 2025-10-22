@@ -1,6 +1,6 @@
 <img width="1847" height="938" alt="Level 0" src="https://github.com/user-attachments/assets/81c876f2-ccfb-4e71-97da-84e9564c607e" />
 
-Wiki: https://scopsula.github.io/Labyrinth/
+Wiki: https://scopsula.github.io/Labyrinth/<br>
 Note: The wiki is not neccesary to play/understand the game
 This is a small Backrooms / Labyrinth game with theming options using illwill.
 
