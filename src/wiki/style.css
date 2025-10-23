@@ -23,7 +23,7 @@
 }
 
 .headingRow {
-  text-align: left;
+  text-align: center;
   height: 1px;
   font-size: 18px;
   color: cyan
@@ -31,7 +31,6 @@
 
 .outline {
   outline: 5px solid white;
-  margin: 0px
 }
 
 .insideHeader {
@@ -47,6 +46,7 @@ body {
   font-family: Roboto;
   background-color: black;
   color: white;
+  text-align: center
 }
 
 h1, h2, h3, h4 {
@@ -61,6 +61,7 @@ th, td {
   vertical-align: top;
   padding-right: 50px;
   padding-bottom: 10px;
+  text-align: left;
 }
 
 th {
