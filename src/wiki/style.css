@@ -1,29 +1,58 @@
-body {
-  background-color: black;
-  color: white
+@font-face {
+  font-family: Roboto;
+  src: url(fonts/roboto/Roboto-Regular.ttf);
 }
-h1 {
+
+@font-face {
+  font-family: Roboto-Serrif;
+  src: url(fonts/roboto/RobotoSerif-Regular.ttf);
+}
+
+@font-face {
+  font-family: Roboto-Mono;
+  src: url(fonts/roboto/RobotoMono-Regular.ttf);
+}
+
+.header {
   color: black;
   font-size: 45px;
   -webkit-text-stroke: 2px white;
   background-image: url('./tile.png');
   padding: 30px;
-  margin: 0px
+  margin: 0px;
 }
+
+.headingRow {
+  text-align: left;
+  height: 1px;
+  font-size: 18px;
+  color: cyan
+}
+
+body {
+  font-family: Roboto;
+  background-color: black;
+  color: white;
+}
+
+h1, h2, h3, h4 {
+  font-family: Roboto-Serrif;
+}
+
 hr {
   margin-top: 5px
 }
+
 th, td {
   vertical-align: top;
   padding-right: 50px;
   padding-bottom: 10px;
 }
+
 th {
   height: 1px
 }
-tr {
-  text-align: left;
-}
+
 a {
   color: lightblue
 }
