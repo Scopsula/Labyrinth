@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<h1><a href="../../index.html">⌂</a> Labyrinth Wiki</h1>
+<h1 class="header"><a href="../../index.html">⌂</a> Labyrinth Wiki</h1>
 <hr>
 <a href="../list.html">Levels</a>
 <a href="../../entities/list.html">Entities</a>
@@ -15,7 +15,7 @@
 
 <h2>Level 2 - Pipe Tunnels</h2>
 <table>
-  <tr>
+  <tr class="headingRow">
     <th>Description</th>
     <th style="text-align:right; width:1%" rowspan="99">
       <img src="levelScreenShot.png" alt="Screenshot of level" width="621" height="313">
@@ -28,43 +28,51 @@
       the edges of the the tunnel system.
     </td>
   </tr>
-  <tr style="height:1px">
+  <tr class="headingRow">
     <td><b>Items</b></td>
   </tr>
   <tr style ="height:1px">
     <td>
-      | Almond water | 10 / (100 * tX * tY) <br>
-      | Canned Food | 5 / (100 * tX * tY) <br>
-      | Flashlight | 1 / (100 * tX * tY)
+      <ul>
+        <li>Almond water : 10 / (100 * tX * tY)</li>
+        <li>Canned Food : 5 / (100 * tX * tY)</li>
+        <li>Flashlight : 1 / (100 * tX * tY)</li>
+      </ul>
     </td>
   </tr>
-  <tr style="height:1px">
+  <tr class="headingRow">
     <td><b>Entities</b></td>
   </tr>
   <tr style ="height:1px">
     <td>
-      | <a href="../../entities/smiler.html">Smiler</a> : 1/300
+      <ul>
+        <li><a href="../../entities/smiler.html">Smiler</a> : 1/300</li>
+      </ul>
     </td>
   </tr>
-  <tr style="height:1px">
+  <tr class="headingRow">
     <td><b>Generation</b></td>
   </tr>
   <tr style ="height:1px">
     <td>
-      Custom generation:<br>
-      | For n in 0 to total iterations div ((tX + tY) div 2)<br>
-      | Pick Random Direction (LRUD)<br>
-      | Clear Between 1 to tX * tY Left or Right<br>
-      | Clear Between 1 to tY * tY Up or Down
+      Custom generation:
+      <ul>
+        <li>For n in 0 to total iterations div ((tX + tY) div 2)<br>
+        Pick Random Direction (LRUD)<br>
+        When L/R: Clear Between 1 to tX * tY Left/Right<br>
+        When U/D: Clear Between 1 to tY * tY Up/Down</li>
+      </ul>
     </td>
   </tr>
-  <tr style="height:1px">
+  <tr class="headingRow">
     <td><b>Style</b></td>
   </tr>
   <tr style ="height:1px">
     <td>
-      | Dynamic Connected Corridors<br>
-      | Clear tiles with 3+ edges
+      <ul>
+        <li>Dynamic Connected Corridors</li>
+        <li>Clear tiles with 3+ edges</li>
+      </ul>
     </td>
   </tr>
 
