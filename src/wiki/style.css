@@ -29,16 +29,16 @@
   color: cyan
 }
 
-.cyanOutline {
-  outline: 5px solid cyan;
+.outline {
+  outline: 5px solid white;
   margin: 0px
 }
 
-.cyanInside {
+.insideHeader {
   color: white;
   font-size: 16px;
   font-family: Roboto;
-  outline: 5px solid cyan;
+  outline: 5px solid white;
   margin: 0px;
   padding: 5px
 }
