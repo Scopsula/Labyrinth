@@ -1,0 +1,26 @@
+body {
+  background-color: black;
+  color: white
+}
+h1 {
+  color: black;
+  font-size: 45px;
+  -webkit-text-stroke: 2px white;
+  background-image: url('./tile.png');
+  padding: 30px;
+  margin: 0px
+}
+hr {
+  margin-top: 5px
+}
+th, td {
+  vertical-align: top;
+  padding-right: 50px;
+  padding-bottom: 10px;
+}
+th {
+  height: 1px
+}
+tr {
+  text-align: left;
+}
