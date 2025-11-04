@@ -107,7 +107,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
 
     map = map.replace("R", " ")
     writeMap('R', coords)
-  
+
   of 2:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
