@@ -49,6 +49,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
     return @[]
 
 proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
+  var lv = readFile("../data/level").splitLines[0]
   var map: string = m
   if items == true:
     for i in 0 .. p.len - 1:
@@ -64,5 +65,14 @@ proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
         map[mP] = 'A'
       else:
         map[mP] = '*'
-    return map
+  case lv
+  of "4":
+    for i in 0 .. p.len - 1:
+      var mP: int
+      mP += p[i][0] - s[0]
+      mP += (p[i][1] - s[1]) * (s[4] + 1)
+      if mP - (s[4] + 1) >= 0:
+        if map[mP - (s[4] + 1)] == ' ': 
+          if rand(1 .. s[2]) == 1:
+            map[mP - (s[4] + 1)] = 'W'
   return map

@@ -27,6 +27,8 @@ proc match(t: char, v: string, xy: array[2, int], exy: array[2, int]): string =
       if mF[i][0] == t:
         let lMatch: string = mF[i].split(' ')[1]
         return &"{level}/{lMatch}"
+  if fileExists(&"../data/chars/temp/{t}"):
+    return &"temp/{t}"
 
 proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
   var cBH: string
