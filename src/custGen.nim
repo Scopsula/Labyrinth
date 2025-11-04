@@ -37,6 +37,14 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         pos[d[0]] += d[1]
         path.add(pos)
     return path
+  # Work in progress
+  of "4":
+    for i in 1 .. n * rand(1 .. t[0]):
+      let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+      for i in 1 .. (t[0] - d[0] * t[1]) div t[1]:
+        pos[d[0]] += d[1]
+        path.add(pos)
+    return path
   else:
     return @[]
 
