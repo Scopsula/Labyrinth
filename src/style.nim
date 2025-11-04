@@ -151,53 +151,69 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         if c1 == ' ' and c2 == ' ':
           clear = true
         if clear == true:
-          if rows[y + 1][x] == ' ':
-            if y == rows.len - 2:
+          var r = v.replace('W', ' ').splitLines
+          if r[y + 1][x] == ' ' :
+            if y == r.len - 2:
               incr += 1
-            elif rows[y + 2][x] != ' ':
+            elif r[y + 2][x] != ' ':
               incr += 1
-            if rows[y][x - 1] != ' ' or rows[y + 1][x - 1] != ' ':
+            if r[y][x - 1] != ' ' or r[y + 1][x - 1] != ' ':
               incr += 2
-            if rows[y][x + 1] != ' ' or rows[y + 1][x + 1] != ' ':
+            if r[y][x + 1] != ' ' or r[y + 1][x + 1] != ' ':
               incr += 4
-            if rows[y - 1][x] != ' ':
+            if r[y - 1][x] != ' ':
               incr += 8
             let c = "abcdefghijklmnop"[incr]
             visible[y * (lw + 1) + x] = c
-          elif rows[y - 1][x] != ' ':
-            if rows[y][x - 1] != ' ': 
+          elif r[y - 1][x] != ' ':
+            if r[y][x - 1] != ' ': 
               visible[y * (lw + 1) + x] = '0'
-              if rows[y][x + 1] != ' ':
+              if r[y][x + 1] != ' ':
                 visible[y * (lw + 1) + x] = '3'
-            elif rows[y][x + 1] != ' ': 
+            elif r[y][x + 1] != ' ': 
               visible[y * (lw + 1) + x] = '1'
             else: 
               visible[y * (lw + 1) + x] = '2'
-          elif rows[y + 1][x] != ' ':
-            if rows[y][x - 1] != ' ': 
+          elif r[y + 1][x] != ' ':
+            if r[y][x - 1] != ' ': 
               visible[y * (lw + 1) + x] = '4'
-              if rows[y][x + 1] != ' ':
+              if r[y][x + 1] != ' ':
                 visible[y * (lw + 1) + x] = '6'
-            elif rows[y][x + 1] != ' ': 
+            elif r[y][x + 1] != ' ': 
               visible[y * (lw + 1) + x] = '5'
         if c1 == 'W' or c2 == 'W':
           let c: char = visible[y * (lw + 1) + x]
-          let nC: char = c.toUpperAscii
-          var tile: string
-          let match: seq[string] = readFile(&"../data/chars/{level}/match").splitLines
-          for i in 0 .. match.len - 1:
-            if match[i][0] == c:
-              let selTile = match[i].split(' ')[1]
-              tile = readFile(&"../data/chars/4/{selTile}")
-              break
-          let window = readFile(&"../data/chars/window")
-          for i in 0 .. window.len - 1:
-            if window[i] != ' ':
-              tile[i] = window[i]
-          writeFile(&"../data/chars/temp/{nC}", tile)
+          var nC: char
+          case c
+          of 'W': nC = '`'
+          of '0': nC = ')'
+          of '1': nC = '!'
+          of '2': nC = '@'
+          of '3': nC = '#'
+          of '4': nC = '$'
+          of '5': nC = '%'
+          of '6': nC = '^'
+          of '7': nC = '&'
+          of '8': nC = '+'
+          of '9': nC = '-'
+          else: discard
+          if not fileExists(&"../data/chars/temp/{nC}"):
+            var tile: string
+            let match: seq[string] = readFile(&"../data/chars/{level}/match").splitLines
+            for i in 0 .. match.len - 1:
+              if match[i][0] == c:
+                let selTile = match[i].split(' ')[1]
+                tile = readFile(&"../data/chars/4/{selTile}")
+                break
+            let window = readFile(&"../data/chars/window")
+            for i in 0 .. window.len - 1:
+              if window[i] != ' ':
+                if window[i] == 'X':
+                  tile[i] = ' '
+                else:
+                  tile[i] = window[i]
+            writeFile(&"../data/chars/temp/{nC}", tile)
           visible[y * (lw + 1) + x] = nC
-  
   else: discard
-
   return [visible, map]
 

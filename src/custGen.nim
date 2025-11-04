@@ -71,6 +71,8 @@ proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
       var mP: int
       mP += p[i][0] - s[0]
       mP += (p[i][1] - s[1]) * (s[4] + 1)
+      if items == false:
+        map[mP] = '*'
       if mP - (s[4] + 1) >= 0:
         if map[mP - (s[4] + 1)] == ' ': 
           if rand(1 .. s[2]) == 1:
