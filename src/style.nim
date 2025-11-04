@@ -1,4 +1,4 @@
-import strutils, strformat, random
+import strutils, strformat, random, os
 
 proc refresh*(): bool =
   let level: string = readFile("../data/level")
@@ -32,7 +32,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           map[wy * mW + wx] = uC
 
   case level
-  of 0, 4, 5:
+  of 0, 5:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         var incr: int = 0
@@ -139,6 +139,64 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
 
     writeMap('*', setCoords())
 
+  of 4:
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        var incr: int = 0
+        let c1: char = rows[y][x]
+        let c2: char = visible[y * (lw + 1) + x]
+        var clear: bool = false
+        if c1 == 'W' or c2 == 'W':
+          clear = true
+        if c1 == ' ' and c2 == ' ':
+          clear = true
+        if clear == true:
+          if rows[y + 1][x] == ' ':
+            if y == rows.len - 2:
+              incr += 1
+            elif rows[y + 2][x] != ' ':
+              incr += 1
+            if rows[y][x - 1] != ' ' or rows[y + 1][x - 1] != ' ':
+              incr += 2
+            if rows[y][x + 1] != ' ' or rows[y + 1][x + 1] != ' ':
+              incr += 4
+            if rows[y - 1][x] != ' ':
+              incr += 8
+            let c = "abcdefghijklmnop"[incr]
+            visible[y * (lw + 1) + x] = c
+          elif rows[y - 1][x] != ' ':
+            if rows[y][x - 1] != ' ': 
+              visible[y * (lw + 1) + x] = '0'
+              if rows[y][x + 1] != ' ':
+                visible[y * (lw + 1) + x] = '3'
+            elif rows[y][x + 1] != ' ': 
+              visible[y * (lw + 1) + x] = '1'
+            else: 
+              visible[y * (lw + 1) + x] = '2'
+          elif rows[y + 1][x] != ' ':
+            if rows[y][x - 1] != ' ': 
+              visible[y * (lw + 1) + x] = '4'
+              if rows[y][x + 1] != ' ':
+                visible[y * (lw + 1) + x] = '6'
+            elif rows[y][x + 1] != ' ': 
+              visible[y * (lw + 1) + x] = '5'
+        if c1 == 'W' or c2 == 'W':
+          let c: char = visible[y * (lw + 1) + x]
+          let nC: char = c.toUpperAscii
+          var tile: string
+          let match: seq[string] = readFile(&"../data/chars/{level}/match").splitLines
+          for i in 0 .. match.len - 1:
+            if match[i][0] == c:
+              let selTile = match[i].split(' ')[1]
+              tile = readFile(&"../data/chars/4/{selTile}")
+              break
+          let window = readFile(&"../data/chars/window")
+          for i in 0 .. window.len - 1:
+            if window[i] != ' ':
+              tile[i] = window[i]
+          writeFile(&"../data/chars/temp/{nC}", tile)
+          visible[y * (lw + 1) + x] = nC
+  
   else: discard
 
   return [visible, map]
