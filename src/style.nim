@@ -32,7 +32,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           map[wy * mW + wx] = uC
 
   case level
-  of 0, 5:
+  of 0:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         var incr: int = 0
@@ -139,7 +139,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
 
     writeMap('*', setCoords())
 
-  of 4:
+  of 4, 5:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         var incr: int = 0
@@ -203,7 +203,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             for i in 0 .. match.len - 1:
               if match[i][0] == c:
                 let selTile = match[i].split(' ')[1]
-                tile = readFile(&"../data/chars/4/{selTile}")
+                tile = readFile(&"../data/chars/{level}/{selTile}")
                 break
             let window = readFile(&"../data/chars/window")
             for i in 0 .. window.len - 1:
