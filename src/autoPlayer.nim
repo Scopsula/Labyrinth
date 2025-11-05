@@ -168,6 +168,7 @@ proc main() =
         sUp()
         initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg)
         deleteEntity([x, y])
+        up = true
 
     if up == true:
       sUp()
