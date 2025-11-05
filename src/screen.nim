@@ -49,7 +49,22 @@ proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
         let wrC: char = cH[iY * (tX + 1) + iX]
         scr[sPos + iY * (w + 1) + iX] = wrC
 
-proc sc*(v: string, wht: array[4, int], xy: array[2, int], gXYH: array[5, int], chkD: array[4, int], map: string, msg: string): array[2, string] =
+var 
+  xy: array[2, int]
+  wht: seq[int]
+  gXYH: seq[int]
+  chkD: seq[int]
+
+proc importVar*(iVar: seq[int], name: string) =
+  case name
+  of "xy": 
+    xy[0] = iVar[0]
+    xy[1] = iVar[1]
+  of "wht": wht = iVar
+  of "gXYH": gXYH = iVar
+  of "chkD": chkD = iVar
+
+proc sc*(v: string, map: string, msg: string): array[2, string] =
   var w1: string
   for i in 1 .. wht[0]:
     w1 = w1 & "/"
