@@ -24,16 +24,17 @@ proc match(t: char, v: string, xy: array[2, int], exy: array[2, int]): string =
   elif fileExists(&"../data/chars/{level}/match"):
     let mF = readFile(&"../data/chars/{level}/match").splitLines
     for i in 0 .. mF.len - 1:
-      if mF[i][0] == t:
-        let lMatch: string = mF[i].split(' ')[1]
-        return &"{level}/{lMatch}"
+      if mF[i] != "": 
+        if mF[i][0] == t:
+          let lMatch: string = mF[i].split(' ')[1]
+          return &"{level}/{lMatch}"
   if fileExists(&"../data/chars/temp/{t}"):
     return &"temp/{t}"
 
 proc writeChar(y, x, tX: int, tY: int, w: int, c: string) =
   var cBH: string
   var cH : string
-  if not c.contains(&"{level}"):
+  if not c.contains(&"{level}") and not c.contains("temp"):
     cBH = readFile(&"../data/chars/{level}/path")
     cH = readFile(&"../data/chars/{c}")
   else:

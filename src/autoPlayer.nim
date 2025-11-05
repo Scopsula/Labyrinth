@@ -38,7 +38,7 @@ level 0
 let conf = readFile("../data/config").splitLines
 let n = conf[0].split(' ')[1].parseInt
 if conf[1].split(' ')[1] == "true": h0 = 1 
-if conf[2].split(' ')[1] == "true" or not dirExists("../data"):
+if conf[2].split(' ')[1] == "true":
   removeDir("../data/items")
   createDir("../data/items")
   writeFile("../data/stats", stats)
@@ -48,6 +48,9 @@ if conf[9].split(' ')[1] == "true": h3 = 1
 let sV: int = conf[7].split(' ')[1].parseInt
 let eT: float = conf[8].split(' ')[1].parseFloat
 let collision = conf[10].split(' ')[1].replace("|", "")
+
+removeDir("../data/chars/temp")
+createDir("../data/chars/temp")
 
 randomize()
 illwillInit()
@@ -228,6 +231,8 @@ proc main() =
 
   lv += 1
   bypass = true
+  removeDir("../data/chars/temp")
+  createDir("../data/chars/temp")
   resetEntities()
   main()
 main()
