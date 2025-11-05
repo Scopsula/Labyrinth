@@ -32,7 +32,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           map[wy * mW + wx] = uC
 
   case level
-  of 0:
+  of 0, 5:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         var incr: int = 0
@@ -139,7 +139,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
 
     writeMap('*', setCoords())
 
-  of 4, 5:
+  of 4:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         var incr: int = 0
