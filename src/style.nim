@@ -1,4 +1,4 @@
-import strutils, strformat, random
+import strutils, strformat, random, os
 
 proc refresh*(): bool =
   let level: string = readFile("../data/level")
