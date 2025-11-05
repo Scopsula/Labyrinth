@@ -126,6 +126,14 @@ proc main() =
     bg: string
     msg: string
 
+  proc sUp() =
+    m[y * mW + x] = 'S'
+    update()
+    let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0, h2, h3], [xD, yD, mW, mYC], m, msg)
+    m = rSc[0]
+    bg = rSc[1]
+    up = false 
+
   while true:
     msg = ""
     if h1 == 1:
@@ -153,16 +161,12 @@ proc main() =
           sSx -= 1
         if scY mod 2 == 0:
           sSy -= 1
+        sUp()
         initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg)
         deleteEntity([x, y])
 
     if up == true:
-      m[y * mW + x] = 'S'
-      update()
-      let rSc: array[2, string] = sc(visible, [w, h, tX, tY], [x, y], [gX, gY, h0, h2, h3], [xD, yD, mW, mYC], m, msg)
-      m = rSc[0]
-      bg = rSc[1]
-      up = false
+      sUp()
 
     if bypass == true:
       bypass = false
