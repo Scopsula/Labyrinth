@@ -174,16 +174,17 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
           discard execShellCmd("clear")
           echo sCr
 
-    writeChar(&"{eType}/1", [eLX - 1, eLN + 0], s3S)
-    writeChar(&"{eType}/2", [eLX + 0, eLN + 0], s3S)
-    writeChar(&"{eType}/3", [eLX + 1, eLN + 0], s3S)
-    writeChar(&"{eType}/4", [eLX - 1, eLN + 1], s3S)
-    writeChar(&"{eType}/5", [eLX + 0, eLN + 1], s3S)
-    writeChar(&"{eType}/6", [eLX + 1, eLN + 1], s3S)
-    writeChar(&"{eType}/7", [eLX - 1, eLN + 2], s3S)
-    writeChar(&"{eType}/8", [eLX + 0, eLN + 2], s3S)
-    writeChar(&"{eType}/9", [eLX + 1, eLN + 2], s3S)
-   
+    if fileExists &"../data/chars/{eType}/1":
+      writeChar(&"{eType}/1", [eLX - 1, eLN + 0], s3S)
+      writeChar(&"{eType}/2", [eLX + 0, eLN + 0], s3S)
+      writeChar(&"{eType}/3", [eLX + 1, eLN + 0], s3S)
+      writeChar(&"{eType}/4", [eLX - 1, eLN + 1], s3S)
+      writeChar(&"{eType}/5", [eLX + 0, eLN + 1], s3S)
+      writeChar(&"{eType}/6", [eLX + 1, eLN + 1], s3S)
+      writeChar(&"{eType}/7", [eLX - 1, eLN + 2], s3S)
+      writeChar(&"{eType}/8", [eLX + 0, eLN + 2], s3S)
+      writeChar(&"{eType}/9", [eLX + 1, eLN + 2], s3S)
+
     if fileExists &"../data/chars/{eType}/t0":
       writeChar(&"{eType}/t0", [eLX + 1, eLN - 1], s3S)
       writeChar(&"{eType}/t1", [eLX + 2, eLN - 1], s3S)
