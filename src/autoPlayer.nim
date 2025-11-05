@@ -1,4 +1,4 @@
-import illwill, strutils, strformat, random, os, times, std/monotimes
+import illwill, strutils, strformat, random, os 
 import screen, autoGen, style, openMap, openInv, entities, upStats, battle
 
 const
@@ -46,7 +46,7 @@ if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
 if conf[9].split(' ')[1] == "true": h3 = 1
 let sV: int = conf[7].split(' ')[1].parseInt
-let eT: float = conf[8].split(' ')[1].parseFloat
+# let eT: float = conf[8].split(' ')[1].parseFloat
 let collision = conf[10].split('|')[1]
 
 removeDir("../data/chars/temp")
@@ -126,7 +126,6 @@ proc main() =
     steps: int = 0
     bg: string
     msg: string
-    time = getMonoTime()
 
   while true:
     msg = ""
@@ -139,24 +138,24 @@ proc main() =
     msg = iUpdate(m[y * mW + x])
 
     if h2 == 1:
-      if (getMonoTime() - time).inMilliseconds().toFloat >= eT * 1000:
-        m = moveEntities([x, y], m, mW)
+      let uM: array[2, string] = moveEntities([x, y], m, mW)
+      if uM[1] == "true":
+        m = uM[0]
         if m[gY * mW + gX] != 'X':
           m[gY * mW + gX] = 'X'
           deleteEntity([gX, gY])
-        time = getMonoTime()
         update()
         if visible.contains('E'):
           up = true
-      if m[y * mW + x] == 'E':
-        var sSx: int = scX
-        var sSy: int = scY
-        if scX mod 2 == 0:
-          sSx -= 1
-        if scY mod 2 == 0:
-          sSy -= 1
-        initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg)
-        deleteEntity([x, y])
+        if m[y * mW + x] == 'E':
+          var sSx: int = scX
+          var sSy: int = scY
+          if scX mod 2 == 0:
+            sSx -= 1
+          if scY mod 2 == 0:
+            sSy -= 1
+          initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg)
+          deleteEntity([x, y])
 
     if up == true:
       m[y * mW + x] = 'S'
