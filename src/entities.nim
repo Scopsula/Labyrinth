@@ -1,10 +1,12 @@
-import strformat, strutils, random
+import strformat, strutils, random, std/monotimes, times
 import custGen
 
 const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
+let eT: float = readFile("../data/config").splitLines[8].split(' ')[1].parseFloat
 
 var 
   eloc: seq[array[3, int]]
+  eTime: seq[MonoTime]
   eTypes: array[1, string] = ["smiler"]
   deadZones: seq[seq[array[2, int]]]
 
@@ -17,6 +19,7 @@ proc deleteEntity*(xy: array[2, int]) =
     if eloc.contains([xy[0], xy[1], i]):
       let d: int = find(eloc, [xy[0], xy[1], i])
       eloc.delete(d)
+      eTime.delete(d)
       deadZones.delete(d)
 
 proc absoluteFindEntity*(xy: array[2, int]): string =
@@ -37,57 +40,60 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
 
   return absoluteFindEntity([wx, wy])
 
-proc moveEntities*(xy: array[2, int], m: string, mW: int): string =
+proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
   var map: string = m
-
+  var update: bool = false
   if eloc.len > 0:
     for i in 0 .. eloc.len - 1:
-      var eM: string = map.replace("E", " ")
+      if (getMonoTime() - eTime[i]).inMilliseconds().toFloat >= eT * 1000:
+        update = true
+        eTime[i] = getMonoTime()
+        var eM: string = map.replace("E", " ")
 
-      if deadZones[i].len > 0:
-        if deadZones[i].contains(xy):
-          deadZones[i].setLen(0)
+        if deadZones[i].len > 0:
+          if deadZones[i].contains(xy):
+            deadZones[i].setLen(0)
+          else:
+            for r in 0 .. deadZones[i].len - 1:
+              eM[deadZones[i][r][1] * mW + deadZones[i][r][0]] = ' '
+
+        var eXY: array[2, int] = [eloc[i][0], eloc[i][1]]
+
+        let chk: int = eXY[1] * mW + eXY[0]
+        if map[chk] != 'X': map[chk] = '*'
+        if (eXY[1] + 1) * mW + eXY[0] + 1 > map.len - 1: discard
+        elif (eXY[1] - 1) * mW + eXY[0] - 1 < 0: discard
+        elif eXY[0] < xy[0] and eM[chk + 1] != ' ':
+          eXY[0] += 1
+        elif eXY[0] > xy[0] and eM[chk - 1] != ' ':
+          eXY[0] -= 1 
+        elif eXY[1] < xy[1] and eM[chk + mW] != ' ':
+          eXY[1] += 1
+        elif eXY[1] > xy[1] and eM[chk - mW] != ' ':
+          eXY[1] -= 1
         else:
-          for r in 0 .. deadZones[i].len - 1:
-            eM[deadZones[i][r][1] * mW + deadZones[i][r][0]] = ' '
+          if eM[chk + 1] == ' ':
+            if eM[chk - 1] == ' ':
+              if eM[chk + mW] == ' ':
+                if eM[chk - mW] == ' ':
+                  let mv: array[2, int] = sample(dir)
+                  if map[chk + mv[1] * mW + mv[0]] != ' ':
+                    if map[chk + mv[1] * mW + mv[0]] != 'E':
+                      deadZones[i].add([eXY[0], eXY[1]]) 
+                      eXY[0] += mv[0]
+                      eXY[1] += mv[1]
 
-      var eXY: array[2, int] = [eloc[i][0], eloc[i][1]]
+          deadZones[i].add([eXY[0], eXY[1]]) 
+          let mv: array[2, int] = sample(dir)
+          if eM[chk + mv[1] * mW + mv[0]] != ' ':
+            eXY[0] += mv[0]
+            eXY[1] += mv[1]
 
-      let chk: int = eXY[1] * mW + eXY[0]
-      if map[chk] != 'X': map[chk] = '*'
-      if (eXY[1] + 1) * mW + eXY[0] + 1 > map.len - 1: discard
-      elif (eXY[1] - 1) * mW + eXY[0] - 1 < 0: discard
-      elif eXY[0] < xy[0] and eM[chk + 1] != ' ':
-        eXY[0] += 1
-      elif eXY[0] > xy[0] and eM[chk - 1] != ' ':
-        eXY[0] -= 1 
-      elif eXY[1] < xy[1] and eM[chk + mW] != ' ':
-        eXY[1] += 1
-      elif eXY[1] > xy[1] and eM[chk - mW] != ' ':
-        eXY[1] -= 1
-      else:
-        if eM[chk + 1] == ' ':
-          if eM[chk - 1] == ' ':
-            if eM[chk + mW] == ' ':
-              if eM[chk - mW] == ' ':
-                let mv: array[2, int] = sample(dir)
-                if map[chk + mv[1] * mW + mv[0]] != ' ':
-                  if map[chk + mv[1] * mW + mv[0]] != 'E':
-                    deadZones[i].add([eXY[0], eXY[1]]) 
-                    eXY[0] += mv[0]
-                    eXY[1] += mv[1]
+        eloc[i][0] = eXY[0]
+        eloc[i][1] = eXY[1]
 
-        deadZones[i].add([eXY[0], eXY[1]]) 
-        let mv: array[2, int] = sample(dir)
-        if eM[chk + mv[1] * mW + mv[0]] != ' ':
-          eXY[0] += mv[0]
-          eXY[1] += mv[1]
-
-      eloc[i][0] = eXY[0]
-      eloc[i][1] = eXY[1]
-
-      map[eXY[1] * mW + eXY[0]] = 'E'
-  return map
+        map[eXY[1] * mW + eXY[0]] = 'E'
+  return [map, &"{update}"]
 
 proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, string] =
   var visible: string = v
@@ -111,6 +117,7 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
             eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])
+            eTime.add(getMonoTime())
             deadZones.setLen(eloc.len)
             visible[y * (lw + 1) + x] = 'E'
             map[wY * mW + wx] = 'E'
