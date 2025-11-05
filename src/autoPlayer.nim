@@ -129,10 +129,10 @@ proc main() =
   proc sUp() =
     m[y * mW + x] = 'S'
     update()
-    importVar(@[w, h, tX, tY], "wht")
-    importVar(@[x, y], "xy")
-    importVar(@[gX, gY, h0, h2, h3], "gXYH")
-    importVar(@[xD, yD, mW, mYC], "chkD")
+    exportVar(@[w, h, tX, tY], "wht")
+    exportVar(@[x, y], "xy")
+    exportVar(@[gX, gY, h0, h2, h3], "gXYH")
+    exportVar(@[xD, yD, mW, mYC], "chkD")
     let rSc: array[2, string] = sc(visible, m, msg)
     m = rSc[0]
     bg = rSc[1]

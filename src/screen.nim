@@ -55,7 +55,7 @@ var
   gXYH: seq[int]
   chkD: seq[int]
 
-proc importVar*(iVar: seq[int], name: string) =
+proc exportVar*(iVar: seq[int], name: string) =
   case name
   of "xy": 
     xy[0] = iVar[0]
