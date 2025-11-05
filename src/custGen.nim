@@ -66,7 +66,7 @@ proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
       else:
         map[mP] = '*'
   case lv
-  of "4":
+  of "4", "5":
     for i in 0 .. p.len - 1:
       var mP: int
       mP += p[i][0] - s[0]
