@@ -6,15 +6,16 @@ const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
 var 
   eloc: seq[array[3, int]]
   eTime: seq[MonoTime]
-  eTypes: seq[array[2, string]] # = ["smiler"]
+  eTypes: seq[array[2, string]]
   deadZones: seq[seq[array[2, int]]]
 
 let aE = toSeq(walkDir("../data/entities", relative=true))
 
 for i in 0 .. aE.len - 1:
-  let eDa: string = readFile(&"../data/entities/{aE[i][1]}/stats")
-  let mSe: string = eDa.splitLines[9].split(' ')[1]
-  eTypes.add([aE[i][1], mSe])
+  if fileExists(&"../data/chars/entities/{aE[i][1]}/map"):
+    let eDa: string = readFile(&"../data/entities/{aE[i][1]}/stats")
+    let mSe: string = eDa.splitLines[9].split(' ')[1]
+    eTypes.add([aE[i][1], mSe])
 
 proc resetEntities*() =
   eloc.setLen(0)
@@ -103,6 +104,9 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
   return [map, &"{update}"]
 
 proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, string] =
+  if eTypes.len == 0:
+    return [v, mS[1]]
+
   var visible: string = v
   var rows = v.splitLines
   var coords: array[2, int]
