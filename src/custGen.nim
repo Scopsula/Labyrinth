@@ -10,7 +10,9 @@ proc cEGen*(): int =
   of "1":
     return 5000
   of "2": 
-    return 1000
+    return 500
+  of "4":
+    return 20000
   else:
     return 10000
 
@@ -44,6 +46,67 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
       for i in 1 .. (t[0] - d[0] * t[1]) div t[1]:
         pos[d[0]] += d[1]
         path.add(pos)
+    return path
+  of "5":
+    var c4: int = 0
+    var rV: int = 0
+    var rX: int = t[0]
+    var rY: int = t[1]
+    for i in 1 .. n div sample([t[0], t[1]]):
+      if rand(t[0] * t[1]) == 0 or rV > 0:
+        if rV == 0:
+         rV = rand(1 .. t[0] * t[1])
+        let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+        for i in 1 .. (t[0] - d[0] * t[1]) div t[1]:
+          pos[d[0]] += d[1]
+          path.add(pos)
+        rV -= 1
+      else:
+        if rand(t[0] * t[1]) == 0:
+          rX = sample([t[0], t[1]])
+          rY = sample([t[0], t[1]])
+        c4 += 1
+        case c4
+        of 1:
+          for i in 1 .. rX:
+            pos[0] += 1
+            path.add(pos)
+        of 2:
+          for i in 1 .. rY:
+            pos[1] += 1
+            path.add(pos)
+        of 3:
+          for i in 1 .. rX:
+            pos[0] -= 1
+            path.add(pos)
+        of 4:
+          for i in 1 .. rY:
+            pos[1] -= 1
+            path.add(pos)
+        else:
+          var rCV: int = 0
+          if rand(t[0] * t[1]) == 1:
+            rCV = sample([rX, rY])
+          for i in 0 .. rand(rCV):
+            case rand(3)
+            of 0:
+              for i in 0 .. rX:
+                pos[0] += 1
+                path.add(pos)
+            of 1:
+              for i in 0 .. rY:
+                pos[1] += 1
+                path.add(pos)
+            of 2:
+              for i in 0 .. rX:
+                pos[0] -= 1
+                path.add(pos)
+            of 3:
+              for i in 0 .. rY:
+                pos[1] -= 1
+                path.add(pos)
+            else: discard
+          c4 = 0
     return path
   else:
     return @[]
