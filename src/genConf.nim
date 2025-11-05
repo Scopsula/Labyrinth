@@ -11,7 +11,7 @@ itemsOnMap false
 sleep 5
 entitySpeed 0.6
 hud true
-break false
+collision | W|
 """
 
 if fileExists("../data/config"):
