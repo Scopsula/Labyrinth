@@ -44,10 +44,9 @@ if conf[2].split(' ')[1] == "true":
   writeFile("../data/stats", stats)
 if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
-if conf[9].split(' ')[1] == "true": h3 = 1
+if conf[8].split(' ')[1] == "true": h3 = 1
 let sV: int = conf[7].split(' ')[1].parseInt
-# let eT: float = conf[8].split(' ')[1].parseFloat
-let collision = conf[10].split('|')[1]
+let collision = conf[9].split('|')[1]
 
 removeDir("../data/chars/temp")
 createDir("../data/chars/temp")

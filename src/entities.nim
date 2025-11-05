@@ -1,14 +1,20 @@
-import strformat, strutils, random, std/monotimes, times
+import strformat, strutils, random, std/monotimes, times, os, sequtils
 import custGen
 
 const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
-let eT: float = readFile("../data/config").splitLines[8].split(' ')[1].parseFloat
 
 var 
   eloc: seq[array[3, int]]
   eTime: seq[MonoTime]
-  eTypes: array[1, string] = ["smiler"]
+  eTypes: seq[array[2, string]] # = ["smiler"]
   deadZones: seq[seq[array[2, int]]]
+
+let aE = toSeq(walkDir("../data/entities", relative=true))
+
+for i in 0 .. aE.len - 1:
+  let eDa: string = readFile(&"../data/entities/{aE[i][1]}/stats")
+  let mSe: string = eDa.splitLines[9].split(' ')[1]
+  eTypes.add([aE[i][1], mSe])
 
 proc resetEntities*() =
   eloc.setLen(0)
@@ -25,7 +31,7 @@ proc deleteEntity*(xy: array[2, int]) =
 proc absoluteFindEntity*(xy: array[2, int]): string =
   for i in 0 .. eTypes.len - 1:
     if eloc.contains([xy[0], xy[1], i]):
-      return &"entities/{eTypes[i]}/map"
+      return &"entities/{eTypes[i][0]}/map"
 
 proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   let rows = v.splitLines
@@ -45,6 +51,7 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
   var update: bool = false
   if eloc.len > 0:
     for i in 0 .. eloc.len - 1:
+      let eT: float = eTypes[eloc[i][2]][1].parseFloat
       if (getMonoTime() - eTime[i]).inMilliseconds().toFloat >= eT * 1000:
         update = true
         eTime[i] = getMonoTime()
