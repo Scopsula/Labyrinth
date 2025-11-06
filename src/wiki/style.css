@@ -13,6 +13,11 @@
   src: url(fonts/roboto/RobotoMono-Regular.ttf);
 }
 
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .header {
   color: black;
   font-size: 45px;
