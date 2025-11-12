@@ -20,18 +20,21 @@ proc setEData(lv: int) =
     if fileExists(&"../data/chars/entities/{aE[i][1]}/map"):
       let eDa: string = readFile(&"../data/entities/{aE[i][1]}/stats")
       let eSl: seq[string] = eDa.splitLines
-      let mSe: string = eSl[9].split(' ')[1]
       var eCm: string
+      var mSe: string
       for i in 0 .. eSl.len:
-        case eSl[11 + i].split(' ')[0]
-        of "]":
+        let data: seq[string] = eSl[10 + i].split(' ')
+        case data[0]
+        of "END":
           eCM = "0"
           break
         of "A":
-          eCm = eSl[11 + i].split(' ')[1]
+          eCm = data[1]
+          mSe = data[2]
           break
-        if lv == eSl[11 + i].split(' ')[0].parseInt:
-          eCm = eSl[11 + i].split(' ')[1]
+        if lv == data[0].parseInt:
+          eCm = data[1]
+          mSe = data[2]
           break
       if eCM != "0":
         eTypes.add([aE[i][1], mSe, eCm])
