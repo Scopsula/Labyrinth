@@ -153,7 +153,7 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
         skipCount += 1
         if x == pLX and y == pLN:
           writeChar("player", [x, y], s3S)
-        elif x == eLX and y == eLN + 1:
+        elif x == eLX and y == eLN:
           writeChar(&"{eType}/map", [x, y], s3S)
         elif y == sS[1] - (scY * 2/7).toInt:
           let n = (((sS[0] - 2) mod 5)) div 2 + 1
