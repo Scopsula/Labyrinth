@@ -135,6 +135,7 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
           eloc[i][3] = 4
           eXY[1] -= 1
         else:
+          var moved: bool = false
           if eM[chk + 1] == ' ':
             if eM[chk - 1] == ' ':
               if eM[chk + mW] == ' ':
@@ -145,18 +146,20 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
                       deadZones[i].add([eXY[0], eXY[1]]) 
                       eXY[0] += mv[0]
                       eXY[1] += mv[1]
+                      moved = true
                       setDir(mv, i)
                     else:
                       eloc[i][3] = 0
 
-          deadZones[i].add([eXY[0], eXY[1]]) 
-          let mv: array[2, int] = sample(dir)
-          if eM[chk + mv[1] * mW + mv[0]] != ' ':
-            eXY[0] += mv[0]
-            eXY[1] += mv[1]
-            setDir(mv, i)
-          else:
-            eloc[i][3] = 0
+          deadZones[i].add([eXY[0], eXY[1]])
+          if moved == false:
+            let mv: array[2, int] = sample(dir)
+            if eM[chk + mv[1] * mW + mv[0]] != ' ':
+              eXY[0] += mv[0]
+              eXY[1] += mv[1]
+              setDir(mv, i)
+            else:
+              eloc[i][3] = 0
 
         eloc[i][0] = eXY[0]
         eloc[i][1] = eXY[1]
