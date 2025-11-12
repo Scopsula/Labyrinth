@@ -240,7 +240,7 @@ proc main() =
   bypass = true
   removeDir("../data/chars/temp")
   createDir("../data/chars/temp")
-  resetEntities()
+  resetEntities(lv)
   main()
 main()
 

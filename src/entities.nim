@@ -4,23 +4,54 @@ import custGen
 const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
 
 var 
+  rValue: float = cEGen(0)
   eloc: seq[array[3, int]]
   eTime: seq[MonoTime]
   eTypes: seq[array[3, string]]
   deadZones: seq[seq[array[2, int]]]
+  eSelect: int
+  eCMult: float
+  eChance: int
 
 let aE = toSeq(walkDir("../data/entities", relative=true))
 
-for i in 0 .. aE.len - 1:
-  if fileExists(&"../data/chars/entities/{aE[i][1]}/map"):
-    let eDa: string = readFile(&"../data/entities/{aE[i][1]}/stats")
-    let mSe: string = eDa.splitLines[9].split(' ')[1]
-    let eCm: string = eDa.splitLines[10].split(' ')[1]
-    eTypes.add([aE[i][1], mSe, eCm])
+proc setEData(lv: int) =
+  for i in 0 .. aE.len - 1:
+    if fileExists(&"../data/chars/entities/{aE[i][1]}/map"):
+      let eDa: string = readFile(&"../data/entities/{aE[i][1]}/stats")
+      let eSl: seq[string] = eDa.splitLines
+      let mSe: string = eSl[9].split(' ')[1]
+      var eCm: string
+      for i in 0 .. eSl.len:
+        case eSl[11 + i].split(' ')[0]
+        of "]":
+          eCM = "0"
+          break
+        of "A":
+          eCm = eSl[11 + i].split(' ')[1]
+          break
+        if lv == eSl[11 + i].split(' ')[0].parseInt:
+          eCm = eSl[11 + i].split(' ')[1]
+          break
+      if eCM != "0":
+        eTypes.add([aE[i][1], mSe, eCm])
+setEData(0)
 
-proc resetEntities*() =
+proc selEn() =
+  eSelect = rand(0 .. eTypes.len - 1)
+  eCMult = 1 / eTypes[eSelect][2].parseFloat
+  eChance  = (rValue * eCMult).toInt
+selEn()
+
+proc resetEntities*(lv: int) =
   eloc.setLen(0)
+  eTypes.setLen(0)
+  eTime.setLen(0)
   deadZones.setLen(0)
+  rValue = cEGen(lv)
+  setEData(lv)
+  if eTypes.len > 0:
+    selEn()
 
 proc deleteEntity*(xy: array[2, int]) =
   for i in 0 .. eTypes.len - 1:
@@ -117,19 +148,6 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
       if rows[y][x] == 'S':
         coords = [x, y]
 
-  var 
-    eSelect: int
-    eCMult: float
-    eChance: int
-    rValue: float
-
-  proc selEn() =
-    eSelect = rand(0 .. eTypes.len - 1)
-    rValue = cEGen(eTypes[0][eSelect])
-    eCMult = 1 / eTypes[eSelect][2].parseFloat
-    eChance  = (rValue * eCMult).toInt
-  selEn()
-
   var map: string = mS[1]
   let mW: int = mS[0].parseInt
   for y in 0 .. rows.len - 1:
@@ -147,3 +165,4 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
             selEn()
 
   return [visible, map]
+
