@@ -6,7 +6,7 @@ const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
 var 
   eloc: seq[array[3, int]]
   eTime: seq[MonoTime]
-  eTypes: seq[array[2, string]]
+  eTypes: seq[array[3, string]]
   deadZones: seq[seq[array[2, int]]]
 
 let aE = toSeq(walkDir("../data/entities", relative=true))
@@ -15,7 +15,8 @@ for i in 0 .. aE.len - 1:
   if fileExists(&"../data/chars/entities/{aE[i][1]}/map"):
     let eDa: string = readFile(&"../data/entities/{aE[i][1]}/stats")
     let mSe: string = eDa.splitLines[9].split(' ')[1]
-    eTypes.add([aE[i][1], mSe])
+    let eCm: string = eDa.splitLines[10].split(' ')[1]
+    eTypes.add([aE[i][1], mSe, eCm])
 
 proc resetEntities*() =
   eloc.setLen(0)
@@ -116,7 +117,18 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
       if rows[y][x] == 'S':
         coords = [x, y]
 
-  let rValue: int = cEGen()
+  var 
+    eSelect: int
+    eCMult: float
+    eChance: int
+    rValue: float
+
+  proc selEn() =
+    eSelect = rand(0 .. eTypes.len - 1)
+    rValue = cEGen(eTypes[0][eSelect])
+    eCMult = 1 / eTypes[eSelect][2].parseFloat
+    eChance  = (rValue * eCMult).toInt
+  selEn()
 
   var map: string = mS[1]
   let mW: int = mS[0].parseInt
@@ -124,13 +136,14 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
     for x in 0 .. lw - 1:
       if y == 0 or y == rows.len - 1 or x == 0 or x == lw - 1:
         if rows[y][x] == '*':
-          if rand(1 .. rValue) == 1:
+          if rand(1 .. eChance) == 1:
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
-            eloc.add([wx, wy, rand(0 .. eTypes.len - 1)])
+            eloc.add([wx, wy, eSelect])
             eTime.add(getMonoTime())
             deadZones.setLen(eloc.len)
             visible[y * (lw + 1) + x] = 'E'
             map[wY * mW + wx] = 'E'
+            selEn()
 
   return [visible, map]

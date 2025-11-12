@@ -4,12 +4,16 @@ var items: bool
 if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
   items = true
 
-proc cEGen*(): int =
+proc cEGen*(eName: string): float =
   var lv = readFile("../data/level").splitLines[0]
   case lv
   of "1":
-    return 5000
-  of "2": 
+    case eName
+    of "smiler":
+      return 5000
+    else:
+      return 10000
+  of "2":
     return 500
   of "4":
     return 20000
