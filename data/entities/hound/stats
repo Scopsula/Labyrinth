@@ -1,0 +1,12 @@
+normal scratch bite chase
+magic null
+health 30
+strength 3
+mStrength 0
+speed 40
+stamina 30
+resists null
+weaknesses fire|50
+level reciprocalSpawnMult mapSpeed
+4 1 0.5
+END

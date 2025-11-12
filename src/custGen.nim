@@ -10,6 +10,8 @@ proc cEGen*(lv: int): float =
     return 5000
   of 2:
     return 1000
+  of 4:
+    return 20000
   else:
     return 10000
 

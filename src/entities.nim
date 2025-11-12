@@ -5,7 +5,7 @@ const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
 
 var 
   rValue: float = cEGen(0)
-  eloc: seq[array[3, int]]
+  eloc: seq[array[4, int]]
   eTime: seq[MonoTime]
   eTypes: seq[array[3, string]]
   deadZones: seq[seq[array[2, int]]]
@@ -58,16 +58,26 @@ proc resetEntities*(lv: int) =
 
 proc deleteEntity*(xy: array[2, int]) =
   for i in 0 .. eTypes.len - 1:
-    if eloc.contains([xy[0], xy[1], i]):
-      let d: int = find(eloc, [xy[0], xy[1], i])
-      eloc.delete(d)
-      eTime.delete(d)
-      deadZones.delete(d)
+    for d in 0 .. 4:
+      if eloc.contains([xy[0], xy[1], i, d]):
+        let d: int = find(eloc, [xy[0], xy[1], i, d])
+        eloc.delete(d)
+        eTime.delete(d)
+        deadZones.delete(d)
 
 proc absoluteFindEntity*(xy: array[2, int]): string =
   for i in 0 .. eTypes.len - 1:
-    if eloc.contains([xy[0], xy[1], i]):
-      return &"entities/{eTypes[i][0]}/map"
+    for d in 0 .. 4:
+      if eloc.contains([xy[0], xy[1], i, d]):
+        var pol: string
+        if d == 0: pol = "map"
+        if d == 1: pol = "right"
+        if d == 2: pol = "left"
+        if d == 3: pol = "down"
+        if d == 4: pol = "up"
+        if fileExists(&"../data/chars/entities/{eTypes[i][0]}/{pol}"):
+          return &"entities/{eTypes[i][0]}/{pol}"
+        return &"entities/{eTypes[i][0]}/map"
 
 proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   let rows = v.splitLines
@@ -83,6 +93,12 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
   return absoluteFindEntity([wx, wy])
 
 proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
+  proc setDir(mv: array[2, int], i: int) =
+    if mv == [1, 0]: eloc[i][3] = 1
+    if mv == [-1, 0]: eloc[i][3] = 2
+    if mv == [0, 1]: eloc[i][3] = 3
+    if mv == [0, -1]: eloc[i][3] = 4
+
   var map: string = m
   var update: bool = false
   if eloc.len > 0:
@@ -107,12 +123,16 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
         if (eXY[1] + 1) * mW + eXY[0] + 1 > map.len - 1: discard
         elif (eXY[1] - 1) * mW + eXY[0] - 1 < 0: discard
         elif eXY[0] < xy[0] and eM[chk + 1] != ' ':
+          eloc[i][3] = 1
           eXY[0] += 1
         elif eXY[0] > xy[0] and eM[chk - 1] != ' ':
+          eloc[i][3] = 2
           eXY[0] -= 1 
         elif eXY[1] < xy[1] and eM[chk + mW] != ' ':
+          eloc[i][3] = 3 
           eXY[1] += 1
         elif eXY[1] > xy[1] and eM[chk - mW] != ' ':
+          eloc[i][3] = 4
           eXY[1] -= 1
         else:
           if eM[chk + 1] == ' ':
@@ -125,12 +145,14 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
                       deadZones[i].add([eXY[0], eXY[1]]) 
                       eXY[0] += mv[0]
                       eXY[1] += mv[1]
+                      setDir(mv, i)
 
           deadZones[i].add([eXY[0], eXY[1]]) 
           let mv: array[2, int] = sample(dir)
           if eM[chk + mv[1] * mW + mv[0]] != ' ':
             eXY[0] += mv[0]
             eXY[1] += mv[1]
+            setDir(mv, i)
 
         eloc[i][0] = eXY[0]
         eloc[i][1] = eXY[1]
@@ -160,7 +182,7 @@ proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, str
           if rand(1 .. eChance) == 1:
             let wx: int = xy[0] - coords[0] + x
             let wy: int = xy[1] - coords[1] + y
-            eloc.add([wx, wy, eSelect])
+            eloc.add([wx, wy, eSelect, 0])
             eTime.add(getMonoTime())
             deadZones.setLen(eloc.len)
             visible[y * (lw + 1) + x] = 'E'
