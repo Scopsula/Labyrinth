@@ -92,13 +92,13 @@ proc findEntity*(v: string, xy: array[2, int], exy: array[2, int]): string =
 
   return absoluteFindEntity([wx, wy])
 
-proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
-  proc setDir(mv: array[2, int], i: int) =
-    if mv == [1, 0]: eloc[i][3] = 1
-    if mv == [-1, 0]: eloc[i][3] = 2
-    if mv == [0, 1]: eloc[i][3] = 3
-    if mv == [0, -1]: eloc[i][3] = 4
+proc setDir(mv: array[2, int], i: int) =
+  if mv == [1, 0]: eloc[i][3] = 1
+  if mv == [-1, 0]: eloc[i][3] = 2
+  if mv == [0, 1]: eloc[i][3] = 3
+  if mv == [0, -1]: eloc[i][3] = 4
 
+proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
   var map: string = m
   var update: bool = false
   if eloc.len > 0:
