@@ -8,4 +8,10 @@ stamina 50
 resists dark|50
 weaknesses light|50 fire|50
 mapSpeed 0.3
-spawnRecpMult 1
+spawnLvRecipMult [
+0 0.5
+2 2
+4 0
+5 0
+A 1
+]
