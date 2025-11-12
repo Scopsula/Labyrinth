@@ -146,6 +146,8 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
                       eXY[0] += mv[0]
                       eXY[1] += mv[1]
                       setDir(mv, i)
+                    else:
+                      eloc[i][3] = 0
 
           deadZones[i].add([eXY[0], eXY[1]]) 
           let mv: array[2, int] = sample(dir)
@@ -153,6 +155,8 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
             eXY[0] += mv[0]
             eXY[1] += mv[1]
             setDir(mv, i)
+          else:
+            eloc[i][3] = 0
 
         eloc[i][0] = eXY[0]
         eloc[i][1] = eXY[1]
