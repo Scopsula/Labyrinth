@@ -147,9 +147,7 @@ proc main() =
   while true:
     if h4 == 1:
       let checkAudio = audioZone([x, y], [tX, tY], lv)
-      if audioFile == "":
-        audioFile = checkAudio
-      elif checkAudio != audioFile:
+      if checkAudio != audioFile:
         stop()
         audioFile = checkAudio
         playAudio = true
@@ -157,7 +155,7 @@ proc main() =
       if playAudio == true:
         if fileExists(&"../data/audio/{audioFile}.wav"):
           if fileExists(&"../data/audio/{audioFile}Duration"):
-            let d = readFile(&"../data/audio/{lv}Duration")
+            let d = readFile(&"../data/audio/{audioFile}Duration")
             duration = d[0 .. ^2].parseFloat
             play(&"../data/audio/{audioFile}.wav")
             time = getMonoTime()
@@ -266,7 +264,6 @@ proc main() =
 
   lv += 1
   bypass = true
-  playAudio = true
   removeDir("../data/chars/temp")
   createDir("../data/chars/temp")
   resetEntities(lv)
