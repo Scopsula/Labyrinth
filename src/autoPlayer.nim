@@ -1,5 +1,5 @@
-import illwill, strutils, strformat, random, os 
-import screen, autoGen, style, openMap, openInv, entities, upStats, battle
+import illwill, strutils, strformat, random, os, std/monotimes, times 
+import screen, autoGen, style, openMap, openInv, entities, upStats, battle, audio
 
 const
   tX: int = 10
@@ -12,6 +12,7 @@ var
   h1: int = 0
   h2: int = 0
   h3: int = 0
+  h4: int = 0
 
 let
   w: int = terminalWidth()
@@ -45,6 +46,7 @@ if conf[2].split(' ')[1] == "true":
 if conf[3].split(' ')[1] == "true": h1 = 1
 if conf[4].split(' ')[1] == "true": h2 = 1
 if conf[8].split(' ')[1] == "true": h3 = 1
+if conf[10].split(' ')[1] == "true": h4 = 1
 let sV: int = conf[7].split(' ')[1].parseInt
 let collision = conf[9].split('|')[1]
 
@@ -122,9 +124,13 @@ proc main() =
     up: bool = true
     bypass: bool = true
     closeMenu: bool = false
+    playAudio: bool = true
     steps: int = 0
+    duration: float
     bg: string
     msg: string
+    time: MonoTime
+    audioFile: string
 
   proc sUp() =
     m[y * mW + x] = 'S'
@@ -139,6 +145,28 @@ proc main() =
     up = false 
 
   while true:
+    if h4 == 1:
+      let checkAudio = audioZone([x, y], [tX, tY], lv)
+      if audioFile == "":
+        audioFile = checkAudio
+      elif checkAudio != audioFile:
+        stop()
+        audioFile = checkAudio
+        playAudio = true
+    
+      if playAudio == true:
+        if fileExists(&"../data/audio/{audioFile}.wav"):
+          if fileExists(&"../data/audio/{audioFile}Duration"):
+            let d = readFile(&"../data/audio/{lv}Duration")
+            duration = d[0 .. ^2].parseFloat
+            play(&"../data/audio/{audioFile}.wav")
+            time = getMonoTime()
+            playAudio = false
+
+      if (getMonoTime() - time).inSeconds.toFloat >= duration:
+        stop()
+        playAudio = true
+
     msg = ""
     if h1 == 1:
       if steps == tX * tY or steps == 3:
@@ -238,6 +266,7 @@ proc main() =
 
   lv += 1
   bypass = true
+  playAudio = true
   removeDir("../data/chars/temp")
   createDir("../data/chars/temp")
   resetEntities(lv)

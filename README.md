@@ -7,7 +7,9 @@ This is a WIP rouguelike backrooms game with static procedurally generated level
 For more details view the wiki above
 
 Building on Linux:
-- Depends on illwill, https://github.com/johnnovak/illwill
+- Depends on illwill https://github.com/johnnovak/illwill
+- Depends on parasound https://github.com/paranim/parasound
+- Both of these can be installed with nimble
 - build.sh will compile the game and generate the config
 
 Running:
