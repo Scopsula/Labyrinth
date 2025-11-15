@@ -14,6 +14,7 @@ Building on Linux:
 
 Running:
 - Change to the bin directory and execute autoPlayer
+- On NixOS run using steam-run for audio
 
 Game Configuration:
 - In data/config, to generate run genConf in bin
