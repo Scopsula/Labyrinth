@@ -1,6 +1,5 @@
 import parasound/dr_wav
 import parasound/miniaudio
-import os
 
 var engine = newSeq[uint8](ma_engine_size())
 proc play*(data: string) =
