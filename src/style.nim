@@ -9,6 +9,18 @@ proc refresh*(): bool =
 
 let loot: string = readFile("../data/config").splitLines[5].split(' ')[1]
 
+proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
+  case lv
+  of 1:
+    let nx: string = &"{xy[0] div (t[0] * t[1] + 1)}"
+    let ny: string = &"{xy[1] div (t[1] * t[1])}"
+    if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
+      return "halls"
+    else:
+      return "1"
+  else:
+    return &"{lv}"
+
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
   var map = mS[1]

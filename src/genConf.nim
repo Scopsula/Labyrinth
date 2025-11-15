@@ -11,6 +11,7 @@ itemsOnMap false
 sleep 5
 hud true
 collision| W
+audio false (Note: Audio must be self-provided)
 """
 
 if fileExists("../data/config"):
