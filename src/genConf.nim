@@ -8,7 +8,7 @@ thirstDrain true
 entities true
 items true
 itemsOnMap false
-sleep 5
+sleep 0
 hud true
 collision| W
 audio false (Note: Audio must be self-provided)
