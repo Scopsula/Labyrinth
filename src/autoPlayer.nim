@@ -165,15 +165,6 @@ proc main() =
         stop()
         playAudio = true
 
-    msg = ""
-    if h1 == 1:
-      if steps == tX * tY or steps == 3:
-        let tUpdate: array[2, string] = tDrain(steps, tY * tX)
-        msg = tUpdate[0]
-        steps = tUpdate[1].parseInt
-
-    msg = iUpdate(m[y * mW + x])
-
     if h2 == 1:
       let uM: array[2, string] = moveEntities([x, y], m, mW)
       if uM[1] == "true":
@@ -197,6 +188,12 @@ proc main() =
         up = true
 
     if up == true:
+      if h1 == 1:
+        if steps == tX * tY or steps == 3:
+          let tUpdate: array[2, string] = tDrain(steps, tY * tX)
+          msg = tUpdate[0]
+          steps = tUpdate[1].parseInt
+      msg = iUpdate(m[y * mW + x])
       sUp()
 
     if bypass == true:
