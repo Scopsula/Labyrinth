@@ -23,6 +23,7 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
       if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
         return "halls"
     else:
+      let nx: string = &"{xy[0] div (t[0] * t[1] + 1)}"
       if rValues[nx.parseInt + (ny.parseInt * rValues[0]) + 1] == 1:
         return "halls"
     return "1"
