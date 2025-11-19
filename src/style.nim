@@ -13,19 +13,22 @@ var doRValues: bool = false
 if doRValuesStr == "true":
   doRValues = true
 
+var rValues: seq[int]
 proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   case lv
   of 1:
     let nx: string = &"{(xy[0] + 1) div (t[0] * t[1] + 1)}"
     let ny: string = &"{xy[1] div (t[1] * t[1])}"
-    if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
-      return "halls"
+    if doRValues == false:
+      if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
+        return "halls"
     else:
-      return "1"
+      if rValues[nx.parseInt + (ny.parseInt * rValues[0]) + 1] == 1:
+        return "halls"
+    return "1"
   else:
     return &"{lv}"
 
-var rValues: seq[int]
 proc setRValues*(lv: int, map: string, s: array[4, int]) =
   if doRValues == true:
     case lv
