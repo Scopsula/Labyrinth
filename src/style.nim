@@ -1,4 +1,4 @@
-import strutils, strformat, random, os
+import strutils, strformat, random, os 
 
 proc refresh*(): bool =
   let level: string = readFile("../data/level")
@@ -8,6 +8,10 @@ proc refresh*(): bool =
   else: discard
 
 let loot: string = readFile("../data/config").splitLines[5].split(' ')[1]
+let doRValuesStr: string = readFile("../data/config").splitLines[11].split(' ')[1]
+var doRValues: bool = false
+if doRValuesStr == "true":
+  doRValues = true
 
 proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   case lv
@@ -20,6 +24,22 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
       return "1"
   else:
     return &"{lv}"
+
+var rValues: seq[int]
+proc setRValues*(lv: int, map: string, s: array[4, int]) =
+  if doRValues == true:
+    case lv
+    of 1:
+      let rX: int = s[1] div (s[2] * s[3] + 1)
+      let rY: int = s[0] div (s[3] * s[3])
+      rValues.add(rX)
+      for i in 0 .. (rX + 1) * rY:
+        if rand(s[3]) == 0:
+          rValues.add(1)
+        else:
+          rValues.add(0)
+    else:
+      discard
 
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
@@ -80,22 +100,38 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
               visible[y * (lw + 1) + x] = '5'
 
   of 1:
-    var coords: array[2, int] = setCoords() 
-
+    var coords: array[2, int] = setCoords()
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         if rows[y][x] == ' ':
-          let nx: string = &"{(xy[0] - coords[0] + x + 1) div (t[0] * t[1] + 1)}"
-          let ny: string = &"{(xy[1] - coords[1] + y) div (t[1] * t[1])}"
-          if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
-            let cx: string = &"{xy[0] - coords[0] + x}"
-            let cy: string = &"{xy[1] - coords[1] + y}"
-            if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
-              if loot == "true" and rand(1 .. 500) == 1:
-                visible[y * (lw + 1) + x] = 'R'
-              else:
-                visible[y * (lw + 1) + x] = '*'
+          var doElse: bool = false
+          if doRValues == false:
+            let nx: string = &"{(xy[0] - coords[0] + x + 1) div (t[0] * t[1] + 1)}"
+            let ny: string = &"{(xy[1] - coords[1] + y) div (t[1] * t[1])}"
+            if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
+              let cx: string = &"{xy[0] - coords[0] + x}"
+              let cy: string = &"{xy[1] - coords[1] + y}"
+              if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
+                if loot == "true" and rand(1 .. 500) == 1:
+                  visible[y * (lw + 1) + x] = 'R'
+                else:
+                  visible[y * (lw + 1) + x] = '*'
+            else:
+              doElse = true
           else:
+            var nx: int = (xy[0] - coords[0] + x) div (t[0] * t[1] + 1)
+            var ny: int = (xy[1] - coords[1] + y) div (t[1] * t[1])
+            if rValues[nx + (ny * rValues[0]) + 1] == 1:
+              let cx: int = xy[0] - coords[0] + x - (nx * (t[0] * t[1] + 1))
+              let cy: int = xy[1] - coords[1] + y - (ny * (t[1] * t[1]))
+              if cx mod 2 == 0 or cy mod 2 == 0:
+                if loot == "true" and rand(1 .. 500) == 1:
+                  visible[y * (lw + 1) + x] = 'R'
+                else:
+                  visible[y * (lw + 1) + x] = '*'
+            else:
+              doElse = true
+          if doElse == true:
             var incr: int = 0
             if rows[y + 1][x] != ' ':
               incr += 1
@@ -116,8 +152,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
                 incr = 19
             let c = "abcdefghijklmnopqrst"[incr]
             visible[y * (lw + 1) + x] = c
-
-    map = map.replace("R", " ")
     writeMap('R', coords)
 
   of 2:

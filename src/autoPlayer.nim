@@ -67,6 +67,7 @@ proc main() =
   let sMap: string = map
   let mYC: int = map.splitLines.len
   let mW: int = map.splitlines[0].len
+  setRValues(lv, map, [mYC, mW, tx, ty])
 
   var gX: int
   var gY: int

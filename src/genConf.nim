@@ -12,6 +12,7 @@ sleep 0
 hud true
 collision| W
 audio false (Note: Audio must be self-provided)
+doRValues true
 """
 
 if fileExists("../data/config"):
