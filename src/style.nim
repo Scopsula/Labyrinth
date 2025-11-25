@@ -152,7 +152,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       else:
         visible[y * (lw + 1) + x] = c
 
-  proc halls(y: int, x: int): bool =
+  proc halls(y: int, x: int, nC: bool): bool =
     if rows[y][x] == ' ':
       if doRValues == false:
         let nx: string = &"{(xy[0] - coords[0] + x + 1) div (t[0] * t[1] + 1)}"
@@ -170,7 +170,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         var nx: int = (xy[0] - coords[0] + x) div (t[0] * t[1] + 1)
         var ny: int = (xy[1] - coords[1] + y) div (t[1] * t[1])
         if rValues[nx + (ny * rValues[0]) + 1] == 1:
-          if doRValues == true:
+          if doRValues == true and nC == true:
             noCorner(nx, ny)
           let cx: int = xy[0] - coords[0] + x - (nx * (t[0] * t[1] + 1))
           let cy: int = xy[1] - coords[1] + y - (ny * (t[1] * t[1]))
@@ -192,7 +192,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     coords = setCoords()
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x) == true:
+        if halls(y, x, true) == true:
           corridors(y, x, false)
     writeMap('R', coords)
 
