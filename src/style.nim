@@ -30,7 +30,7 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   else:
     return &"{lv}"
 
-proc setRValues*(lv: int, map: string, s: array[4, int]) =
+proc setRValues*(lv: int, s: array[4, int]) =
   if doRValues == true:
     case lv
     of 1:
@@ -38,7 +38,7 @@ proc setRValues*(lv: int, map: string, s: array[4, int]) =
       let rY: int = s[0] div (s[3] * s[3])
       rValues.add(rX)
       for i in 0 .. (rX + 1) * rY:
-        if rand(s[3]) == 0:
+        if rand(1) == 0:
           rValues.add(1)
         else:
           rValues.add(0)
