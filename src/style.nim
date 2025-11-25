@@ -38,18 +38,40 @@ proc setRValues*(lv: int, s: array[4, int]) =
       let rY: int = s[0] div (s[3] * s[3])
       rValues.add(rX)
       for i in 0 .. (rX + 1) * rY:
-        if rand(1) == 0:
+        if rand(1 .. s[3]) == 1:
           rValues.add(1)
         else:
           rValues.add(0)
     else:
       discard
 
+proc noCorner(nx: int, ny: int) =
+  if rValues[(nx - 1) + ((ny - 1) * rValues[0]) + 1] == 1: # Up Left
+    if rValues[(nx - 1) + (ny * rValues[0]) + 1] == 0: # Left
+      if rValues[nx + ((ny - 1) * rValues[0]) + 1] == 0: # Up
+        rValues[(nx - 1) + ((ny - 1) * rValues[0]) + 1] = 0 # Up Left
+
+  if rValues[(nx + 1) + ((ny - 1) * rValues[0]) + 1] == 1: # Up Right
+    if rValues[(nx + 1) + (ny * rValues[0]) + 1] == 0: # Right
+      if rValues[nx + ((ny - 1) * rValues[0]) + 1] == 0: # Up
+        rValues[(nx + 1) + ((ny - 1) * rValues[0]) + 1] = 0 # Up Right
+
+  if rValues[(nx - 1) + ((ny + 1) * rValues[0]) + 1] == 1: # Down Left
+    if rValues[(nx - 1) + (ny * rValues[0]) + 1] == 0: # Left
+      if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
+        rValues[(nx - 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Left
+
+  if rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] == 1: # Down Right
+    if rValues[(nx + 1) + (ny * rValues[0]) + 1] == 0: # Right
+      if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
+        rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Right
+
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
   var map = mS[1]
   var rows = v.splitLines
   let lw = rows[0].len
+  var coords: array[2, int]
 
   proc setCoords(): array[2, int] =
     for y in 0 .. rows.len - 1:
@@ -67,126 +89,116 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           let wy: int = xy[1] - coords[1] + y
           map[wy * mW + wx] = uC
 
+  proc ceilings(y: int, x: int, tW: bool) =
+    var incr: int = 0
+    if rows[y][x] == ' ' and visible[y * (lw + 1) + x] == ' ':
+      if rows[y + 1][x] == ' ':
+        if y == rows.len - 2:
+          incr += 1
+        elif rows[y + 2][x] != ' ':
+          incr += 1
+        if rows[y][x - 1] != ' ' or rows[y + 1][x - 1] != ' ':
+          incr += 2
+        if rows[y][x + 1] != ' ' or rows[y + 1][x + 1] != ' ':
+          incr += 4
+        if rows[y - 1][x] != ' ':
+          incr += 8
+        let c = "abcdefghijklmnop"[incr]
+        visible[y * (lw + 1) + x] = c
+      elif rows[y - 1][x] != ' ' and tW == true:
+        if rows[y][x - 1] != ' ': 
+          visible[y * (lw + 1) + x] = '0'
+          if rows[y][x + 1] != ' ':
+            visible[y * (lw + 1) + x] = '3'
+        elif rows[y][x + 1] != ' ': 
+          visible[y * (lw + 1) + x] = '1'
+        else: 
+          visible[y * (lw + 1) + x] = '2'
+      elif rows[y + 1][x] != ' ' and tW == true:
+        if rows[y][x - 1] != ' ': 
+          visible[y * (lw + 1) + x] = '4'
+          if rows[y][x + 1] != ' ':
+            visible[y * (lw + 1) + x] = '6'
+        elif rows[y][x + 1] != ' ': 
+          visible[y * (lw + 1) + x] = '5'
+
+  proc corridors(y: int, x: int, r3e: bool) =
+    if rows[y][x] == ' ':
+      var incr: int = 0
+      if rows[y + 1][x] != ' ':
+        incr += 1
+      if rows[y][x - 1] != ' ':
+        incr += 2
+      if rows[y][x + 1] != ' ':
+        incr += 4
+      if rows[y - 1][x] != ' ':
+        incr += 8
+      if incr == 0:
+        if rows[y + 1][x - 1] != ' ':
+          incr = 16 
+        elif rows[y + 1][x + 1] != ' ':
+          incr = 17
+        elif rows[y - 1][x - 1] != ' ':
+          incr = 18
+        elif rows[y - 1][x + 1] != ' ':
+          incr = 19
+      let c = "abcdefghijklmnopqrst"[incr]
+      if r3e == true:
+        case c
+        of 'g', 'h', 'j', 'l', 'n', 'o', 'p':
+          visible[y * (lw + 1) + x] = '*'
+        else:
+          visible[y * (lw + 1) + x] = c
+      else:
+        visible[y * (lw + 1) + x] = c
+
+  proc halls(y: int, x: int): bool =
+    if rows[y][x] == ' ':
+      if doRValues == false:
+        let nx: string = &"{(xy[0] - coords[0] + x + 1) div (t[0] * t[1] + 1)}"
+        let ny: string = &"{(xy[1] - coords[1] + y) div (t[1] * t[1])}"
+        if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
+          let cx: string = &"{xy[0] - coords[0] + x}"
+          let cy: string = &"{xy[1] - coords[1] + y}"
+          if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
+            if loot == "true" and rand(1 .. 500) == 1:
+              visible[y * (lw + 1) + x] = 'R'
+            else:
+              visible[y * (lw + 1) + x] = '*'
+          return false
+      else:
+        var nx: int = (xy[0] - coords[0] + x) div (t[0] * t[1] + 1)
+        var ny: int = (xy[1] - coords[1] + y) div (t[1] * t[1])
+        if rValues[nx + (ny * rValues[0]) + 1] == 1:
+          noCorner(nx, ny)
+          let cx: int = xy[0] - coords[0] + x - (nx * (t[0] * t[1] + 1))
+          let cy: int = xy[1] - coords[1] + y - (ny * (t[1] * t[1]))
+          if cx mod 2 == 0 or cy mod 2 == 0:
+            if loot == "true" and rand(1 .. 500) == 1:
+              visible[y * (lw + 1) + x] = 'R'
+            else:
+              visible[y * (lw + 1) + x] = '*'
+          return false
+    return true
+
   case level
   of 0, 5:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        var incr: int = 0
-        if rows[y][x] == ' ' and visible[y * (lw + 1) + x] == ' ':
-          if rows[y + 1][x] == ' ':
-            if y == rows.len - 2:
-              incr += 1
-            elif rows[y + 2][x] != ' ':
-              incr += 1
-            if rows[y][x - 1] != ' ' or rows[y + 1][x - 1] != ' ':
-              incr += 2
-            if rows[y][x + 1] != ' ' or rows[y + 1][x + 1] != ' ':
-              incr += 4
-            if rows[y - 1][x] != ' ':
-              incr += 8
-            let c = "abcdefghijklmnop"[incr]
-            visible[y * (lw + 1) + x] = c
-          elif rows[y - 1][x] != ' ':
-            if rows[y][x - 1] != ' ': 
-              visible[y * (lw + 1) + x] = '0'
-              if rows[y][x + 1] != ' ':
-                visible[y * (lw + 1) + x] = '3'
-            elif rows[y][x + 1] != ' ': 
-              visible[y * (lw + 1) + x] = '1'
-            else: 
-              visible[y * (lw + 1) + x] = '2'
-          elif rows[y + 1][x] != ' ':
-            if rows[y][x - 1] != ' ': 
-              visible[y * (lw + 1) + x] = '4'
-              if rows[y][x + 1] != ' ':
-                visible[y * (lw + 1) + x] = '6'
-            elif rows[y][x + 1] != ' ': 
-              visible[y * (lw + 1) + x] = '5'
+        ceilings(y, x, true)
 
   of 1:
-    var coords: array[2, int] = setCoords()
+    coords = setCoords()
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if rows[y][x] == ' ':
-          var doElse: bool = false
-          if doRValues == false:
-            let nx: string = &"{(xy[0] - coords[0] + x + 1) div (t[0] * t[1] + 1)}"
-            let ny: string = &"{(xy[1] - coords[1] + y) div (t[1] * t[1])}"
-            if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
-              let cx: string = &"{xy[0] - coords[0] + x}"
-              let cy: string = &"{xy[1] - coords[1] + y}"
-              if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
-                if loot == "true" and rand(1 .. 500) == 1:
-                  visible[y * (lw + 1) + x] = 'R'
-                else:
-                  visible[y * (lw + 1) + x] = '*'
-            else:
-              doElse = true
-          else:
-            var nx: int = (xy[0] - coords[0] + x) div (t[0] * t[1] + 1)
-            var ny: int = (xy[1] - coords[1] + y) div (t[1] * t[1])
-            if rValues[nx + (ny * rValues[0]) + 1] == 1:
-              let cx: int = xy[0] - coords[0] + x - (nx * (t[0] * t[1] + 1))
-              let cy: int = xy[1] - coords[1] + y - (ny * (t[1] * t[1]))
-              if cx mod 2 == 0 or cy mod 2 == 0:
-                if loot == "true" and rand(1 .. 500) == 1:
-                  visible[y * (lw + 1) + x] = 'R'
-                else:
-                  visible[y * (lw + 1) + x] = '*'
-            else:
-              doElse = true
-          if doElse == true:
-            var incr: int = 0
-            if rows[y + 1][x] != ' ':
-              incr += 1
-            if rows[y][x - 1] != ' ':
-              incr += 2
-            if rows[y][x + 1] != ' ':
-              incr += 4
-            if rows[y - 1][x] != ' ':
-              incr += 8
-            if incr == 0:
-              if rows[y + 1][x - 1] != ' ':
-                incr = 16 
-              elif rows[y + 1][x + 1] != ' ':
-                incr = 17
-              elif rows[y - 1][x - 1] != ' ':
-                incr = 18
-              elif rows[y - 1][x + 1] != ' ':
-                incr = 19
-            let c = "abcdefghijklmnopqrst"[incr]
-            visible[y * (lw + 1) + x] = c
+        if halls(y, x) == true:
+          corridors(y, x, false)
     writeMap('R', coords)
 
   of 2:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if rows[y][x] == ' ':
-          var incr: int = 0
-          if rows[y + 1][x] != ' ':
-            incr += 1
-          if rows[y][x - 1] != ' ':
-            incr += 2
-          if rows[y][x + 1] != ' ':
-            incr += 4
-          if rows[y - 1][x] != ' ':
-            incr += 8
-          if incr == 0:
-            if rows[y + 1][x - 1] != ' ':
-              incr = 16 
-            elif rows[y + 1][x + 1] != ' ':
-              incr = 17
-            elif rows[y - 1][x - 1] != ' ':
-              incr = 18
-            elif rows[y - 1][x + 1] != ' ':
-              incr = 19
-          let c = "abcdefghijklmnopqrst"[incr]
-          case c
-          of 'g', 'h', 'j', 'l', 'n', 'o', 'p':
-            visible[y * (lw + 1) + x] = '*'
-          else:
-            visible[y * (lw + 1) + x] = c
-
+        corridors(y, x, true)
     writeMap('*', setCoords())
 
   of 4:
