@@ -101,12 +101,12 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         if rows[y][x] == 'S':
           return [x, y]
 
-  proc writeMap(n: char, coords: array[2, int]) =
+  proc writeMap(n: array[2, char], coords: array[2, int]) =
     let mW = mS[0].parseInt
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         let uC: char = visible[y * (lw + 1) + x]
-        if uC == '*' or uC == n:
+        if uC == n[0] or uC == n[1]:
           let wx: int = xy[0] - coords[0] + x
           let wy: int = xy[1] - coords[1] + y
           map[wy * mW + wx] = uC
@@ -174,7 +174,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       else:
         visible[y * (lw + 1) + x] = c
 
-  proc halls(y: int, x: int, s: array[2, int], c: array[2, char], nC: bool): bool =
+  proc halls(y: int, x: int, s: array[2, int], c: array[2, char], nC: array[2, bool]): bool =
     if rows[y][x] == ' ' or c[0] != ' ':
       if doRValues == false:
         let nx: string = &"{(xy[0] - coords[0] + x + 1) div s[0]}"
@@ -189,13 +189,17 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
               else:
                 visible[y * (lw + 1) + x] = '*'
           else:
-            visible[y * (lw + 1) + x] = c[0]
+            if nC[1] == true:
+              if rows[y][x] == ' ':
+                visible[y * (lw + 1) + x] = c[0]
+            else:
+              visible[y * (lw + 1) + x] = c[0]
           return false
       else:
         var nx: int = (xy[0] - coords[0] + x) div s[0]
         var ny: int = (xy[1] - coords[1] + y) div s[1]
         if rValues[nx + (ny * rValues[0]) + 1] == 1:
-          if nC == true:
+          if nC[0] == true:
             noCorner(nx, ny)
           let cx: int = xy[0] - coords[0] + x - (nx * s[0])
           let cy: int = xy[1] - coords[1] + y - (ny * s[1])
@@ -206,7 +210,11 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
               else:
                 visible[y * (lw + 1) + x] = '*'
           else:
-            visible[y * (lw + 1) + x] = c[0]
+            if nC[1] == true:
+              if rows[y][x] == ' ':
+                visible[y * (lw + 1) + x] = c[0]
+            else:
+              visible[y * (lw + 1) + x] = c[0]
           return false
     return true
 
@@ -220,23 +228,23 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     coords = setCoords()
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x, getSize(level, [t[0], t[1]]), ['P', ' '], true) == true:
+        if halls(y, x, getSize(level, [t[0], t[1]]), ['P', ' '], [true, false]) == true:
           ceilings(y, x, true)
-    writeMap('*', coords)
+    writeMap(['*', 'P'], coords)
 
   of 1:
     coords = setCoords()
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x, getSize(level, [t[0], t[1]]), [' ', 'R'], true) == true:
+        if halls(y, x, getSize(level, [t[0], t[1]]), [' ', 'R'], [true, false]) == true:
           corridors(y, x, false)
-    writeMap('R', coords)
+    writeMap(['*', 'R'], coords)
 
   of 2:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         corridors(y, x, true)
-    writeMap('*', setCoords())
+    writeMap(['*', '*'], setCoords())
 
   of 4:
     for y in 1 .. rows.len - 2:
