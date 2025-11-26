@@ -46,25 +46,33 @@ proc setRValues*(lv: int, s: array[4, int]) =
       discard
 
 proc noCorner(nx: int, ny: int) =
-  if rValues[(nx - 1) + ((ny - 1) * rValues[0]) + 1] == 1: # Up Left
-    if rValues[(nx - 1) + (ny * rValues[0]) + 1] == 0: # Left
-      if rValues[nx + ((ny - 1) * rValues[0]) + 1] == 0: # Up
-        rValues[(nx - 1) + ((ny - 1) * rValues[0]) + 1] = 0 # Up Left
+  if (nx - 1) + ((ny - 1) * rValues[0]) + 1 > 0: # Up Left (min value)
+    if (nx - 1) + (ny * rValues[0]) + 1 < rValues.len: # Left (max value)
+      if rValues[(nx - 1) + ((ny - 1) * rValues[0]) + 1] == 1: # Up Left
+        if rValues[(nx - 1) + (ny * rValues[0]) + 1] == 0: # Left
+          if rValues[nx + ((ny - 1) * rValues[0]) + 1] == 0: # Up
+            rValues[(nx - 1) + ((ny - 1) * rValues[0]) + 1] = 0 # Up Left
 
-  if rValues[(nx + 1) + ((ny - 1) * rValues[0]) + 1] == 1: # Up Right
-    if rValues[(nx + 1) + (ny * rValues[0]) + 1] == 0: # Right
-      if rValues[nx + ((ny - 1) * rValues[0]) + 1] == 0: # Up
-        rValues[(nx + 1) + ((ny - 1) * rValues[0]) + 1] = 0 # Up Right
+  if nx + ((ny - 1) * rValues[0]) + 1 > 0: # Up (min value)
+    if (nx + 1) + (ny * rValues[0]) + 1 < rValues.len: # Right (max value) 
+      if rValues[(nx + 1) + ((ny - 1) * rValues[0]) + 1] == 1: # Up Right
+        if rValues[(nx + 1) + (ny * rValues[0]) + 1] == 0: # Right
+          if rValues[nx + ((ny - 1) * rValues[0]) + 1] == 0: # Up
+            rValues[(nx + 1) + ((ny - 1) * rValues[0]) + 1] = 0 # Up Right
 
-  if rValues[(nx - 1) + ((ny + 1) * rValues[0]) + 1] == 1: # Down Left
-    if rValues[(nx - 1) + (ny * rValues[0]) + 1] == 0: # Left
-      if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
-        rValues[(nx - 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Left
+  if (nx - 1) + (ny * rValues[0]) + 1 > 0: # Left (min value)
+    if nx + ((ny + 1) * rValues[0]) + 1 < rValues.len: # Down (max value)
+      if rValues[(nx - 1) + ((ny + 1) * rValues[0]) + 1] == 1: # Down Left
+        if rValues[(nx - 1) + (ny * rValues[0]) + 1] == 0: # Left
+          if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
+            rValues[(nx - 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Left
 
-  if rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] == 1: # Down Right
-    if rValues[(nx + 1) + (ny * rValues[0]) + 1] == 0: # Right
-      if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
-        rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Right
+  if (nx + 1) + (ny * rValues[0]) + 1 > 0: # Right (min value)
+    if (nx + 1) + ((ny + 1) * rValues[0]) + 1 < rValues.len: # Down Right (max value)
+      if rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] == 1: # Down Right
+        if rValues[(nx + 1) + (ny * rValues[0]) + 1] == 0: # Right
+          if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
+            rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Right
 
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
