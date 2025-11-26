@@ -1,10 +1,12 @@
-import strutils, strformat, random, os 
+import strutils, strformat, random, os
+import custGen
 
 proc refresh*(): bool =
   let level: string = readFile("../data/level")
   case level
   of "1": return true
   of "2": return true
+  of "5": return true
   else: discard
 
 let loot: string = readFile("../data/config").splitLines[5].split(' ')[1]
@@ -30,15 +32,27 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   else:
     return &"{lv}"
 
+proc getSize(lv: int, t: array[2, int]): array[2, int] =
+  case lv
+  of 1:
+    return [t[0] * t[1] + 1, t[1] * t[1]]
+  of 5:
+    return [(t[0] * t[1] div 5) + 1, t[0] + 1]
+  else:
+    discard
+
 proc setRValues*(lv: int, s: array[4, int]) =
+  rValues.setLen(0)
   if doRValues == true:
     case lv
-    of 1:
-      let rX: int = s[1] div (s[2] * s[3] + 1)
-      let rY: int = s[0] div (s[3] * s[3])
+    of 1, 5:
+      let size: array[2, int] = getSize(lv, [s[2], s[3]])
+      let rX: int = s[1] div size[0]
+      let rY: int = s[0] div size[1]
+      let rSV: int = cEGen(lv, true).toInt
       rValues.add(rX)
-      for i in 0 .. (rX + 1) * rY:
-        if rand(2) == 0:
+      for i in 0 .. (rX + 1) * (rY + 1):
+        if rand(rSV) == 0:
           rValues.add(1)
         else:
           rValues.add(0)
@@ -160,47 +174,61 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       else:
         visible[y * (lw + 1) + x] = c
 
-  proc halls(y: int, x: int, nC: bool): bool =
-    if rows[y][x] == ' ':
+  proc halls(y: int, x: int, s: array[2, int], c: array[2, char], nC: bool): bool =
+    if rows[y][x] == ' ' or c[0] != ' ':
       if doRValues == false:
-        let nx: string = &"{(xy[0] - coords[0] + x + 1) div (t[0] * t[1] + 1)}"
-        let ny: string = &"{(xy[1] - coords[1] + y) div (t[1] * t[1])}"
+        let nx: string = &"{(xy[0] - coords[0] + x + 1) div s[0]}"
+        let ny: string = &"{(xy[1] - coords[1] + y) div s[1]}"
         if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
           let cx: string = &"{xy[0] - coords[0] + x}"
           let cy: string = &"{xy[1] - coords[1] + y}"
           if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
-            if loot == "true" and rand(1 .. 500) == 1:
-              visible[y * (lw + 1) + x] = 'R'
-            else:
-              visible[y * (lw + 1) + x] = '*'
+            if rows[y][x] == ' ':
+              if c[1] != ' ' and loot == "true" and rand(1 .. 500) == 1:
+                visible[y * (lw + 1) + x] = c[1]
+              else:
+                visible[y * (lw + 1) + x] = '*'
+          else:
+            visible[y * (lw + 1) + x] = c[0]
           return false
       else:
-        var nx: int = (xy[0] - coords[0] + x) div (t[0] * t[1] + 1)
-        var ny: int = (xy[1] - coords[1] + y) div (t[1] * t[1])
+        var nx: int = (xy[0] - coords[0] + x) div s[0]
+        var ny: int = (xy[1] - coords[1] + y) div s[1]
         if rValues[nx + (ny * rValues[0]) + 1] == 1:
           if nC == true:
             noCorner(nx, ny)
-          let cx: int = xy[0] - coords[0] + x - (nx * (t[0] * t[1] + 1))
-          let cy: int = xy[1] - coords[1] + y - (ny * (t[1] * t[1]))
+          let cx: int = xy[0] - coords[0] + x - (nx * s[0])
+          let cy: int = xy[1] - coords[1] + y - (ny * s[1])
           if cx mod 2 == 0 or cy mod 2 == 0:
-            if loot == "true" and rand(1 .. 500) == 1:
-              visible[y * (lw + 1) + x] = 'R'
-            else:
-              visible[y * (lw + 1) + x] = '*'
+            if rows[y][x] == ' ':
+              if c[1] != ' ' and loot == "true" and rand(1 .. 500) == 1:
+                visible[y * (lw + 1) + x] = c[1]
+              else:
+                visible[y * (lw + 1) + x] = '*'
+          else:
+            visible[y * (lw + 1) + x] = c[0]
           return false
     return true
 
   case level
-  of 0, 5:
+  of 0:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         ceilings(y, x, true)
+
+  of 5:
+    coords = setCoords()
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        if halls(y, x, getSize(level, [t[0], t[1]]), ['P', ' '], true) == true:
+          ceilings(y, x, true)
+    writeMap('*', coords)
 
   of 1:
     coords = setCoords()
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x, true) == true:
+        if halls(y, x, getSize(level, [t[0], t[1]]), [' ', 'R'], true) == true:
           corridors(y, x, false)
     writeMap('R', coords)
 

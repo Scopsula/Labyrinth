@@ -4,7 +4,7 @@ import custGen
 const dir: seq[array[2, int]] = @[[1, 0], [-1, 0], [0, 1], [0, -1]]
 
 var 
-  rValue: float = cEGen(0)
+  rValue: float = cEGen(0, false)
   eloc: seq[array[4, int]]
   eTime: seq[MonoTime]
   eTypes: seq[array[3, string]]
@@ -51,7 +51,7 @@ proc resetEntities*(lv: int) =
   eTypes.setLen(0)
   eTime.setLen(0)
   deadZones.setLen(0)
-  rValue = cEGen(lv)
+  rValue = cEGen(lv, false)
   setEData(lv)
   if eTypes.len > 0:
     selEn()
