@@ -10,7 +10,7 @@ items true
 itemsOnMap false
 sleep 0
 hud true
-collision| W
+collision| WP
 audio false (Note: Audio must be self-provided)
 doRValues true
 """
