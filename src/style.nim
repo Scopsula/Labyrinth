@@ -224,14 +224,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       for x in 1 .. lw - 2:
         ceilings(y, x, true)
 
-  of 5:
-    coords = setCoords()
-    for y in 1 .. rows.len - 2:
-      for x in 1 .. lw - 2:
-        if halls(y, x, getSize(level, [t[0], t[1]]), ['P', ' '], [true, false]) == true:
-          ceilings(y, x, true)
-    writeMap(['*', 'P'], coords)
-
   of 1:
     coords = setCoords()
     for y in 1 .. rows.len - 2:
@@ -245,6 +237,14 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       for x in 1 .. lw - 2:
         corridors(y, x, true)
     writeMap(['*', '*'], setCoords())
+
+  of 5:
+    coords = setCoords()
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        if halls(y, x, getSize(level, [t[0], t[1]]), ['P', ' '], [true, false]) == true:
+          ceilings(y, x, true)
+    writeMap(['*', 'P'], coords)
 
   of 4:
     for y in 1 .. rows.len - 2:
