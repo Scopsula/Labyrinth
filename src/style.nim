@@ -41,10 +41,7 @@ proc getSize(lv: int, t: array[2, int]): array[2, int] =
   else:
     discard
 
-var styleData: seq[string]
 proc setRValues*(lv: int, s: array[4, int]) =
-  if fileExists(&"../data/style/{lv}"):
-    styleData = readFile(&"../data/style/{lv}").splitLines
   rValues.setLen(0)
   if doRValues == true:
     case lv
