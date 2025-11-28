@@ -10,24 +10,15 @@ proc refresh*(): bool =
   else: discard
 
 let loot: string = readFile("../data/config").splitLines[5].split(' ')[1]
-let doRValuesStr: string = readFile("../data/config").splitLines[11].split(' ')[1]
-var doRValues: bool = false
-if doRValuesStr == "true":
-  doRValues = true
 
 var rValues: seq[int]
 proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   case lv
   of 1:
-    let nx: string = &"{(xy[0] + 1) div (t[0] * t[1] + 1)}"
-    let ny: string = &"{xy[1] div (t[1] * t[1])}"
-    if doRValues == false:
-      if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
-        return "halls"
-    else:
-      let nx: string = &"{xy[0] div (t[0] * t[1] + 1)}"
-      if rValues[nx.parseInt + (ny.parseInt * rValues[0]) + 1] == 1:
-        return "halls"
+    let nx: int = xy[0] div (t[0] * t[1] + 1)
+    let ny: int = xy[1] div (t[1] * t[1])
+    if rValues[nx + (ny * rValues[0]) + 1] == 1:
+      return "halls"
     return "1"
   else:
     return &"{lv}"
@@ -43,21 +34,20 @@ proc getSize(lv: int, t: array[2, int]): array[2, int] =
 
 proc setRValues*(lv: int, s: array[4, int]) =
   rValues.setLen(0)
-  if doRValues == true:
-    case lv
-    of 1, 5:
-      let size: array[2, int] = getSize(lv, [s[2], s[3]])
-      let rX: int = s[1] div size[0]
-      let rY: int = s[0] div size[1]
-      let rSV: int = cEGen(lv, true).toInt
-      rValues.add(rX)
-      for i in 0 .. (rX + 1) * (rY + 1):
-        if rand(rSV) == 0:
-          rValues.add(1)
-        else:
-          rValues.add(0)
-    else:
-      discard
+  case lv
+  of 1, 5:
+    let size: array[2, int] = getSize(lv, [s[2], s[3]])
+    let rX: int = s[1] div size[0]
+    let rY: int = s[0] div size[1]
+    let rSV: int = cEGen(lv, true).toInt
+    rValues.add(rX)
+    for i in 0 .. (rX + 1) * (rY + 1):
+      if rand(rSV) == 0:
+        rValues.add(1)
+      else:
+        rValues.add(0)
+  else:
+    discard
 
 proc noCorner(nx: int, ny: int) =
   if (nx - 1) + ((ny - 1) * rValues[0]) + 1 > 0: # Up Left (min value)
@@ -182,6 +172,30 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       else:
         visible[y * (lw + 1) + x] = c
 
+  proc halls(y: int, x: int, s: array[2, int], c: array[3, char], nC: array[2, bool]): bool =
+    if rows[y][x] == ' ' or rows[y][x] == c[2] or c[0] != ' ':
+      var nx: int = (xy[0] - coords[0] + x) div s[0]
+      var ny: int = (xy[1] - coords[1] + y) div s[1]
+      if rValues[nx + (ny * rValues[0]) + 1] == 1:
+        if nC[0] == true:
+          noCorner(nx, ny)
+        let cx: int = xy[0] - coords[0] + x - (nx * s[0])
+        let cy: int = xy[1] - coords[1] + y - (ny * s[1])
+        if cx mod 2 == 0 or cy mod 2 == 0:
+          if rows[y][x] == ' ' or rows[y][x] == c[2]:
+            if c[1] != ' ' and loot == "true" and rand(1 .. 500) == 1:
+              visible[y * (lw + 1) + x] = c[1]
+            else:
+              visible[y * (lw + 1) + x] = '*'
+        else:
+          if nC[1] == true:
+            if rows[y][x] == ' ':
+              visible[y * (lw + 1) + x] = c[0]
+          else:
+            visible[y * (lw + 1) + x] = c[0]
+        return true
+    return false
+
   proc delHalls(s: array[2, int]) =
     var dV: seq[int]
     var kV: seq[int]
@@ -200,50 +214,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       dV.del(d)
     for i in 0 .. dV.len - 1:
       rValues[dV[i]] = 0
-
-  proc halls(y: int, x: int, s: array[2, int], c: array[3, char], nC: array[2, bool]): bool =
-    if rows[y][x] == ' ' or rows[y][x] == c[2] or c[0] != ' ':
-      if doRValues == false:
-        let nx: string = &"{(xy[0] - coords[0] + x + 1) div s[0]}"
-        let ny: string = &"{(xy[1] - coords[1] + y) div s[1]}"
-        if "13579".contains(nx[^1]) and "13579".contains(ny[^1]):
-          let cx: string = &"{xy[0] - coords[0] + x}"
-          let cy: string = &"{xy[1] - coords[1] + y}"
-          if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
-            if rows[y][x] == ' ' or rows[y][x] == c[2]:
-              if c[1] != ' ' and loot == "true" and rand(1 .. 500) == 1:
-                visible[y * (lw + 1) + x] = c[1]
-              else:
-                visible[y * (lw + 1) + x] = '*'
-          else:
-            if nC[1] == true:
-              if rows[y][x] == ' ':
-                visible[y * (lw + 1) + x] = c[0]
-            else:
-              visible[y * (lw + 1) + x] = c[0]
-          return true
-      else:
-        var nx: int = (xy[0] - coords[0] + x) div s[0]
-        var ny: int = (xy[1] - coords[1] + y) div s[1]
-        if rValues[nx + (ny * rValues[0]) + 1] == 1:
-          if nC[0] == true:
-            noCorner(nx, ny)
-          let cx: int = xy[0] - coords[0] + x - (nx * s[0])
-          let cy: int = xy[1] - coords[1] + y - (ny * s[1])
-          if cx mod 2 == 0 or cy mod 2 == 0:
-            if rows[y][x] == ' ' or rows[y][x] == c[2]:
-              if c[1] != ' ' and loot == "true" and rand(1 .. 500) == 1:
-                visible[y * (lw + 1) + x] = c[1]
-              else:
-                visible[y * (lw + 1) + x] = '*'
-          else:
-            if nC[1] == true:
-              if rows[y][x] == ' ':
-                visible[y * (lw + 1) + x] = c[0]
-            else:
-              visible[y * (lw + 1) + x] = c[0]
-          return true
-    return false
 
   case level
   of 0:
