@@ -101,47 +101,55 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         if rows[y][x] == 'S':
           return [x, y]
 
-  proc writeMap(n: array[2, char], coords: array[2, int]) =
+  proc writeMap(n: seq[char], coords: array[2, int]) =
     let mW = mS[0].parseInt
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         let uC: char = visible[y * (lw + 1) + x]
-        if uC == n[0] or uC == n[1]:
+        if n.contains(uC):
           let wx: int = xy[0] - coords[0] + x
           let wy: int = xy[1] - coords[1] + y
           map[wy * mW + wx] = uC
 
-  proc ceilings(y: int, x: int, tW: bool) =
+  proc ceilings(y: int, x: int, c: char, tW: bool) =
     var incr: int = 0
-    if rows[y][x] == ' ' and visible[y * (lw + 1) + x] == ' ':
-      if rows[y + 1][x] == ' ':
-        if y == rows.len - 2:
+    let c1: char = rows[y][x]
+    let c2: char = visible[y * (lw + 1) + x]
+    var clear: bool = false
+    if c1 == c or c2 == c:
+      clear = true
+    if c1 == ' ' and c2 == ' ':
+      clear = true
+    if clear == true:
+      var r = v.replace(c, ' ').splitLines
+      if r[y + 1][x] == ' ':
+        if y == r.len - 2:
           incr += 1
-        elif rows[y + 2][x] != ' ':
+        elif r[y + 2][x] != ' ':
           incr += 1
-        if rows[y][x - 1] != ' ' or rows[y + 1][x - 1] != ' ':
+        if r[y][x - 1] != ' ' or r[y + 1][x - 1] != ' ':
           incr += 2
-        if rows[y][x + 1] != ' ' or rows[y + 1][x + 1] != ' ':
+        if r[y][x + 1] != ' ' or r[y + 1][x + 1] != ' ':
           incr += 4
         if rows[y - 1][x] != ' ':
           incr += 8
         let c = "abcdefghijklmnop"[incr]
         visible[y * (lw + 1) + x] = c
-      elif rows[y - 1][x] != ' ' and tW == true:
-        if rows[y][x - 1] != ' ': 
+      elif r[y - 1][x] != ' ' and tW == true:
+        if r[y][x - 1] != ' ': 
           visible[y * (lw + 1) + x] = '0'
-          if rows[y][x + 1] != ' ':
+          if r[y][x + 1] != ' ':
             visible[y * (lw + 1) + x] = '3'
-        elif rows[y][x + 1] != ' ': 
+        elif r[y][x + 1] != ' ': 
           visible[y * (lw + 1) + x] = '1'
         else: 
           visible[y * (lw + 1) + x] = '2'
-      elif rows[y + 1][x] != ' ' and tW == true:
-        if rows[y][x - 1] != ' ': 
+      elif r[y + 1][x] != ' ' and tW == true:
+        if r[y][x - 1] != ' ': 
           visible[y * (lw + 1) + x] = '4'
-          if rows[y][x + 1] != ' ':
+          if r[y][x + 1] != ' ':
             visible[y * (lw + 1) + x] = '6'
-        elif rows[y][x + 1] != ' ': 
+        elif r[y][x + 1] != ' ': 
           visible[y * (lw + 1) + x] = '5'
 
   proc corridors(y: int, x: int, r3e: bool) =
@@ -174,8 +182,8 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       else:
         visible[y * (lw + 1) + x] = c
 
-  proc halls(y: int, x: int, s: array[2, int], c: array[2, char], nC: array[2, bool]): bool =
-    if rows[y][x] == ' ' or c[0] != ' ':
+  proc halls(y: int, x: int, s: array[2, int], c: array[3, char], nC: array[2, bool]): bool =
+    if rows[y][x] == ' ' or rows[y][x] == c[2] or c[0] != ' ':
       if doRValues == false:
         let nx: string = &"{(xy[0] - coords[0] + x + 1) div s[0]}"
         let ny: string = &"{(xy[1] - coords[1] + y) div s[1]}"
@@ -183,7 +191,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           let cx: string = &"{xy[0] - coords[0] + x}"
           let cy: string = &"{xy[1] - coords[1] + y}"
           if not "13579".contains(cx[^1]) or not "02468".contains(cy[^1]):
-            if rows[y][x] == ' ':
+            if rows[y][x] == ' ' or rows[y][x] == c[2]:
               if c[1] != ' ' and loot == "true" and rand(1 .. 500) == 1:
                 visible[y * (lw + 1) + x] = c[1]
               else:
@@ -194,7 +202,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
                 visible[y * (lw + 1) + x] = c[0]
             else:
               visible[y * (lw + 1) + x] = c[0]
-          return false
+          return true
       else:
         var nx: int = (xy[0] - coords[0] + x) div s[0]
         var ny: int = (xy[1] - coords[1] + y) div s[1]
@@ -204,7 +212,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           let cx: int = xy[0] - coords[0] + x - (nx * s[0])
           let cy: int = xy[1] - coords[1] + y - (ny * s[1])
           if cx mod 2 == 0 or cy mod 2 == 0:
-            if rows[y][x] == ' ':
+            if rows[y][x] == ' ' or rows[y][x] == c[2]:
               if c[1] != ' ' and loot == "true" and rand(1 .. 500) == 1:
                 visible[y * (lw + 1) + x] = c[1]
               else:
@@ -215,80 +223,53 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
                 visible[y * (lw + 1) + x] = c[0]
             else:
               visible[y * (lw + 1) + x] = c[0]
-          return false
-    return true
+          return true
+    return false
 
   case level
   of 0:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        ceilings(y, x, true)
+        ceilings(y, x, ' ', true)
 
   of 1:
     coords = setCoords()
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x, getSize(level, [t[0], t[1]]), [' ', 'R'], [true, false]) == true:
+        if halls(y, x, getSize(level, [t[0], t[1]]), [' ', 'R', ' '], [true, false]) == false:
           corridors(y, x, false)
-    writeMap(['*', 'R'], coords)
+    writeMap(@['*', 'R'], coords)
 
   of 2:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         corridors(y, x, true)
-    writeMap(['*', '*'], setCoords())
+    writeMap(@['*'], setCoords())
 
   of 5:
     coords = setCoords()
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x, getSize(level, [t[0], t[1]]), ['P', ' '], [true, false]) == true:
-          ceilings(y, x, true)
-    writeMap(['*', 'P'], coords)
+        if halls(y, x, getSize(level, [t[0], t[1]]), ['P', ' ', 'D'], [true, false]) == false:
+          ceilings(y, x, 'D', true)
+          if rows[y][x] == 'D':
+            var deleteDoor: bool = false
+            if visible[y * (lw + 1) + x - 1] == '*':
+              deleteDoor = true
+            elif visible[y * (lw + 1) + x + 1] == '*':
+              deleteDoor = true
+            elif visible[(y - 1) * (lw + 1) + x] == '*':
+              deleteDoor = true
+            if deleteDoor == true:
+              visible[y * (lw + 1) + x] = ' '
+              ceilings(y, x, 'D', true)
+    writeMap(@['*', 'P', ' '], coords)
 
   of 4:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        var incr: int = 0
-        let c1: char = rows[y][x]
-        let c2: char = visible[y * (lw + 1) + x]
-        var clear: bool = false
-        if c1 == 'W' or c2 == 'W':
-          clear = true
-        if c1 == ' ' and c2 == ' ':
-          clear = true
-        if clear == true:
-          var r = v.replace('W', ' ').splitLines
-          if r[y + 1][x] == ' ' :
-            if y == r.len - 2:
-              incr += 1
-            elif r[y + 2][x] != ' ':
-              incr += 1
-            if r[y][x - 1] != ' ' or r[y + 1][x - 1] != ' ':
-              incr += 2
-            if r[y][x + 1] != ' ' or r[y + 1][x + 1] != ' ':
-              incr += 4
-            if r[y - 1][x] != ' ':
-              incr += 8
-            let c = "abcdefghijklmnop"[incr]
-            visible[y * (lw + 1) + x] = c
-          elif r[y - 1][x] != ' ':
-            if r[y][x - 1] != ' ': 
-              visible[y * (lw + 1) + x] = '0'
-              if r[y][x + 1] != ' ':
-                visible[y * (lw + 1) + x] = '3'
-            elif r[y][x + 1] != ' ': 
-              visible[y * (lw + 1) + x] = '1'
-            else: 
-              visible[y * (lw + 1) + x] = '2'
-          elif r[y + 1][x] != ' ':
-            if r[y][x - 1] != ' ': 
-              visible[y * (lw + 1) + x] = '4'
-              if r[y][x + 1] != ' ':
-                visible[y * (lw + 1) + x] = '6'
-            elif r[y][x + 1] != ' ': 
-              visible[y * (lw + 1) + x] = '5'
-        if c1 == 'W' or c2 == 'W':
+        ceilings(y, x, 'W', true)
+        if rows[y][x] == 'W' or visible[y * (lw + 1) + x] == 'W':
           let c: char = visible[y * (lw + 1) + x]
           var nC: char
           case c

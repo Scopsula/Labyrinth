@@ -5,10 +5,7 @@ let iOM: string = readFile("../data/config").splitLines[6].split(' ')[1]
 proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int, bg: string, sMap: string) =
   var paths: string = sMap
   let mYC = paths.splitLines.len
-  if iOM == "true":
-    paths = paths.replace("\n", "")
-  else:
-    paths = paths.multiReplace(("\n", ""), ("A", "*"), ("B", "*"), ("F", "*"))
+  paths = paths.replace("\n", "")
 
   let
     yD = (wh[1] - 1) div 2
@@ -44,6 +41,11 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
     let l: string = paths[lXB + lY .. uXB + lY]
     if i < uYB: visible = visible & l & "\n"
     else: visible = visible & l
+
+  if iOM != "true":
+    visible = visible.multiReplace(("A", "*"), ("B", "*"), ("F", "*"))
+
+  visible = visible.multiReplace(("W", " "), ("D", " "))
 
   let x: int = visible.splitLines[0].len
   let y: int = visible.splitLines.len
