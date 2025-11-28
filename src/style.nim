@@ -199,19 +199,51 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
   proc delHalls(s: array[2, int]) =
     var dV: seq[int]
     var kV: seq[int]
+    let l = rValues.len - 1
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         let nx: int = (xy[0] - coords[0] + x) div s[0]
         let ny: int = (xy[1] - coords[1] + y) div s[1]
-        if rValues[nx + (ny * rValues[0]) + 1] == 1:
-          if not dV.contains(nx + (ny * rValues[0] + 1)):
-            dV.add(nx + (ny * rValues[0]) + 1)
+        let n: int = nx + (ny * rValues[0]) + 1
+        if rValues[n] == 1:
+          if not dV.contains(n):
+            dV.add(n)
           if rows[y][x] != ' ':
-            if not kV.contains(nx + (ny * rValues[0] + 1)):
-              kV.add(nx + (ny * rValues[0]) + 1)
+            if not kV.contains(n):
+              kV.add(n)
+              for i in 1 .. l:
+                if n + i > l:
+                  break
+                if rValues[n + i] == 1:
+                  kV.add(n + i)
+                else:
+                  break
+              for i in 1 .. l:
+                if n - i < 0:
+                  break
+                if rValues[n - i] == 1:
+                  kV.add(n - i)
+                else:
+                  break
+              for i in 1 .. l:
+                if n + (i * rValues[0]) > l:
+                  break
+                if rValues[n + (i * rValues[0])] == 1:
+                  kV.add(n + (i * rValues[0]))
+                else:
+                  break
+              for i in 1 .. l:
+                if n - (i * rValues[0]) < 0:
+                  break
+                if rValues[n - (i * rValues[0])] == 1:
+                  kV.add(n - (i * rValues[0]))
+                else:
+                  break
+                
     for i in 0 .. kV.len - 1:
-      let d: int = find(dV, kV[i])
-      dV.del(d)
+      if dV.contains(kV[i]):
+        let d: int = find(dV, kV[i])
+        dV.del(d)
     for i in 0 .. dV.len - 1:
       rValues[dV[i]] = 0
 
