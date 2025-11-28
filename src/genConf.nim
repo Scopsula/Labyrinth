@@ -12,7 +12,6 @@ sleep 0
 hud true
 collision| WPD
 audio false (Note: Audio must be self-provided)
-doRValues true
 """
 
 if fileExists("../data/config"):
