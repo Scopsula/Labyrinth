@@ -28,7 +28,6 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
 
   path.add(pos)
   case lv
-  # Custom generation for level 1 may be removed
   of "1":
     for i in 1 .. n div 2:
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
@@ -36,7 +35,6 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         pos[d[0]] += d[1]
         path.add(pos)
     return path
-  # Work in progress
   of "2":
     for i in 1 .. n div ((t[0] + t[1]) div 2):
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
@@ -44,7 +42,6 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         pos[d[0]] += d[1]
         path.add(pos)
     return path
-  # Work in progress
   of "4":
     for i in 1 .. n * rand(1 .. t[0]):
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
@@ -135,4 +132,19 @@ proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
         if map[mP - (s[4] + 1)] == ' ': 
           if rand(1 .. s[2]) == 1:
             map[mP - (s[4] + 1)] = 'W'
+  of "5":
+    for i in 0 .. p.len - 1:
+      var mP: int
+      mP += p[i][0] - s[0]
+      mP += (p[i][1] - s[1]) * (s[4] + 1)
+      if items == false:
+        map[mP] = '*'
+      if mP + 1 < map.len:
+        if mP - (s[4] + 1) >= 0:
+          if map[mP - (s[4] + 1)] == ' ':
+            if map[mP - 1 - (s[4] + 1)] != 'D' and map[mP + 1 - (s[4] + 1)] != 'D':
+              if map[mP - 1 - (s[4] + 1)] != '*' and map[mP + 1 - (s[4] + 1)] != '*':
+                if rand(1 .. s[2]) == 1:
+                  map[mP - (s[4] + 1)] = 'D'
   return map
+
