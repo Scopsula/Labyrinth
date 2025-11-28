@@ -196,10 +196,49 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         return true
     return false
 
-  proc delHalls(s: array[2, int]) =
+  proc delHalls(s: array[2, int], doLink: bool) =
     var dV: seq[int]
     var kV: seq[int]
+    var link: seq[int]
     let l = rValues.len - 1
+    proc linkHalls(n: int) =
+      for i in 1 .. l:
+        if n + i > l:
+          break
+        if rValues[n + i] == 1:
+          if not kV.contains(n + i):
+            kV.add(n + i)
+            link.add(n + i)
+        else:
+          break
+      for i in 1 .. l:
+        if n - i < 0:
+          break
+        if rValues[n - i] == 1:
+          if not kV.contains(n - i):
+            kV.add(n - i)
+            link.add(n - i)
+        else:
+          break
+      for i in 1 .. l:
+        if n + (i * rValues[0]) > l:
+          break
+        if rValues[n + (i * rValues[0])] == 1:
+          if not kV.contains(n + (i * rValues[0])):
+            kV.add(n + (i * rValues[0]))
+            link.add(n + (i * rValues[0]))
+        else:
+          break
+      for i in 1 .. l:
+        if n - (i * rValues[0]) < 0:
+          break
+        if rValues[n - (i * rValues[0])] == 1:
+          if not kv.contains(n - (i * rValues[0])):
+            kV.add(n - (i * rValues[0]))
+            link.add(n - (i * rValues[0]))
+        else:
+          break
+
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         let nx: int = (xy[0] - coords[0] + x) div s[0]
@@ -211,35 +250,16 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           if rows[y][x] != ' ':
             if not kV.contains(n):
               kV.add(n)
-              for i in 1 .. l:
-                if n + i > l:
-                  break
-                if rValues[n + i] == 1:
-                  kV.add(n + i)
-                else:
-                  break
-              for i in 1 .. l:
-                if n - i < 0:
-                  break
-                if rValues[n - i] == 1:
-                  kV.add(n - i)
-                else:
-                  break
-              for i in 1 .. l:
-                if n + (i * rValues[0]) > l:
-                  break
-                if rValues[n + (i * rValues[0])] == 1:
-                  kV.add(n + (i * rValues[0]))
-                else:
-                  break
-              for i in 1 .. l:
-                if n - (i * rValues[0]) < 0:
-                  break
-                if rValues[n - (i * rValues[0])] == 1:
-                  kV.add(n - (i * rValues[0]))
-                else:
-                  break
-                
+              if doLink == true:
+                link.setLen(0)
+                link.add(n)
+                while true:
+                  let ll: int = link.len
+                  for i in 0 .. link.len - 1:
+                    linkHalls(link[i])
+                  if ll == link.len:
+                    break
+
     for i in 0 .. kV.len - 1:
       if dV.contains(kV[i]):
         let d: int = find(dV, kV[i])
@@ -256,7 +276,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
   of 1:
     coords = setCoords()
     let size = getSize(level, [t[0], t[1]])
-    delHalls(size)
+    delHalls(size, true)
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         if halls(y, x, size, [' ', 'R', ' '], [true, false]) == false:
@@ -272,7 +292,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
   of 5:
     coords = setCoords()
     let size = getSize(level, [t[0], t[1]])
-    delHalls(size)
+    delHalls(size, false)
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         if halls(y, x, size, ['P', ' ', 'D'], [true, false]) == false:
