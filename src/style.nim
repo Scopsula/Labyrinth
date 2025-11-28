@@ -182,6 +182,25 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       else:
         visible[y * (lw + 1) + x] = c
 
+  proc delHalls(s: array[2, int]) =
+    var dV: seq[int]
+    var kV: seq[int]
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        let nx: int = (xy[0] - coords[0] + x) div s[0]
+        let ny: int = (xy[1] - coords[1] + y) div s[1]
+        if rValues[nx + (ny * rValues[0]) + 1] == 1:
+          if not dV.contains(nx + (ny * rValues[0] + 1)):
+            dV.add(nx + (ny * rValues[0]) + 1)
+          if rows[y][x] != ' ':
+            if not kV.contains(nx + (ny * rValues[0] + 1)):
+              kV.add(nx + (ny * rValues[0]) + 1)
+    for i in 0 .. kV.len - 1:
+      let d: int = find(dV, kV[i])
+      dV.del(d)
+    for i in 0 .. dV.len - 1:
+      rValues[dV[i]] = 0
+
   proc halls(y: int, x: int, s: array[2, int], c: array[3, char], nC: array[2, bool]): bool =
     if rows[y][x] == ' ' or rows[y][x] == c[2] or c[0] != ' ':
       if doRValues == false:
@@ -234,9 +253,11 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
 
   of 1:
     coords = setCoords()
+    let size = getSize(level, [t[0], t[1]])
+    delHalls(size)
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x, getSize(level, [t[0], t[1]]), [' ', 'R', ' '], [true, false]) == false:
+        if halls(y, x, size, [' ', 'R', ' '], [true, false]) == false:
           corridors(y, x, false)
     writeMap(@['*', 'R'], coords)
 
@@ -248,9 +269,11 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
 
   of 5:
     coords = setCoords()
+    let size = getSize(level, [t[0], t[1]])
+    delHalls(size)
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x, getSize(level, [t[0], t[1]]), ['P', ' ', 'D'], [true, false]) == false:
+        if halls(y, x, size, ['P', ' ', 'D'], [true, false]) == false:
           ceilings(y, x, 'D', true)
           if rows[y][x] == 'D':
             var deleteDoor: bool = false
