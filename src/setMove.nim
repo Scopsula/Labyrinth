@@ -1,5 +1,5 @@
 proc selEMove*(eType: string, turn: int): string =
-  let entity = eType[9 .. ^2]
+  let entity = eType
   case entity
   of "smiler":
     if turn mod 2 == 0:
