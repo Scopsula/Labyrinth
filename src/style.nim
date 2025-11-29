@@ -32,7 +32,6 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   else:
     return &"{lv}"
 
-
 proc setRValues*(lv: int, s: array[4, int]) =
   rValues.setLen(0)
   case lv
