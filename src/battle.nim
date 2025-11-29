@@ -28,7 +28,7 @@ var
   pMo: seq[seq[string]]
 
 proc setStats(eType: string): bool =
-  if not fileExists(&"../data/{eType}/stats"):
+  if not fileExists(&"../data/entities/{eType}/stats"):
     return false
 
   let stats = readFile(&"../data/stats")
@@ -68,8 +68,8 @@ proc setStats(eType: string): bool =
     let wV = weak[i].split('|')
     wea.add([wV[0], wV[1]])
 
-  if fileExists(&"../data/{eType}/stats"):
-    let stats = readFile(&"../data/{eType}/stats")
+  if fileExists(&"../data/entities/{eType}/stats"):
+    let stats = readFile(&"../data/entities/{eType}/stats")
     eHp = stats.splitLines[2].split(' ')[1].parseInt
     eSt = stats.splitLines[3].split(' ')[1].parseFloat
     eMs = stats.splitLines[4].split(' ')[1].parseFloat
@@ -154,7 +154,7 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
         if x == pLX and y == pLN:
           writeChar("player", [x, y], s3S)
         elif x == eLX and y == eLN:
-          writeChar(&"{eType}/map", [x, y], s3S)
+          writeChar(&"entities/{eType}/map", [x, y], s3S)
         elif y == sS[1] - (scY * 2/7).toInt:
           let n = (((sS[0] - 2) mod 5)) div 2 + 1
           if x == (sS[0] - 2) div 5 * 1 + n: 
@@ -174,27 +174,27 @@ proc screen(sS: array[6, int], eType: string, msg: string) =
           discard execShellCmd("clear")
           echo sCr
 
-    if fileExists &"../data/chars/{eType}/1":
-      writeChar(&"{eType}/1", [eLX - 1, eLN + 0], s3S)
-      writeChar(&"{eType}/2", [eLX + 0, eLN + 0], s3S)
-      writeChar(&"{eType}/3", [eLX + 1, eLN + 0], s3S)
-      writeChar(&"{eType}/4", [eLX - 1, eLN + 1], s3S)
-      writeChar(&"{eType}/5", [eLX + 0, eLN + 1], s3S)
-      writeChar(&"{eType}/6", [eLX + 1, eLN + 1], s3S)
-      writeChar(&"{eType}/7", [eLX - 1, eLN + 2], s3S)
-      writeChar(&"{eType}/8", [eLX + 0, eLN + 2], s3S)
-      writeChar(&"{eType}/9", [eLX + 1, eLN + 2], s3S)
+    if fileExists &"../data/chars/entities/{eType}/1":
+      writeChar(&"entities/{eType}/1", [eLX - 1, eLN + 0], s3S)
+      writeChar(&"entities/{eType}/2", [eLX + 0, eLN + 0], s3S)
+      writeChar(&"entities/{eType}/3", [eLX + 1, eLN + 0], s3S)
+      writeChar(&"entities/{eType}/4", [eLX - 1, eLN + 1], s3S)
+      writeChar(&"entities/{eType}/5", [eLX + 0, eLN + 1], s3S)
+      writeChar(&"entities/{eType}/6", [eLX + 1, eLN + 1], s3S)
+      writeChar(&"entities/{eType}/7", [eLX - 1, eLN + 2], s3S)
+      writeChar(&"entities/{eType}/8", [eLX + 0, eLN + 2], s3S)
+      writeChar(&"entities/{eType}/9", [eLX + 1, eLN + 2], s3S)
 
-    if fileExists &"../data/chars/{eType}/t0":
-      writeChar(&"{eType}/t0", [eLX + 1, eLN - 1], s3S)
-      writeChar(&"{eType}/t1", [eLX + 2, eLN - 1], s3S)
-      writeChar(&"{eType}/t2", [eLX + 3, eLN - 1], s3S)
-      writeChar(&"{eType}/t3", [eLX + 2, eLN + 0], s3S)
-      writeChar(&"{eType}/t4", [eLX + 3, eLN + 0], s3S)
-      writeChar(&"{eType}/t5", [eLX + 2, eLN + 1], s3S)
-      writeChar(&"{eType}/t6", [eLX + 3, eLN + 1], s3S)
-      writeChar(&"{eType}/t7", [eLX + 2, eLN + 2], s3S)
-      writeChar(&"{eType}/t8", [eLX + 3, eLN + 2], s3S)
+    if fileExists &"../data/chars/entities/{eType}/t0":
+      writeChar(&"entities/{eType}/t0", [eLX + 1, eLN - 1], s3S)
+      writeChar(&"entities/{eType}/t1", [eLX + 2, eLN - 1], s3S)
+      writeChar(&"entities/{eType}/t2", [eLX + 3, eLN - 1], s3S)
+      writeChar(&"entities/{eType}/t3", [eLX + 2, eLN + 0], s3S)
+      writeChar(&"entities/{eType}/t4", [eLX + 3, eLN + 0], s3S)
+      writeChar(&"entities/{eType}/t5", [eLX + 2, eLN + 1], s3S)
+      writeChar(&"entities/{eType}/t6", [eLX + 3, eLN + 1], s3S)
+      writeChar(&"entities/{eType}/t7", [eLX + 2, eLN + 2], s3S)
+      writeChar(&"entities/{eType}/t8", [eLX + 3, eLN + 2], s3S)
 
     animation = false
 
@@ -442,7 +442,7 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var mvData: string
   case cat[1]
   of "flashlight":
-    if eType == "entities/smiler":
+    if eType == "smiler":
       discard  
   of "iMove":
     let set = readFile("../data/moves/items").splitLines
@@ -519,7 +519,7 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
   var damage: int = phyDam + magDam
   if damage < 0: damage = 0
 
-  var eName: string = eType[9 .. ^2]
+  var eName: string = eType
   eName[0] = eName[0].toUpperAscii
 
   if rand(1 .. 100) <= mSv[7].parseInt:  
@@ -643,7 +643,7 @@ proc combat(eType: string, sS: array[6, int]) =
         msg = calcMove(cat, eType, true)
         msg = &"{msg}\n{enemyMove(eType)}"
 
-      var eName: string = eType[9 .. ^2]
+      var eName: string = eType
       eName[0] = eName[0].toUpperAscii
       msg = &"{msg}\n{calcModifier(@[], false, eName)}"
 
@@ -665,7 +665,7 @@ proc combat(eType: string, sS: array[6, int]) =
     combat(eType, sS)
 
 proc initBattle*(xy: array[2, int], sS: array[6, int], bg: string) =
-  let eType: string = absoluteFindEntity(xy)[0 .. ^4]
+  let eType: string = absoluteFindEntity(xy).split('/')[1]
   if setStats(eType) == true:
     sCr = bg
     animation = true
