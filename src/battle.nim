@@ -568,7 +568,12 @@ proc calcMove(cat: array[2, string], eType: string, player: bool): string =
 
 proc enemyMove(eType: string): string =
   var mvData: seq[string]
-  for i in 0 .. eMa.len + eAt.len - 2:
+  var dispCC: int = 2
+  if eMa.len == 0:
+    dispCC -= 1
+  if eAt.len == 0:
+    dispCC -= 1
+  for i in 0 .. eMa.len + eAt.len - dispCC:
     for j in 0 .. 9:
       if fileExists(&"../data/moves/set{j}"):
         let set = readFile(&"../data/moves/set{j}").splitLines
@@ -664,8 +669,10 @@ proc combat(eType: string, sS: array[6, int]) =
   if input != 'q' and eHp > 0: 
     combat(eType, sS)
 
-proc initBattle*(xy: array[2, int], sS: array[6, int], bg: string) =
-  let eType: string = absoluteFindEntity(xy).split('/')[1]
+proc initBattle*(xy: array[2, int], sS: array[6, int], bg: string, eT: string) =
+  var eType: string = eT
+  if eType == "null":
+    eType = absoluteFindEntity(xy).split('/')[1]
   if setStats(eType) == true:
     sCr = bg
     animation = true
