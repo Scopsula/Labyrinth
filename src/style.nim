@@ -11,18 +11,6 @@ proc refresh*(): bool =
 
 let loot: string = readFile("../data/config").splitLines[5].split(' ')[1]
 
-var rValues: seq[int]
-proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
-  case lv
-  of 1:
-    let nx: int = xy[0] div (t[0] * t[1] + 1)
-    let ny: int = xy[1] div (t[1] * t[1])
-    if rValues[nx + (ny * rValues[0]) + 1] == 1:
-      return "halls"
-    return "1"
-  else:
-    return &"{lv}"
-
 proc getSize(lv: int, t: array[2, int]): array[2, int] =
   case lv
   of 1:
@@ -31,6 +19,19 @@ proc getSize(lv: int, t: array[2, int]): array[2, int] =
     return [(t[0] * t[1] div 5) + 1, t[0] + 1]
   else:
     discard
+
+var rValues: seq[int]
+proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
+  if rValues.len > 0:
+    let size: array[2, int] = getSize(lv, t)
+    let nx: int = xy[0] div size[0]
+    let ny: int = xy[1] div size[1]
+    if rValues[nx + (ny * rValues[0]) + 1] == 1:
+      return &"{lv}Halls"
+    return &"{lv}"
+  else:
+    return &"{lv}"
+
 
 proc setRValues*(lv: int, s: array[4, int]) =
   rValues.setLen(0)
