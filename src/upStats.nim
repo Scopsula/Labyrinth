@@ -34,7 +34,7 @@ proc iCount(item: char, bound: int): bool =
   else: return false
 
 proc iUpdate*(item: char): string =
-  var msg: string
+  var msg: string = "null"
   if item == 'A':
     var stats: string = readFile("../data/stats")
     var thirst: int = stats.splitLines[9].split(' ')[1].parseInt

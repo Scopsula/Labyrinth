@@ -1,5 +1,5 @@
 import illwill, strutils, strformat, random, os, std/monotimes, times 
-import screen, autoGen, style, openMap, openInv, entities, upStats, battle, audio
+import screen, autoGen, style, openMap, openInv, entities, upStats, battle, audio, colEvents
 
 const
   tX: int = 10
@@ -57,6 +57,7 @@ randomize()
 illwillInit()
 hideCursor()
 
+var msg: string
 var lv: int = 0
 proc main() =
   if not dirExists(&"../data/chars/{lv}"): lv = 0
@@ -129,11 +130,22 @@ proc main() =
     steps: int = 0
     duration: float
     bg: string
-    msg: string
     time: MonoTime
     audioFile: string
 
   proc sUp() =
+    let pM = msg.split(' ')
+    if pM[0] == "battle":
+      msg = cBattle(pM[1])
+      var sSx: int = scX
+      var sSy: int = scY
+      if scX mod 2 == 0:
+        sSx -= 1
+      if scY mod 2 == 0:
+        sSy -= 1
+      sUp()
+      msg = ""
+      initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg, pM[1]) 
     m[y * mW + x] = 'S'
     update()
     exportVar(@[w, h, tX, tY], "wht")
@@ -143,7 +155,7 @@ proc main() =
     let rSc: array[2, string] = sc(visible, m, msg)
     m = rSc[0]
     bg = rSc[1]
-    up = false 
+    up = false
 
   while true:
     if h4 == 1:
@@ -184,7 +196,7 @@ proc main() =
         if scY mod 2 == 0:
           sSy -= 1
         sUp()
-        initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg)
+        initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg, "null")
         deleteEntity([x, y])
         up = true
 
@@ -194,7 +206,9 @@ proc main() =
           let tUpdate: array[2, string] = tDrain(steps, tY * tX)
           msg = tUpdate[0]
           steps = tUpdate[1].parseInt
-      msg = iUpdate(m[y * mW + x])
+      let iMsg: string = iUpdate(m[y * mW + x])
+      if iMsg != "null":
+        msg = iMsg
       sUp()
 
     if bypass == true:
@@ -210,30 +224,58 @@ proc main() =
         if x - 1 >= 0:
           if not collision.contains(m[y * mW + x - 1]):
             m[y * mW + x] = '9'
+            msg = ""
             x -= 1
             steps += 1
             up = true
+          else:
+            msg = cEvents(m[y * mW + x - 1], [y, x - 1], "left")
+            if msg == "exit":
+              msg = cExit(m[y * mW + x - 1])
+              break
+            sUp()
       of Key.Right:
         if x + 1 <= mW - 1:
           if not collision.contains(m[y * mW + x + 1]):
             m[y * mW + x] = '9'
+            msg = ""
             x += 1
             steps += 1
             up = true
+          else:
+            msg = cEvents(m[y * mW + x + 1], [y, x + 1], "right")
+            if msg == "exit":
+              msg = cExit(m[y * mW + x + 1])
+              break
+            sUp()
       of Key.Up:
         if (y - 1) * mW + x >= 0:
           if not collision.contains(m[(y - 1) * mW + x]):
             m[y * mW + x] = '9'
+            msg = ""
             y -= 1
             steps += 1
             up = true
+          else:
+            msg = cEvents(m[(y - 1) * mW + x], [y - 1, x], "up")
+            if msg == "exit":
+              msg = cExit(m[(y - 1) * mW + x])
+              break
+            sUp()
       of Key.Down:
         if (y + 1) * mW + x < m.len:
           if not collision.contains(m[(y + 1) * mW + x]):
             m[y * mW + x] = '9'
+            msg = ""
             y += 1
             steps += 1
             up = true
+          else:
+            msg = cEvents(m[(y + 1) * mW + x], [y + 1, x], "down")
+            if msg == "exit":
+              msg = cExit(m[(y + 1) * mW + x])
+              break
+            sUp()
       of Key.M:
         openMap([w, h], [x, y], m, mW, h0, bg, sMap)
         while true:
@@ -265,6 +307,7 @@ proc main() =
   removeDir("../data/chars/temp")
   createDir("../data/chars/temp")
   resetEntities(lv)
+  resetCEv()
   main()
 main()
 
