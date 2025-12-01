@@ -229,11 +229,13 @@ proc main() =
             steps += 1
             up = true
           else:
+            let oMsg: string = msg
             msg = cEvents(m[y * mW + x - 1], [y, x - 1], "left")
             if msg == "exit":
               msg = cExit(m[y * mW + x - 1])
               break
-            sUp()
+            if oMsg != msg:
+              sUp()
       of Key.Right:
         if x + 1 <= mW - 1:
           if not collision.contains(m[y * mW + x + 1]):
@@ -243,11 +245,13 @@ proc main() =
             steps += 1
             up = true
           else:
+            let oMsg: string = msg
             msg = cEvents(m[y * mW + x + 1], [y, x + 1], "right")
             if msg == "exit":
               msg = cExit(m[y * mW + x + 1])
               break
-            sUp()
+            if oMsg != msg:
+              sUp()
       of Key.Up:
         if (y - 1) * mW + x >= 0:
           if not collision.contains(m[(y - 1) * mW + x]):
@@ -257,11 +261,13 @@ proc main() =
             steps += 1
             up = true
           else:
+            let oMsg: string = msg
             msg = cEvents(m[(y - 1) * mW + x], [y - 1, x], "up")
             if msg == "exit":
               msg = cExit(m[(y - 1) * mW + x])
               break
-            sUp()
+            if oMsg != msg:
+              sUp()
       of Key.Down:
         if (y + 1) * mW + x < m.len:
           if not collision.contains(m[(y + 1) * mW + x]):
@@ -271,11 +277,13 @@ proc main() =
             steps += 1
             up = true
           else:
+            let oMsg: string = msg
             msg = cEvents(m[(y + 1) * mW + x], [y + 1, x], "down")
             if msg == "exit":
               msg = cExit(m[(y + 1) * mW + x])
               break
-            sUp()
+            if oMsg != msg:
+              sUp()
       of Key.M:
         openMap([w, h], [x, y], m, mW, h0, bg, sMap)
         while true:
