@@ -64,6 +64,15 @@ proc exportVar*(iVar: seq[int], name: string) =
   of "gXYH": gXYH = iVar
   of "chkD": chkD = iVar
 
+proc bar(st: string, ln: int): string =
+  var rSt: string = st
+  for i in 1 .. ln:
+    rSt = rSt & "O-"
+  for i in ln + 1 .. 5:
+    rSt = rSt & "|-"
+  rSt[^1] = ' '
+  return rSt
+
 proc sc*(v: string, map: string, msg: string): array[2, string] =
   var w1: string
   for i in 1 .. wht[0]:
@@ -114,20 +123,11 @@ proc sc*(v: string, map: string, msg: string): array[2, string] =
     let dThirst = stats[9].split(' ')[1].parseInt div 10
 
     var hBar: string = "H: "
-    for i in 1 .. dHealth:
-      hBar = hBar & "O-"
-    for i in dHealth + 1 .. 5:
-      hBar = hBar & "|-"
-    hBar[^1] = ' '
+    hBar = bar(hBar, dHealth)
+    wrLine(hBar, 0)
 
     var tBar: string = "T: "
-    for i in 1 .. dThirst:
-      tBar = tBar & "O-"
-    for i in dThirst + 1 .. 5:
-      tBar = tBar & "|-"
-    tBar[^1] = ' '
-
-    wrLine(hBar, 0)
+    tBar = bar(tBar, dThirst)
     wrLine(tBar, 1)
 
     var lC: int = 0
@@ -140,6 +140,7 @@ proc sc*(v: string, map: string, msg: string): array[2, string] =
     wrLine("[i] to open inv ", 3 + lC)
     wrLine("[q] to quit ", 4 + lC)
     wrLine(msg, 5 + lC)
+
   elif gXYH[2] == 1: 
     wrLine(&"pX: {xy[0]} pY: {xy[1]} ", 0)
     wrLine(&"gX: {gXYH[0]} gY: {gXYH[1]} ", 1)
