@@ -283,7 +283,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         visible[y * (lw + 1) + x] = ' '
         ceilings(y, x, d, true)
 
-  proc overlay(y: int, x: int, d: char, oD: seq[array[2, char]]) =
+  proc overlay(y: int, x: int, d: char, oD: seq[array[2, char]], target: string) =
     if rows[y][x] == d or visible[y * (lw + 1) + x] == d:
       let c: char = visible[y * (lw + 1) + x]
       var nC: char
@@ -299,13 +299,13 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             let selTile = match[i].split(' ')[1]
             tile = readFile(&"../data/chars/{level}/{selTile}")
             break
-        let window = readFile(&"../data/chars/window")
-        for i in 0 .. window.len - 1:
-          if window[i] != ' ':
-            if window[i] == 'X':
+        let tg = readFile(&"../data/chars/{target}")
+        for i in 0 .. tg.len - 1:
+          if tg[i] != ' ':
+            if tg[i] == 'X':
               tile[i] = ' '
             else:
-              tile[i] = window[i]
+              tile[i] = tg[i]
         writeFile(&"../data/chars/temp/{nC}", tile)
       visible[y * (lw + 1) + x] = nC
 
@@ -340,7 +340,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           for i in 0 .. 9:
             let c = &"{i}"
             oD.add([c[0], zton[i]])
-        overlay(y, x, 'W', oD)
+        overlay(y, x, 'W', oD, "window")
 
   of 5:
     coords = setCoords()
