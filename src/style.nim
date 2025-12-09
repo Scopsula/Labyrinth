@@ -11,19 +11,17 @@ proc refresh*(): bool =
 
 let loot: string = readFile("../data/config").splitLines[5].split(' ')[1]
 
-proc getSize(lv: int, t: array[2, int]): array[2, int] =
-  case lv
-  of 1:
-    return [t[0] * t[1] + 1, t[1] * t[1]]
-  of 5:
-    return [(t[0] * t[1] div 5) + 1, t[0] + 1]
-  else:
-    discard
+proc getSize(lv: int): array[2, int] =
+  let sData = readFile(&"../data/levels/{lv}").splitLines
+  for i in 0 .. sData.len - 1:
+    let size = sData[i].split('.')
+    if size[0] == "halls":
+      return [size[1].parseInt, size[2].parseInt]
 
 var rValues: seq[int]
 proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   if rValues.len > 0:
-    let size: array[2, int] = getSize(lv, t)
+    let size: array[2, int] = getSize(lv)
     let nx: int = xy[0] div size[0]
     let ny: int = xy[1] div size[1]
     if rValues[nx + (ny * rValues[0]) + 1] == 1:
@@ -32,13 +30,66 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   else:
     return &"{lv}"
 
-var oD: seq[array[2, char]]
+var
+  cel: bool
+  cor: bool
+  halls: bool
+  wM: bool
+  doOW: bool
+  doDH: bool
+  link: bool
+  oWdata: char
+  celData: seq[string]
+  corData: seq[string]
+  hallsData: seq[string]
+  wMdata: seq[char]
+  oD: seq[array[2, char]]
+
 proc setRValues*(lv: int, s: array[4, int]) =
+  cel = false
+  cor = false
+  halls = false
+  wM = false
+  doOW = false
+  doDH = false
+
+  if fileExists(&"../data/levels/{lv}"):
+    let data = readFile(&"../data/levels/{lv}").splitLines
+    for i in 0 .. data.len - 1:
+      if data[i].len > 1:
+        let dLine = data[i].split('.')
+        if dLine[0] == "ceilings": 
+          cel = true
+          celData.setLen(0)
+          for j in 1 .. dLine.len - 1:
+            celData.add(dLine[j])
+        if dLine[0] == "corridors": 
+          cor = true
+          corData.setLen(0)
+          for j in 1 .. dLine.len - 1:
+            corData.add(dLine[j])
+        if dLine[0] == "halls": 
+          halls = true
+          hallsData.setLen(0)
+          for j in 3 .. dLine.len - 1:
+            hallsData.add(dLine[j])
+        if dLine[0] == "writeMap":
+          wM = true
+          wMdata.setLen(0)
+          for j in 1 .. dLine.len - 1:
+            wmData.add(dLine[j][0])
+        if dLine[0] == "overlayWall":
+          doOW = true
+          oWdata = dLine[1][0]
+        if dLine[0] == "delHalls":
+          doDH = true
+          if dLine[1] == "true": link = true
+          else: link = false
+
   rValues.setLen(0)
   oD.setLen(0)
-  case lv
-  of 1, 5:
-    let size: array[2, int] = getSize(lv, [s[2], s[3]])
+  if halls == true:
+    let size: array[2, int] = getSize(lv)
     let rX: int = s[1] div size[0]
     let rY: int = s[0] div size[1]
     let rSV: int = cEGen(lv, true).toInt
@@ -48,8 +99,6 @@ proc setRValues*(lv: int, s: array[4, int]) =
         rValues.add(1)
       else:
         rValues.add(0)
-  else:
-    discard
 
 proc noCorner(nx: int, ny: int) =
   if (nx - 1) + ((ny - 1) * rValues[0]) + 1 > 0: # Up Left (min value)
@@ -309,28 +358,58 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         writeFile(&"../data/chars/temp/{nC}", tile)
       visible[y * (lw + 1) + x] = nC
 
-  case level
-  of 0:
-    for y in 1 .. rows.len - 2:
-      for x in 1 .. lw - 2:
-        ceilings(y, x, ' ', true)
-
-  of 1:
+  if halls == true:
     coords = setCoords()
-    let size = getSize(level, [t[0], t[1]])
-    delHalls(size, true)
+    let size = getSize(level)
+    if doDH == true:
+      delHalls(size, link)
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        if halls(y, x, size, [' ', 'R', ' '], [true, false]) == false:
-          corridors(y, x, false)
-    writeMap(@['*', 'R'], coords)
+        var h1: bool = false
+        var h2: bool = false
+        if hallsData[0] == "true": h1 = true
+        if hallsData[1] == "true": h2 = true
+        let cD: array[3, char] = [hallsData[2][0], hallsData[3][0], hallsData[4][0]]
+        let b0: bool = halls(y, x, size, cd, [h1, h2])
+        if cel == true and b0 == false:
+          var b1: bool = false
+          if celData[1] == "true": b1 = true
+          ceilings(y, x, celData[0][0], b1)
+          if doOW == true:
+            overlayWall(y, x, oWdata)
+        if cor == true and b0 == false:
+          var b1: bool = false
+          if corData[0] == "true": b1 = true
+          corridors(y, x, b1)
+          if b1 == true:
+            writeMap(@['*'], setCoords())
+    if wM == true:
+      writeMap(wMdata, coords)
 
-  of 2:
+  elif cel == true:
+    var b1: bool = false
+    if celData[1] == "true": b1 = true
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
-        corridors(y, x, true)
-    writeMap(@['*'], setCoords())
+        ceilings(y, x, celData[0][0], b1)
+    if wM == true:
+      writeMap(wMdata, setCoords())
 
+  elif cor == true:
+    var b1: bool = false
+    if corData[0] == "true": b1 = true
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        corridors(y, x, b1)
+    if b1 == true:
+      if wM == true:
+        if not wMdata.contains('*'):
+          wMdata.add('*')
+        writeMap(wMdata, setCoords())
+      else:
+        writeMap(@['*'], setCoords())
+
+  case level
   of 4:
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
@@ -341,17 +420,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             let c = &"{i}"
             oD.add([c[0], zton[i]])
         overlay(y, x, 'W', oD, "window")
-
-  of 5:
-    coords = setCoords()
-    let size = getSize(level, [t[0], t[1]])
-    delHalls(size, false)
-    for y in 1 .. rows.len - 2:
-      for x in 1 .. lw - 2:
-        if halls(y, x, size, ['P', ' ', 'D'], [true, false]) == false:
-          ceilings(y, x, 'D', true)
-          overlayWall(y, x, 'D')
-    writeMap(@['*', 'P', ' '], coords)
 
   else: discard
   return [visible, map]
