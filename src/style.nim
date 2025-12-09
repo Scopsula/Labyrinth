@@ -32,8 +32,10 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   else:
     return &"{lv}"
 
+var oD: seq[array[2, char]]
 proc setRValues*(lv: int, s: array[4, int]) =
   rValues.setLen(0)
+  oD.setLen(0)
   case lv
   of 1, 5:
     let size: array[2, int] = getSize(lv, [s[2], s[3]])
@@ -78,6 +80,7 @@ proc noCorner(nx: int, ny: int) =
           if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
             rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Right
 
+var zton: string = ")!@#$%^&*("
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
   var map = mS[1]
@@ -267,6 +270,45 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     for i in 0 .. dV.len - 1:
       rValues[dV[i]] = 0
 
+  proc overlayWall(y: int, x: int, d: char) =
+    if rows[y][x] == d:
+      var oW: bool = false
+      if visible[y * (lw + 1) + x - 1] == '*':
+        oW = true
+      elif visible[y * (lw + 1) + x + 1] == '*':
+        oW = true
+      elif visible[(y - 1) * (lw + 1) + x] == '*':
+        oW = true
+      if oW == true:
+        visible[y * (lw + 1) + x] = ' '
+        ceilings(y, x, d, true)
+
+  proc overlay(y: int, x: int, d: char, oD: seq[array[2, char]]) =
+    if rows[y][x] == d or visible[y * (lw + 1) + x] == d:
+      let c: char = visible[y * (lw + 1) + x]
+      var nC: char
+      for i in 0 .. oD.len - 1:
+        if c == oD[i][0]:
+          nC = oD[i][1]
+          break
+      if not fileExists(&"../data/chars/temp/{nC}"):
+        var tile: string
+        let match: seq[string] = readFile(&"../data/chars/{level}/match").splitLines
+        for i in 0 .. match.len - 1:
+          if match[i][0] == c:
+            let selTile = match[i].split(' ')[1]
+            tile = readFile(&"../data/chars/{level}/{selTile}")
+            break
+        let window = readFile(&"../data/chars/window")
+        for i in 0 .. window.len - 1:
+          if window[i] != ' ':
+            if window[i] == 'X':
+              tile[i] = ' '
+            else:
+              tile[i] = window[i]
+        writeFile(&"../data/chars/temp/{nC}", tile)
+      visible[y * (lw + 1) + x] = nC
+
   case level
   of 0:
     for y in 1 .. rows.len - 2:
@@ -289,6 +331,17 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         corridors(y, x, true)
     writeMap(@['*'], setCoords())
 
+  of 4:
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        ceilings(y, x, 'W', true)
+        if oD.len == 0:
+          oD.add(['W', '`'])
+          for i in 0 .. 9:
+            let c = &"{i}"
+            oD.add([c[0], zton[i]])
+        overlay(y, x, 'W', oD)
+
   of 5:
     coords = setCoords()
     let size = getSize(level, [t[0], t[1]])
@@ -297,56 +350,9 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       for x in 1 .. lw - 2:
         if halls(y, x, size, ['P', ' ', 'D'], [true, false]) == false:
           ceilings(y, x, 'D', true)
-          if rows[y][x] == 'D':
-            var deleteDoor: bool = false
-            if visible[y * (lw + 1) + x - 1] == '*':
-              deleteDoor = true
-            elif visible[y * (lw + 1) + x + 1] == '*':
-              deleteDoor = true
-            elif visible[(y - 1) * (lw + 1) + x] == '*':
-              deleteDoor = true
-            if deleteDoor == true:
-              visible[y * (lw + 1) + x] = ' '
-              ceilings(y, x, 'D', true)
+          overlayWall(y, x, 'D')
     writeMap(@['*', 'P', ' '], coords)
 
-  of 4:
-    for y in 1 .. rows.len - 2:
-      for x in 1 .. lw - 2:
-        ceilings(y, x, 'W', true)
-        if rows[y][x] == 'W' or visible[y * (lw + 1) + x] == 'W':
-          let c: char = visible[y * (lw + 1) + x]
-          var nC: char
-          case c
-          of 'W': nC = '`'
-          of '0': nC = ')'
-          of '1': nC = '!'
-          of '2': nC = '@'
-          of '3': nC = '#'
-          of '4': nC = '$'
-          of '5': nC = '%'
-          of '6': nC = '^'
-          of '7': nC = '&'
-          of '8': nC = '+'
-          of '9': nC = '-'
-          else: discard
-          if not fileExists(&"../data/chars/temp/{nC}"):
-            var tile: string
-            let match: seq[string] = readFile(&"../data/chars/{level}/match").splitLines
-            for i in 0 .. match.len - 1:
-              if match[i][0] == c:
-                let selTile = match[i].split(' ')[1]
-                tile = readFile(&"../data/chars/{level}/{selTile}")
-                break
-            let window = readFile(&"../data/chars/window")
-            for i in 0 .. window.len - 1:
-              if window[i] != ' ':
-                if window[i] == 'X':
-                  tile[i] = ' '
-                else:
-                  tile[i] = window[i]
-            writeFile(&"../data/chars/temp/{nC}", tile)
-          visible[y * (lw + 1) + x] = nC
   else: discard
   return [visible, map]
 
