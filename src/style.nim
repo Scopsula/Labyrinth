@@ -413,8 +413,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         corridors(y, x, b1)
-        if doOW == true:
-          overlayWall(y, x, oWdata)
         if doOV == true:
           overlay(y, x, oVdata[0][0], oVdata[1])
     if b1 == true:
