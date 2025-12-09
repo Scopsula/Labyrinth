@@ -33,15 +33,17 @@ var
   cor: bool
   halls: bool
   wM: bool
+  doOV: bool
   doOW: bool
   doDH: bool
   link: bool
   oWdata: char
+  oVdata: seq[string]
   celData: seq[string]
   corData: seq[string]
   hallsData: seq[string]
   wMdata: seq[char]
-  oD: seq[array[2, char]]
+  cList: seq[char]
 
 proc setRValues*(lv: int, s: array[4, int]) =
   cel = false
@@ -83,9 +85,13 @@ proc setRValues*(lv: int, s: array[4, int]) =
           doDH = true
           if dLine[1] == "true": link = true
           else: link = false
+        if dLine[0] == "overlay":
+          doOV = true
+          for j in 1 .. dLine.len - 1:
+            oVdata.add(dLine[j])
 
   rValues.setLen(0)
-  oD.setLen(0)
+  cList.setLen(0)
   if halls == true:
     let size: array[2, int] = getSize(lv)
     let rX: int = s[1] div size[0]
@@ -127,7 +133,7 @@ proc noCorner(nx: int, ny: int) =
           if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
             rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Right
 
-var zton: string = ")!@#$%^&*("
+var zton: string = "`!@#$%^&*()_+-=[];{}:|<>?,."
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
   var map = mS[1]
@@ -330,13 +336,15 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         visible[y * (lw + 1) + x] = ' '
         ceilings(y, x, d, true)
 
-  proc overlay(y: int, x: int, d: char, oD: seq[array[2, char]], target: string) =
+  proc overlay(y: int, x: int, d: char, target: string) =
     if rows[y][x] == d or visible[y * (lw + 1) + x] == d:
       let c: char = visible[y * (lw + 1) + x]
+      if not cList.contains(c):
+        cList.add(c)
       var nC: char
-      for i in 0 .. oD.len - 1:
-        if c == oD[i][0]:
-          nC = oD[i][1]
+      for i in 0 .. cList.len - 1:
+        if c == cList[i]:
+          nC = zton[i]
           break
       if not fileExists(&"../data/chars/temp/{nC}"):
         var tile: string
@@ -375,6 +383,8 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           ceilings(y, x, celData[0][0], b1)
           if doOW == true:
             overlayWall(y, x, oWdata)
+          if doOV == true:
+            overlay(y, x, oVdata[0][0], oVdata[1])
         if cor == true and b0 == false:
           var b1: bool = false
           if corData[0] == "true": b1 = true
@@ -390,6 +400,10 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         ceilings(y, x, celData[0][0], b1)
+        if doOW == true:
+          overlayWall(y, x, oWdata)
+        if doOV == true:
+          overlay(y, x, oVdata[0][0], oVdata[1])
     if wM == true:
       writeMap(wMdata, setCoords())
 
@@ -399,6 +413,10 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         corridors(y, x, b1)
+        if doOW == true:
+          overlayWall(y, x, oWdata)
+        if doOV == true:
+          overlay(y, x, oVdata[0][0], oVdata[1])
     if b1 == true:
       if wM == true:
         if not wMdata.contains('*'):
@@ -406,19 +424,5 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         writeMap(wMdata, setCoords())
       else:
         writeMap(@['*'], setCoords())
-
-  case level
-  of 4:
-    for y in 1 .. rows.len - 2:
-      for x in 1 .. lw - 2:
-        ceilings(y, x, 'W', true)
-        if oD.len == 0:
-          oD.add(['W', '`'])
-          for i in 0 .. 9:
-            let c = &"{i}"
-            oD.add([c[0], zton[i]])
-        overlay(y, x, 'W', oD, "window")
-
-  else: discard
   return [visible, map]
 
