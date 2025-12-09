@@ -1,13 +1,11 @@
 import strutils, strformat, random, os
 import custGen
 
-proc refresh*(): bool =
-  let level: string = readFile("../data/level")
-  case level
-  of "1": return true
-  of "2": return true
-  of "5": return true
-  else: discard
+proc refresh*(lv: int): bool =
+  if fileExists(&"../data/levels/{lv}"):
+    let rData = readFile(&"../data/levels/{lv}")
+    if rData.contains("refresh"):
+      return true
 
 let loot: string = readFile("../data/config").splitLines[5].split(' ')[1]
 

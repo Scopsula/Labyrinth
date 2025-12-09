@@ -2,12 +2,10 @@ import strutils, strformat, os
 import style, entities
 
 var scr: string = ""
-var lv: string
 var level: int
 
-proc newLevel*() =
-  lv = readFile("../data/level").splitLines[0]
-  level = lv.parseInt
+proc newLevel*(nlv: int) =
+  level = nlv
 
 proc match(t: char, v: string, xy: array[2, int], exy: array[2, int]): string =
   case t

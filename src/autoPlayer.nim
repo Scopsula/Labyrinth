@@ -62,7 +62,7 @@ var lv: int = 0
 proc main() =
   if not dirExists(&"../data/chars/{lv}"): lv = 0
   writeFile("../data/level", &"{lv}")
-  newLevel()
+  newLevel(lv)
   let valPoint: seq[array[2, int]] = autoGenLv(n)
   var map: string = readFile("../data/map")
   let sMap: string = map
@@ -213,7 +213,7 @@ proc main() =
 
     if bypass == true:
       bypass = false
-      if refresh() == true or closeMenu == true:
+      if refresh(lv) == true or closeMenu == true:
         closeMenu = false
         up = true
 
