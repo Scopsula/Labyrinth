@@ -38,13 +38,11 @@ proc setEData(lv: int) =
           break
       if eCM != "0":
         eTypes.add([aE[i][1], mSe, eCm])
-setEData(0)
 
 proc selEn() =
   eSelect = rand(0 .. eTypes.len - 1)
   eCMult = 1 / eTypes[eSelect][2].parseFloat
   eChance  = (rValue * eCMult).toInt
-selEn()
 
 proc resetEntities*(lv: int) =
   eloc.setLen(0)
