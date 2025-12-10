@@ -69,6 +69,7 @@ proc main() =
   let mYC: int = map.splitLines.len
   let mW: int = map.splitlines[0].len
   setRValues(lv, [mYC, mW, tx, ty])
+  resetEntities(lv)
 
   var gX: int
   var gY: int
@@ -314,7 +315,6 @@ proc main() =
   bypass = true
   removeDir("../data/chars/temp")
   createDir("../data/chars/temp")
-  resetEntities(lv)
   resetCEv()
   main()
 main()
