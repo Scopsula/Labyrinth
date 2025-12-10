@@ -4,23 +4,6 @@ var items: bool
 if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
   items = true
 
-proc cEGen*(lv: int, r: bool): float =
-  case lv
-  of 1:
-    if r == true:
-      return 2
-    return 5000
-  of 2:
-    return 1000
-  of 4:
-    return 20000
-  of 5:
-    if r == true:
-      return 4
-    return 10000
-  else:
-    return 10000
-
 proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
   var lv = readFile("../data/level").splitLines[0]
   var pos: array[2, int] = [0,0]

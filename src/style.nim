@@ -1,5 +1,4 @@
 import strutils, strformat, random, os
-import custGen
 
 proc refresh*(lv: int): bool =
   if fileExists(&"../data/levels/{lv}"):
@@ -29,6 +28,7 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
     return &"{lv}"
 
 var
+  eC: float = 10000
   cel: bool
   cor: bool
   halls: bool
@@ -53,6 +53,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
   doOW = false
   doDH = false
 
+  var rSV: array[3, int] = [-1, 0, 0]
   if fileExists(&"../data/levels/{lv}"):
     let data = readFile(&"../data/levels/{lv}").splitLines
     for i in 0 .. data.len - 1:
@@ -89,20 +90,27 @@ proc setRValues*(lv: int, s: array[4, int]) =
           doOV = true
           for j in 1 .. dLine.len - 1:
             oVdata.add(dLine[j])
+        if dLine[0] == "rSV":
+          for i in 0 .. 2:
+            rSV[i] = dLine[i + 1].parseInt
+        if dLine[0] == "eC":
+          eC = dLine[1].parseFloat
 
   rValues.setLen(0)
   cList.setLen(0)
-  if halls == true:
+  if rSV[0] != -1:
     let size: array[2, int] = getSize(lv)
     let rX: int = s[1] div size[0]
     let rY: int = s[0] div size[1]
-    let rSV: int = cEGen(lv, true).toInt
     rValues.add(rX)
     for i in 0 .. (rX + 1) * (rY + 1):
-      if rand(rSV) == 0:
+      if rand(rSV[0] .. rSV[1]) <= rSV[2]:
         rValues.add(1)
       else:
         rValues.add(0)
+
+proc returnEC*(): float =
+  return eC
 
 proc noCorner(nx: int, ny: int) =
   if (nx - 1) + ((ny - 1) * rValues[0]) + 1 > 0: # Up Left (min value)
