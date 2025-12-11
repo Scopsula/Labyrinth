@@ -1,7 +1,7 @@
 refresh
 eC.5000
-rSV.0.2.0
+rSV.0.1.0
 delHalls.true
-halls.15.15.true.false. .R. 
+halls.21.21.true.false. .R. 
 corridors.false
 writeMap.*.R
