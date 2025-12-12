@@ -123,7 +123,7 @@ proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
       if items == false:
         map[mP] = '*'
       if mP + 1 < map.len:
-        if mP - (s[4] + 1) >= 0:
+        if mP - 1 - (s[4] + 1) >= 0:
           if map[mP - (s[4] + 1)] == ' ':
             if map[mP - 1 - (s[4] + 1)] != 'D' and map[mP + 1 - (s[4] + 1)] != 'D':
               if map[mP - 1 - (s[4] + 1)] != '*' and map[mP + 1 - (s[4] + 1)] != '*':
