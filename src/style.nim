@@ -111,9 +111,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
 
         of "eC":
           eC = dLine[1].parseFloat
-
-        else:
-          discard
+        else: discard
 
   rValues.setLen(0)
   cList.setLen(0)
