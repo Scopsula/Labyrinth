@@ -163,6 +163,7 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
         eloc[i][1] = eXY[1]
 
         map[eXY[1] * mW + eXY[0]] = 'E'
+
   return [map, &"{update}"]
 
 proc entities*(v: string, mS: array[2, string], xy: array[2, int]): array[2, string] =
