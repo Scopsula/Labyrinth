@@ -34,13 +34,17 @@ var
   halls: bool
   wM: bool
   doOV: bool
-  doOW: bool
   doDH: bool
   link: bool
+  cD: array[3, char]
+  h1: bool = false
+  h2: bool = false
+  b1: bool = false
+  b2: bool = false
   oVdata: seq[string]
   celData: seq[string]
   corData: seq[string]
-  hallsData: seq[string]
+  hData: seq[string]
   wMdata: seq[char]
   cList: seq[char]
 
@@ -49,7 +53,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
   cor = false
   halls = false
   wM = false
-  doOW = false
+  doOV = false
   doDH = false
 
   var rSV: array[3, int] = [-1, 0, 0]
@@ -63,16 +67,23 @@ proc setRValues*(lv: int, s: array[4, int]) =
           celData.setLen(0)
           for j in 1 .. dLine.len - 1:
             celData.add(dLine[j])
+          if celData[1] == "true":
+            b1 = true
         if dLine[0] == "corridors": 
           cor = true
           corData.setLen(0)
-          for j in 1 .. dLine.len - 1:
-            corData.add(dLine[j])
+          if dLine[1] == "true":
+            b2 = true
         if dLine[0] == "halls": 
           halls = true
-          hallsData.setLen(0)
+          hData.setLen(0)
           for j in 3 .. dLine.len - 1:
-            hallsData.add(dLine[j])
+            hData.add(dLine[j])
+          if hData[0] == "true":
+            h1 = true
+          if hData[1] == "true":
+            h2 = true
+          cD = [hData[2][0], hData[3][0], hData[4][0]]
         if dLine[0] == "writeMap":
           wM = true
           wMdata.setLen(0)
@@ -138,6 +149,7 @@ proc noCorner(nx: int, ny: int) =
           if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
             rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Right
 
+var hSize: array[2, int]
 var zton: string = "`!@#$%^&*()_+-=[];{}:|<>?,."
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
@@ -330,85 +342,60 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
 
   proc overlay(y: int, x: int, d: char, target: string) =
     if rows[y][x] == d or visible[y * (lw + 1) + x] == d:
+      var tile: string
       let c: char = visible[y * (lw + 1) + x]
-      if not cList.contains(c):
-        cList.add(c)
-      var nC: char
-      for i in 0 .. cList.len - 1:
-        if c == cList[i]:
-          nC = zton[i]
-          break
-      if not fileExists(&"../data/chars/temp/{nC}"):
-        var tile: string
-        let match: seq[string] = readFile(&"../data/chars/{level}/match").splitLines
-        for i in 0 .. match.len - 1:
+      let match: seq[string] = readFile(&"../data/chars/{level}/match").splitLines
+      for i in 0 .. match.len - 1:
+        if match[i].len > 0:
           if match[i][0] == c:
-            let selTile = match[i].split(' ')[1]
-            tile = readFile(&"../data/chars/{level}/{selTile}")
+            if match[i].len > 0:
+              let selTile = match[i].split(' ')[1]
+              tile = readFile(&"../data/chars/{level}/{selTile}")
+              break
+      if tile.len > 0:
+        if not cList.contains(c):
+          cList.add(c)
+        var nC: char
+        for i in 0 .. cList.len - 1:
+          if c == cList[i]:
+            nC = zton[i]
             break
-        let tg = readFile(&"../data/chars/{target}")
-        for i in 0 .. tg.len - 1:
-          if tg[i] != ' ':
-            if tg[i] == 'X':
-              tile[i] = ' '
-            else:
-              tile[i] = tg[i]
-        writeFile(&"../data/chars/temp/{nC}", tile)
-      visible[y * (lw + 1) + x] = nC
+        if not fileExists(&"../data/chars/temp/{nC}"):
+          let tg = readFile(&"../data/chars/{target}")
+          for i in 0 .. tg.len - 1:
+            if tg[i] != ' ':
+              if tg[i] == 'X':
+                tile[i] = ' '
+              else:
+                tile[i] = tg[i]
+          writeFile(&"../data/chars/temp/{nC}", tile)
+        visible[y * (lw + 1) + x] = nC
 
   if halls == true:
     coords = setCoords()
-    let size = getSize(level)
+    hSize = getSize(level)
     if doDH == true:
-      delHalls(size, link)
-    for y in 1 .. rows.len - 2:
-      for x in 1 .. lw - 2:
-        var h1: bool = false
-        var h2: bool = false
-        if hallsData[0] == "true": h1 = true
-        if hallsData[1] == "true": h2 = true
-        let cD: array[3, char] = [hallsData[2][0], hallsData[3][0], hallsData[4][0]]
-        let b0: bool = halls(y, x, size, cd, [h1, h2])
-        if cel == true and b0 == false:
-          var b1: bool = false
-          if celData[1] == "true": b1 = true
-          ceilings(y, x, celData[0][0], b1)
-          if doOV == true:
-            overlay(y, x, oVdata[0][0], oVdata[1])
-        if cor == true and b0 == false:
-          var b1: bool = false
-          if corData[0] == "true": b1 = true
-          corridors(y, x, b1)
-          if b1 == true:
-            writeMap(@['*'], setCoords())
-    if wM == true:
-      writeMap(wMdata, coords)
+      delHalls(hSize, link)
+      
+  for y in 1 .. rows.len - 2:
+    for x in 1 .. lw - 2:
+      var b0: bool = false
+      if halls == true:
+        b0 = halls(y, x, hSize, cd, [h1, h2])
 
-  elif cel == true:
-    var b1: bool = false
-    if celData[1] == "true": b1 = true
-    for y in 1 .. rows.len - 2:
-      for x in 1 .. lw - 2:
+      if cel == true and b0 == false:
         ceilings(y, x, celData[0][0], b1)
-        if doOV == true:
-          overlay(y, x, oVdata[0][0], oVdata[1])
-    if wM == true:
-      writeMap(wMdata, setCoords())
 
-  elif cor == true:
-    var b1: bool = false
-    if corData[0] == "true": b1 = true
-    for y in 1 .. rows.len - 2:
-      for x in 1 .. lw - 2:
-        corridors(y, x, b1)
-        if doOV == true:
+      elif cor == true and b0 == false:
+        corridors(y, x, b2)
+      
+      if doOV == true:
+        if b0 == false or oVdata[2] == "true": 
           overlay(y, x, oVdata[0][0], oVdata[1])
-    if b1 == true:
-      if wM == true:
-        if not wMdata.contains('*'):
-          wMdata.add('*')
-        writeMap(wMdata, setCoords())
-      else:
-        writeMap(@['*'], setCoords())
+
+  if wM == true:
+    if halls == false:
+      coords = setCoords()
+    writeMap(wMdata, coords)
   return [visible, map]
 
