@@ -62,19 +62,22 @@ proc setRValues*(lv: int, s: array[4, int]) =
     for i in 0 .. data.len - 1:
       if data[i].len > 1:
         let dLine = data[i].split('.')
-        if dLine[0] == "ceilings": 
+        case dLine[0]
+        of "ceilings": 
           cel = true
           celData.setLen(0)
           for j in 1 .. dLine.len - 1:
             celData.add(dLine[j])
           if celData[1] == "true":
             b1 = true
-        if dLine[0] == "corridors": 
+
+        of "corridors": 
           cor = true
           corData.setLen(0)
           if dLine[1] == "true":
             b2 = true
-        if dLine[0] == "halls": 
+
+        of "halls": 
           halls = true
           hData.setLen(0)
           for j in 3 .. dLine.len - 1:
@@ -84,25 +87,33 @@ proc setRValues*(lv: int, s: array[4, int]) =
           if hData[1] == "true":
             h2 = true
           cD = [hData[2][0], hData[3][0], hData[4][0]]
-        if dLine[0] == "writeMap":
+
+        of "writeMap":
           wM = true
           wMdata.setLen(0)
           for j in 1 .. dLine.len - 1:
             wmData.add(dLine[j][0])
-        if dLine[0] == "delHalls":
+
+        of "delHalls":
           doDH = true
           if dLine[1] == "true": link = true
           else: link = false
-        if dLine[0] == "overlay":
+
+        of "overlay":
           doOV = true
           oVdata.setLen(0)
           for j in 1 .. dLine.len - 1:
             oVdata.add(dLine[j])
-        if dLine[0] == "rSV":
+
+        of "rSV":
           for i in 0 .. 2:
             rSV[i] = dLine[i + 1].parseInt
-        if dLine[0] == "eC":
+
+        of "eC":
           eC = dLine[1].parseFloat
+
+        else:
+          discard
 
   rValues.setLen(0)
   cList.setLen(0)
@@ -121,33 +132,34 @@ proc returnEC*(): float =
   return eC
 
 proc noCorner(nx: int, ny: int) =
-  if (nx - 1) + ((ny - 1) * rValues[0]) + 1 > 0: # Up Left (min value)
-    if (nx - 1) + (ny * rValues[0]) + 1 < rValues.len: # Left (max value)
-      if rValues[(nx - 1) + ((ny - 1) * rValues[0]) + 1] == 1: # Up Left
-        if rValues[(nx - 1) + (ny * rValues[0]) + 1] == 0: # Left
-          if rValues[nx + ((ny - 1) * rValues[0]) + 1] == 0: # Up
-            rValues[(nx - 1) + ((ny - 1) * rValues[0]) + 1] = 0 # Up Left
+  let n: int = nx + (ny * rValues[0]) + 1
+  if n - rValues[0] - 1 > 0:
+    if n - 1 < rValues.len:
+      if rValues[n - rValues[0] - 1] == 1:
+        if rValues[n - 1] == 0:
+          if rValues[n - rValues[0]] == 0:
+            rValues[n - rValues[0] - 1] = 0
 
-  if nx + ((ny - 1) * rValues[0]) + 1 > 0: # Up (min value)
-    if (nx + 1) + (ny * rValues[0]) + 1 < rValues.len: # Right (max value) 
-      if rValues[(nx + 1) + ((ny - 1) * rValues[0]) + 1] == 1: # Up Right
-        if rValues[(nx + 1) + (ny * rValues[0]) + 1] == 0: # Right
-          if rValues[nx + ((ny - 1) * rValues[0]) + 1] == 0: # Up
-            rValues[(nx + 1) + ((ny - 1) * rValues[0]) + 1] = 0 # Up Right
+  if n - rValues[0] > 0:
+    if n + 1 < rValues.len:
+      if rValues[n - rValues[0] + 1] == 1:
+        if rValues[n + 1] == 0:
+          if rValues[n - rValues[0]] == 0:
+            rValues[n - rValues[0] - 1] = 0
 
-  if (nx - 1) + (ny * rValues[0]) + 1 > 0: # Left (min value)
-    if nx + ((ny + 1) * rValues[0]) + 1 < rValues.len: # Down (max value)
-      if rValues[(nx - 1) + ((ny + 1) * rValues[0]) + 1] == 1: # Down Left
-        if rValues[(nx - 1) + (ny * rValues[0]) + 1] == 0: # Left
-          if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
-            rValues[(nx - 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Left
+  if n - 1 > 0:
+    if n + rValues[0] < rValues.len:
+      if rValues[n + rValues[0] - 1] == 1:
+        if rValues[n - 1] == 0:
+          if rValues[n + rValues[0]] == 0:
+            rValues[n + rValues[0] - 1] = 0
 
-  if (nx + 1) + (ny * rValues[0]) + 1 > 0: # Right (min value)
-    if (nx + 1) + ((ny + 1) * rValues[0]) + 1 < rValues.len: # Down Right (max value)
-      if rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] == 1: # Down Right
-        if rValues[(nx + 1) + (ny * rValues[0]) + 1] == 0: # Right
-          if rValues[nx + ((ny + 1) * rValues[0]) + 1] == 0: # Down
-            rValues[(nx + 1) + ((ny + 1) * rValues[0]) + 1] = 0 # Down Right
+  if n + 1 > 0:
+    if n + rValues[0] + 1 < rValues.len:
+      if rValues[n + rValues[0] + 1] == 1:
+        if rValues[n + 1] == 0:
+          if rValues[n + rValues[0]] == 0:
+            rValues[n + rValues[0] + 1] = 0
 
 var hSize: array[2, int]
 var zton: string = "`!@#$%^&*()_+-=[];{}:|<>?,."
@@ -397,5 +409,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     if halls == false:
       coords = setCoords()
     writeMap(wMdata, coords)
+
   return [visible, map]
 
