@@ -37,7 +37,6 @@ var
   doOW: bool
   doDH: bool
   link: bool
-  oWdata: char
   oVdata: seq[string]
   celData: seq[string]
   corData: seq[string]
@@ -79,15 +78,13 @@ proc setRValues*(lv: int, s: array[4, int]) =
           wMdata.setLen(0)
           for j in 1 .. dLine.len - 1:
             wmData.add(dLine[j][0])
-        if dLine[0] == "overlayWall":
-          doOW = true
-          oWdata = dLine[1][0]
         if dLine[0] == "delHalls":
           doDH = true
           if dLine[1] == "true": link = true
           else: link = false
         if dLine[0] == "overlay":
           doOV = true
+          oVdata.setLen(0)
           for j in 1 .. dLine.len - 1:
             oVdata.add(dLine[j])
         if dLine[0] == "rSV":
@@ -331,19 +328,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     for i in 0 .. dV.len - 1:
       rValues[dV[i]] = 0
 
-  proc overlayWall(y: int, x: int, d: char) =
-    if rows[y][x] == d:
-      var oW: bool = false
-      if visible[y * (lw + 1) + x - 1] == '*':
-        oW = true
-      elif visible[y * (lw + 1) + x + 1] == '*':
-        oW = true
-      elif visible[(y - 1) * (lw + 1) + x] == '*':
-        oW = true
-      if oW == true:
-        visible[y * (lw + 1) + x] = ' '
-        ceilings(y, x, d, true)
-
   proc overlay(y: int, x: int, d: char, target: string) =
     if rows[y][x] == d or visible[y * (lw + 1) + x] == d:
       let c: char = visible[y * (lw + 1) + x]
@@ -389,8 +373,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           var b1: bool = false
           if celData[1] == "true": b1 = true
           ceilings(y, x, celData[0][0], b1)
-          if doOW == true:
-            overlayWall(y, x, oWdata)
           if doOV == true:
             overlay(y, x, oVdata[0][0], oVdata[1])
         if cor == true and b0 == false:
@@ -408,8 +390,6 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
     for y in 1 .. rows.len - 2:
       for x in 1 .. lw - 2:
         ceilings(y, x, celData[0][0], b1)
-        if doOW == true:
-          overlayWall(y, x, oWdata)
         if doOV == true:
           overlay(y, x, oVdata[0][0], oVdata[1])
     if wM == true:
