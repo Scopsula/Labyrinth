@@ -17,21 +17,23 @@ proc getSize(lv: int): array[2, int] =
 
 var aData: seq[string]
 var rValues: seq[int]
-proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
-  var rAudio: array[2, string]
+proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): array[2, string] =
+  var rAudio: array[3, string]
   for i in 0 .. aData.len - 1:
     let lAd = aData[i].split('|')
     if lAd[0] == &"{lv}":
       rAudio[0] = &"{lv}/{lAd[1]}"
+      rAudio[2] = lAd[2]
     if lAd[0] == &"{lv}Halls":
       rAudio[1] = &"{lv}/{lAd[1]}"
+      rAudio[2] = lAd[2]
   if rValues.len > 0:
     let size: array[2, int] = getSize(lv)
     let nx: int = xy[0] div size[0]
     let ny: int = xy[1] div size[1]
     if rValues[nx + (ny * rValues[0]) + 1] == 1:
-      return rAudio[1]
-  return rAudio[0]
+      return [rAudio[1], rAudio[2]]
+  return [rAudio[0], rAudio[2]]
 
 var
   eC: float = 10000
@@ -58,7 +60,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
   if fileExists(&"../data/audio/{lv}/match"):
     aData = readFile(&"../data/audio/{lv}/match").splitLines
   else:
-    aData = @[&"{lv}|{lv}"]
+    aData = @[&"{lv}|{lv}|Unknown"]
 
   cel = false
   cor = false

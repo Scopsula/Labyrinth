@@ -71,7 +71,7 @@ proc bar(st: string, ln: int): string =
   rSt[^1] = ' '
   return rSt
 
-proc sc*(v: string, map: string, msg: string): array[2, string] =
+proc sc*(v: string, map: string, msg: string, music: array[2, string]): array[2, string] =
   var w1: string
   for i in 1 .. wht[0]:
     w1 = w1 & "/"
@@ -114,6 +114,37 @@ proc sc*(v: string, map: string, msg: string): array[2, string] =
 
   proc wrLine(line: string, num: int) =
     scr[num * (wht[0] + 1) .. num * (wht[0] + 1) + line.len - 1] = line
+
+  if music[0] != &"{level}/{level}" and music[0].len > 0:
+    let rLen: int = wht[2] * rows[0].len - 1
+    proc wMLine(line: string, num: int) =
+      let lineC: int = num * (wht[0] + 1)
+      scr[lineC + rLen - line.len + 1 .. lineC + rLen] = line
+
+    var line: string = &" | Now playing: {music[0].split('/')[1]} "
+    var author: string = & " | By: {music[1]} "
+
+    if author.len < line.len:
+      for i in author.len .. line.len - 1:
+        author = author & " "
+
+    elif line.len < author.len:
+      for i in line.len .. author.len - 1:
+        line = line & " "
+
+    var bLine: string
+    for i in 0 .. line.len - 1:
+      if i == 0:
+        bLine = bLine & " "
+      elif i == 1:
+        bLine = bLine & "|"
+      else:
+        bLine = bLine & "-"
+
+    wMLine(bLine, 0)
+    wMLine(line, 1)
+    wMLine(author, 2)
+    wMLine(bLine, 3)
 
   if gXYH[4] == 1:
     let stats = readFile("../data/stats").splitLines

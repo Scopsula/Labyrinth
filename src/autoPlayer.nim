@@ -133,6 +133,7 @@ proc main() =
     bg: string
     time: MonoTime
     audioFile: string
+    author: string
 
   proc sUp() =
     let pM = msg.split(' ')
@@ -153,7 +154,7 @@ proc main() =
     exportVar(@[x, y], "xy")
     exportVar(@[gX, gY, h0, h2, h3], "gXYH")
     exportVar(@[xD, yD, mW, mYC], "chkD")
-    let rSc: array[2, string] = sc(visible, m, msg)
+    let rSc: array[2, string] = sc(visible, m, msg, [audioFile, author])
     m = rSc[0]
     bg = rSc[1]
     up = false
@@ -161,9 +162,10 @@ proc main() =
   while true:
     if h4 == 1:
       let checkAudio = audioZone([x, y], [tX, tY], lv)
-      if checkAudio != audioFile:
+      author = checkAudio[1]
+      if checkAudio[0] != audioFile:
         stop()
-        audioFile = checkAudio
+        audioFile = checkAudio[0]
         playAudio = true
     
       if playAudio == true:
@@ -197,6 +199,9 @@ proc main() =
         if scY mod 2 == 0:
           sSy -= 1
         sUp()
+        if h4 == 1:
+          stop()
+          playAudio = true
         initBattle([x, y], [sSx, sSy, w, tX, tY, lV], bg, "null")
         deleteEntity([x, y])
         up = true
@@ -286,6 +291,9 @@ proc main() =
             if oMsg != msg:
               sUp()
       of Key.M:
+        if h4 == 1:
+          stop()
+          playAudio = true
         openMap([w, h], [x, y], m, mW, h0, bg, sMap)
         while true:
           if getKey() == Key.M:
@@ -294,6 +302,9 @@ proc main() =
         bypass = true
         closeMenu = true
       of Key.I:
+        if h4 == 1:
+          stop()
+          playAudio = true
         oInv(bg)
         bypass = true
         closeMenu = true
