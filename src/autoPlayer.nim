@@ -168,8 +168,8 @@ proc main() =
     
       if playAudio == true:
         if fileExists(&"../data/audio/{audioFile}.wav"):
-          if fileExists(&"../data/audio/{audioFile}Duration"):
-            let d = readFile(&"../data/audio/{audioFile}Duration")
+          if fileExists(&"../data/audio/{audioFile}.duration"):
+            let d = readFile(&"../data/audio/{audioFile}.duration")
             duration = d[0 .. ^2].parseFloat
             play(&"../data/audio/{audioFile}.wav")
             time = getMonoTime()

@@ -20,10 +20,10 @@ var rValues: seq[int]
 proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): string =
   var rAudio: array[2, string]
   for i in 0 .. aData.len - 1:
-    let lAd = aData[i].split(' ')
+    let lAd = aData[i].split('|')
     if lAd[0] == &"{lv}":
       rAudio[0] = &"{lv}/{lAd[1]}"
-    if lAd[0] == &"{lv}|Hall":
+    if lAd[0] == &"{lv}Halls":
       rAudio[1] = &"{lv}/{lAd[1]}"
   if rValues.len > 0:
     let size: array[2, int] = getSize(lv)
@@ -58,7 +58,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
   if fileExists(&"../data/audio/{lv}/match"):
     aData = readFile(&"../data/audio/{lv}/match").splitLines
   else:
-    aData = @[&"{lv} {lv}"]
+    aData = @[&"{lv}|{lv}"]
 
   cel = false
   cor = false
