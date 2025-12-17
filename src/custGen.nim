@@ -34,8 +34,8 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
     return path
   of "5":
     var c4: int = 0
-    var rX: int = t[0]
-    var rY: int = t[1]
+    var rX: int = sample([t[0], t[1]])
+    var rY: int = sample([t[0], t[1]])
     for i in 1 .. n:
       if rand(t[0] * t[1]) == 0:
         rX = sample([t[0], t[1]])
@@ -82,6 +82,11 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
               path.add(pos)
           else: discard
         c4 = 0
+    return path
+  of "8":
+    for i in 1 .. n * rand(t[1] .. t[0]):
+      pos[rand(1)] += rand(-1 .. 1)
+      path.add(pos)
     return path
   else:
     return @[]
