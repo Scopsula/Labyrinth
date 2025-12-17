@@ -11,7 +11,7 @@ itemsOnMap false
 sleep 0
 hud true
 collision| WPD
-audio false (Note: Audio must be self-provided)
+audio true
 """
 
 if fileExists("../data/config"):
@@ -23,3 +23,4 @@ else:
   echo "\nCreating config..."
   writeFile("../data/config", defConf)
   echo "File written"
+
