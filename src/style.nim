@@ -58,8 +58,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
   if fileExists(&"../data/audio/{lv}/match"):
     aData = readFile(&"../data/audio/{lv}/match").splitLines
   else:
-    aData.setLen(0)
-    aData.add(&"{lv} {lv}")
+    aData = @[&"{lv} {lv}"]
 
   cel = false
   cor = false
