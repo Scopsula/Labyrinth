@@ -27,7 +27,7 @@ if [ ! -d ./bin ]; then
   mkdir ./bin; 
 fi
 
-nim c -d:release ./src/autoPlayer
+nim c -d:release -l:-ldl -l:-lm -l:-lpthread ./src/autoPlayer
 nim c -d:release ./src/genConf.nim
 mv ./src/autoPlayer ./bin
 mv ./src/genConf ./bin

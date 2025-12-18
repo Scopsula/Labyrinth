@@ -22,10 +22,10 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): array[2, string] 
   for i in 0 .. aData.len - 1:
     let lAd = aData[i].split('|')
     if lAd[0] == &"{lv}":
-      rAudio[0] = &"{lv}/{lAd[1]}"
+      rAudio[0] = &"{lAd[1]}"
       rAudio[2] = lAd[2]
     if lAd[0] == &"{lv}Halls":
-      rAudio[1] = &"{lv}/{lAd[1]}"
+      rAudio[1] = &"{lAd[1]}"
       rAudio[2] = lAd[2]
   if rValues.len > 0:
     let size: array[2, int] = getSize(lv)
