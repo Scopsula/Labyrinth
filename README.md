@@ -4,7 +4,7 @@ Wiki: https://scopsula.github.io/Labyrinth/<br>
 Note: The wiki is not neccesary to play/understand the game.<br>
 
 This is a WIP rouguelike backrooms game with static procedurally generated levels.<br>
-For more details view the wiki above<br><br>
+For more details view the wiki above<br>
 
 Audio files (in data/audio) are non-free, and are copyright of DM DOKURO
 - These are not licensed under the GPL
