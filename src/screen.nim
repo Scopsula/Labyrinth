@@ -115,7 +115,7 @@ proc sc*(v: string, map: string, msg: string, music: array[2, string]): array[2,
   proc wrLine(line: string, num: int) =
     scr[num * (wht[0] + 1) .. num * (wht[0] + 1) + line.len - 1] = line
 
-  if music[0] != &"{level}/{level}" and music[0].len > 0:
+  if music[0] != &"{level}/{level}" and music[0].len > 1:
     let rLen: int = wht[2] * rows[0].len - 1
     proc wMLine(line: string, num: int) =
       let lineC: int = num * (wht[0] + 1)
