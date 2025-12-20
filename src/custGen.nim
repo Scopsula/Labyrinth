@@ -32,7 +32,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
       for i in 1 .. rand(t[1] .. (t[0] - d[0] * t[1])):
         proc doW() =
           var oD: int = d[0] - 1
-          if oD == -1: oD = 0
+          if oD == -1: oD = 1
           var tPos = pos
           tPos[oD] -= 1 + (selW div 2)
           while tPos[oD] < pos[oD] + selW div 2:
