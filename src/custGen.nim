@@ -28,22 +28,45 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
     return path
 
   of "3":
-    proc doW(selW: int, d: array[2, int]) =
+    proc doW(selW: int, d: array[2, int], fent: bool) =
+      var con: int = 0
       var oD: int = d[0] - 1
       if oD == -1: oD = 1
       var tPos = pos
+      proc mClear() =
+        var dPos = tPos
+        dPos[d[0]] -= 1
+        for i in 0 .. 2:
+          dPos[d[0]] += i
+          path.add(dPos)
       tPos[oD] -= 1 + (selW div 2)
       while tPos[oD] < pos[oD] + selW div 2:
         tPos[oD] += 1
-        path.add(tPos)
+        if fent == false or rand((selW div 2) * 2) == 0:
+          if fent == true:
+            mClear()
+          path.add(tPos)
+          con -= 1
+        con += 1
+        if fent == true:
+          if con == 2 * (selW div 2) + 1:
+            mClear()
 
     for i in 1 .. n:
       let selW: int = rand(1 .. 100) div 30
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
-      for i in 1 .. rand(t[1] .. (t[0] - d[0] * t[1])):
-        if i == 1: doW(selW, d)
+      let dd: int = rand(t[1] .. (t[0] - d[0] * t[1]))
+      var cj: seq[int]
+      for j in 1 .. dd:
+        if j == 1: doW(selW, d, false)
         pos[d[0]] += d[1]
-        doW(selW, d)
+        var doFent: bool = false
+        if not cj.contains(j - 1):
+          if j < dd:
+            if rand(3) == 3:
+              doFent = true
+              cj.add(j)
+        doW(selW, d, doFent)
     return path
 
   of "4":
