@@ -44,3 +44,4 @@ proc cBattle*(c: string): string =
     return "A figure in the window reached out to grab you!"
   else:
     return ""
+

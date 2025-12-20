@@ -177,3 +177,4 @@ proc sc*(v: string, map: string, msg: string, music: array[2, string]): array[2,
   discard execShellCmd("clear")
   echo scr
   return [vis[1], bg]
+

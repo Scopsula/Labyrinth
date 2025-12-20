@@ -45,10 +45,10 @@ var
   doDH: bool
   link: bool
   cD: array[3, char]
-  h1: bool = false
-  h2: bool = false
-  b1: bool = false
-  b2: bool = false
+  h1: bool
+  h2: bool
+  b1: bool
+  b2: bool
   oVdata: seq[string]
   celData: seq[string]
   corData: seq[string]
@@ -68,6 +68,10 @@ proc setRValues*(lv: int, s: array[4, int]) =
   wM = false
   doOV = false
   doDH = false
+  b1 = false
+  b2 = false
+  h1 = false
+  h2 = false
 
   var rSV: array[3, int] = [-1, 0, 0]
   if fileExists(&"../data/levels/{lv}"):

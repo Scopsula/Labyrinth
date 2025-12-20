@@ -18,6 +18,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         pos[d[0]] += d[1]
         path.add(pos)
     return path
+
   of "2":
     for i in 1 .. n div ((t[0] + t[1]) div 2):
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
@@ -25,6 +26,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         pos[d[0]] += d[1]
         path.add(pos)
     return path
+
   of "3":
     proc doW(selW: int, d: array[2, int]) =
       var oD: int = d[0] - 1
@@ -34,6 +36,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
       while tPos[oD] < pos[oD] + selW div 2:
         tPos[oD] += 1
         path.add(tPos)
+
     for i in 1 .. n:
       let selW: int = rand(1 .. 100) div 30
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
@@ -42,6 +45,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         pos[d[0]] += d[1]
         doW(selW, d)
     return path
+
   of "4":
     for i in 1 .. n * rand(1 .. t[0]):
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
@@ -49,6 +53,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         pos[d[0]] += d[1]
         path.add(pos)
     return path
+
   of "5":
     var c4: int = 0
     var rX: int = sample([t[0], t[1]])
@@ -100,11 +105,13 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
           else: discard
         c4 = 0
     return path
+
   of "8":
     for i in 1 .. n * rand(t[1] .. t[0]):
       pos[rand(1)] += rand(-1 .. 1)
       path.add(pos)
     return path
+
   else:
     return @[]
 
@@ -125,6 +132,7 @@ proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
         map[mP] = 'A'
       else:
         map[mP] = '*'
+
   case lv
   of "4":
     for i in 0 .. p.len - 1:
@@ -137,6 +145,7 @@ proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
         if map[mP - (s[4] + 1)] == ' ': 
           if rand(1 .. s[2]) == 1:
             map[mP - (s[4] + 1)] = 'W'
+
   of "5":
     for i in 0 .. p.len - 1:
       var mP: int

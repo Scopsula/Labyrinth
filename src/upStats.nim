@@ -93,3 +93,4 @@ proc iUpdate*(item: char): string =
     msg = "Opened crate, check inventory"
 
   return msg
+

@@ -73,3 +73,4 @@ proc autoGenLv*(n: int): seq[array[2, int]] =
   writeFile("../data/map", map)
   path.add([sX,sY])
   return path
+
