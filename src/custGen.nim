@@ -26,21 +26,21 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         path.add(pos)
     return path
   of "3":
+    proc doW(selW: int, d: array[2, int]) =
+      var oD: int = d[0] - 1
+      if oD == -1: oD = 1
+      var tPos = pos
+      tPos[oD] -= 1 + (selW div 2)
+      while tPos[oD] < pos[oD] + selW div 2:
+        tPos[oD] += 1
+        path.add(tPos)
     for i in 1 .. n:
       let selW: int = rand(1 .. 100) div 30
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
       for i in 1 .. rand(t[1] .. (t[0] - d[0] * t[1])):
-        proc doW() =
-          var oD: int = d[0] - 1
-          if oD == -1: oD = 1
-          var tPos = pos
-          tPos[oD] -= 1 + (selW div 2)
-          while tPos[oD] < pos[oD] + selW div 2:
-            tPos[oD] += 1
-            path.add(tPos)
-        if i == 1: doW()
+        if i == 1: doW(selW, d)
         pos[d[0]] += d[1]
-        doW()
+        doW(selW, d)
     return path
   of "4":
     for i in 1 .. n * rand(1 .. t[0]):
