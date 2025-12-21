@@ -43,6 +43,7 @@ var
   wM: bool
   doOV: bool
   doDH: bool
+  doSpecial: bool
   link: bool
   cD: array[3, char]
   h1: bool
@@ -68,6 +69,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
   wM = false
   doOV = false
   doDH = false
+  doSpecial = false
   b1 = false
   b2 = false
   h1 = false
@@ -128,6 +130,10 @@ proc setRValues*(lv: int, s: array[4, int]) =
 
         of "eC":
           eC = dLine[1].parseFloat
+
+        of "doSpecial":
+          doSpecial = true
+
         else: discard
 
   rValues.setLen(0)
@@ -177,7 +183,7 @@ proc noCorner(nx: int, ny: int) =
             rValues[n + rValues[0] + 1] = 0
 
 var hSize: array[2, int]
-var zton: string = "`!@#$%^&*()_+-=[];{}:|<>?,."
+var zton: string = "`!@#$%^&'()_+-=[];{}:|<>?,."
 proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, string], t: array[2, int]): array[2, string] =
   var visible: string = v 
   var map = mS[1]
@@ -398,6 +404,29 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           writeFile(&"../data/chars/temp/{nC}", tile)
         visible[y * (lw + 1) + x] = nC
 
+  proc special(y: int, x: int) = 
+    if rows[y][x] == 'Z':
+      var incr: int = 0
+      if rows[y + 1][x] != 'Z':
+        incr += 1
+      if rows[y][x - 1] != 'Z':
+        incr += 2
+      if rows[y][x + 1] != 'Z':
+        incr += 4
+      if rows[y - 1][x] != 'Z':
+        incr += 8
+      if incr == 0:
+        if rows[y + 1][x - 1] != ' ':
+          incr = 16 
+        elif rows[y + 1][x + 1] != ' ':
+          incr = 17
+        elif rows[y - 1][x - 1] != ' ':
+          incr = 18
+        elif rows[y - 1][x + 1] != ' ':
+          incr = 19
+      let c = zton[incr]
+      visible[y * (lw + 1) + x] = c
+
   if halls == true:
     coords = setCoords()
     hSize = getSize(level)
@@ -416,6 +445,9 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       elif cor == true and b0 == false:
         corridors(y, x, b2)
       
+      if doSpecial == true:
+        special(y, x)
+
       if doOV == true:
         if b0 == false or oVdata[2] == "true": 
           overlay(y, x, oVdata[0][0], oVdata[1])

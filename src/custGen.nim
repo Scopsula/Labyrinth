@@ -4,6 +4,8 @@ var items: bool
 if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
   items = true
 
+var special: seq[array[2, int]]
+
 proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
   var lv = readFile("../data/level").splitLines[0]
   var pos: array[2, int] = [0,0]
@@ -28,6 +30,66 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
     return path
 
   of "3":
+    var doNot: seq[array[2, int]]
+    special.setLen(0)
+    proc inSec() =
+      var iPath: seq[array[2, int]]
+      var iPos = pos
+      for y in 0 .. 9:
+        iPos[1] = pos[1] + y
+        for x in 0 .. 9:
+          iPos[0] = pos[0] + x
+          if not doNot.contains(iPos):
+            iPath.add(ipos)
+
+      doNot.add(iPath)
+      path.add(iPath)
+
+      for i in 1 .. iPath.len:
+        var s = sample(iPath)
+        var sPath: seq[array[2, int]]
+        while true:
+          var cs: array[2, int]
+          var stop: bool = false
+
+          proc doStop(cc: array[2, int]) =
+            if cc != [0, 0]:
+              if sPath.contains([s[0] + cc[0], s[1]]):
+                discard
+              elif sPath.contains([s[0], s[1] + cc[1]]):
+                discard
+              elif not iPath.contains(cs):
+                stop = true
+            elif not iPath.contains(cs):
+              stop = true
+          
+          cs = [s[0] - 1, s[1] + 1]
+          doStop([-1, 1])
+          cs = [s[0] + 1, s[1] + 1]
+          doStop([1, 1])
+          cs = [s[0] - 1, s[1] - 1]
+          doStop([-1, -1])
+          cs = [s[0] + 1, s[1] - 1]
+          doStop([1, -1])
+          cs = s
+
+          for i in 0 .. 3:
+            let d = [[0, 1], [0,-1], [1,1], [1,-1]][i]
+            cs[d[0]] += d[1]
+            if not sPath.contains(cs):
+              doStop([0, 0])
+
+          if stop == true:
+            break
+
+          if iPath.contains(s):
+            iPath.del(find(iPath, s))
+            special.add(s)
+            sPath.add(s)
+
+          let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+          s[d[0]] += d[1]          
+
     proc doW(selW: int, d: array[2, int], fent: bool) =
       var con: int = 0
       var oD: int = d[0] - 1
@@ -39,6 +101,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         for i in 0 .. 2:
           dPos[d[0]] += i
           path.add(dPos)
+
       tPos[oD] -= 1 + (selW div 2)
       while tPos[oD] < pos[oD] + selW div 2:
         tPos[oD] += 1
@@ -53,6 +116,10 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
             mClear()
 
     for i in 1 .. n:
+      while doNot.contains(pos):
+        let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
+        pos[d[0]] += d[1]
+
       let selW: int = rand(1 .. 100) div 30
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
       let dd: int = rand(t[1] .. (t[0] - d[0] * t[1]))
@@ -67,6 +134,8 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
               doFent = true
               cj.add(j)
         doW(selW, d, doFent)
+      if rand(1 .. t[0] * t[1]) == 1:
+        inSec()
     return path
 
   of "4":
@@ -157,6 +226,21 @@ proc iGen*(p: seq[array[2, int]], m: string, s: array[5, int]): string =
         map[mP] = '*'
 
   case lv
+  of "3":
+    if special.len > 0:
+      for i in 0 .. p.len - 1:
+        var mP: int
+        mP += p[i][0] - s[0]
+        mP += (p[i][1] - s[1]) * (s[4] + 1)
+        if items == false:
+          map[mP] = '*'
+
+      for i in 0 .. special.len - 1:
+        var doTheSpecial: int
+        doTheSpecial += special[i][0] - s[0]
+        doTheSpecial += (special[i][1] - s[1]) * (s[4] + 1)
+        map[doTheSpecial] = 'Z'
+
   of "4":
     for i in 0 .. p.len - 1:
       var mP: int

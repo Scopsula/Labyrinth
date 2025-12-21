@@ -45,7 +45,7 @@ proc openMap*(wh: array[2, int], loc: array[2, int], m: string, mW: int, h0: int
   if iOM != "true":
     visible = visible.multiReplace(("A", "*"), ("B", "*"), ("F", "*"))
 
-  visible = visible.multiReplace(("W", " "), ("D", " "))
+  visible = visible.multiReplace(("W", " "), ("D", " "), ("Z", " "))
 
   let x: int = visible.splitLines[0].len
   let y: int = visible.splitLines.len

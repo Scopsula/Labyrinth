@@ -10,7 +10,7 @@ items true
 itemsOnMap false
 sleep 0
 hud true
-collision| WPD
+collision| WPDZ
 audio true
 """
 
