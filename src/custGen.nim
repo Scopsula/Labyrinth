@@ -1,4 +1,4 @@
-import random, strutils, sequtils
+import random, strutils
 
 var items: bool
 if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
@@ -108,15 +108,13 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         bPos[1] = pos[1] + y
         for x in -2 .. 20:
           bPos[0] = pos[0] + x
-          if x <= -1 and x >= 19:
-            if y <= -1 and y >= 10: 
-              if y != -1 and y != 10:
-                if x != -1 and x != 19:
-                  bPath.add(bPos)
-              if y == -2 or y == 11:
-                bPath.add(bPos)
-              if x == -2 or x == 20:
-                bPath.add(bPos)
+          if y != -1 and y != 10:
+            if x != -1 and x != 19:
+              bPath.add(bPos)
+          if y == -2 or y == 11:
+            bPath.add(bPos)
+          if x == -2 or x == 20:
+            bPath.add(bPos)
 
       path.add(bPath)
 
