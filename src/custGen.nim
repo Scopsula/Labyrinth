@@ -54,6 +54,42 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
               if doNot[i + 2].len <= -1 * iPos[i]:
                 doNot[i + 2].setLen(-1 * iPos[i] + 1)
 
+          if y == 0: 
+            if cIpos[1] - 1 == -1:
+              useI[1] += 2
+              cIpos[1] = 2
+            if doNot[useI[1]].len <= cIpos[1] - 1:
+              doNot[useI[1]].setLen(cIpos[1] + 1) 
+            doNot[useI[1]][cIPos[1] - 1].add(cIpos[0])
+            doNot[useI[0]][cIPos[0]].add(cIpos[1] - 1)
+            if cIpos[1] - 1 < 0:
+              useI[1] -= 2
+              cIpos[1] = 0
+
+          if y == 9:
+            if doNot[useI[1]].len <= cIpos[1] + 1:
+              doNot[useI[1]].setLen(cIpos[1] + 2)
+            doNot[useI[1]][cIPos[1] + 1].add(cIpos[0])
+            doNot[useI[0]][cIPos[0]].add(cIpos[1] + 1)
+
+          if x == 0: 
+            if cIpos[0] - 1 == -1:
+              useI[0] += 2
+              cIpos[0] = 2
+            if doNot[useI[0]].len <= cIpos[0] - 1:
+              doNot[useI[0]].setLen(cIpos[0] + 1) 
+            doNot[useI[1]][cIPos[1]].add(cIpos[0] - 1)
+            doNot[useI[0]][cIPos[0] - 1].add(cIpos[1])
+            if cIpos[0] - 1 < 0:
+              useI[0] -= 2
+              cIpos[0] = 0
+
+          if x == 9:
+            if doNot[useI[0]].len <= cIpos[0] + 1:
+              doNot[useI[0]].setLen(cIpos[0] + 2)
+            doNot[useI[1]][cIPos[1]].add(cIpos[0] + 1)
+            doNot[useI[0]][cIPos[0] + 1].add(cIpos[1])
+
           let v1 = doNot[useI[0]][cIpos[0]]
           let v2 = doNot[useI[1]][cIpos[1]]
           if v1.len < v2.len:
