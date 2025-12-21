@@ -1,4 +1,4 @@
-import random, strutils
+import random, strutils, sequtils
 
 var items: bool
 if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
@@ -30,7 +30,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
     return path
 
   of "3":
-    var doNot: seq[array[2, int]]
+    var doNot: array[4, seq[seq[int]]]
     special.setLen(0)
     proc inSec() =
       var iPath: seq[array[2, int]]
@@ -39,10 +39,32 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
         iPos[1] = pos[1] + y
         for x in 0 .. 9:
           iPos[0] = pos[0] + x
-          if not doNot.contains(iPos):
-            iPath.add(ipos)
 
-      doNot.add(iPath)
+          var cIpos = iPos
+          var useI: array[2, int]
+          for i in 0 .. 1:
+            if iPos[i] >= 0:
+              useI[i] = i
+              if doNot[i].len <= iPos[i]:
+                doNot[i].setLen(iPos[i] + 1)
+
+            if iPos[i] < 0:
+              cIpos[i] = cIpos[i] * -1
+              useI[i] = i + 2
+              if doNot[i + 2].len <= -1 * iPos[i]:
+                doNot[i + 2].setLen(-1 * iPos[i] + 1)
+
+          let v1 = doNot[useI[0]][cIpos[0]]
+          let v2 = doNot[useI[1]][cIpos[1]]
+          if v1.len < v2.len:
+            if not v1.contains(cIpos[1]):
+              iPath.add(ipos)
+              doNot[useI[0]][cIPos[0]].add(cIpos[1])
+          else:
+            if not v2.contains(cIpos[0]):
+              iPath.add(ipos)
+              doNot[useI[1]][cIPos[1]].add(cIpos[0])           
+
       path.add(iPath)
 
       for i in 1 .. iPath.len:
@@ -116,10 +138,6 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
             mClear()
 
     for i in 1 .. n:
-      while doNot.contains(pos):
-        let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
-        pos[d[0]] += d[1]
-
       let selW: int = rand(1 .. 100) div 30
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
       let dd: int = rand(t[1] .. (t[0] - d[0] * t[1]))
