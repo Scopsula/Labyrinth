@@ -39,6 +39,7 @@ var
   eC: float = 10000
   cel: bool
   cor: bool
+  iCor: bool
   halls: bool
   wM: bool
   doOV: bool
@@ -53,6 +54,7 @@ var
   oVdata: seq[string]
   celData: seq[string]
   corData: seq[string]
+  iCorData: seq[string]
   hData: seq[string]
   wMdata: seq[char]
   cList: seq[char]
@@ -65,6 +67,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
 
   cel = false
   cor = false
+  iCor = false
   halls = false
   wM = false
   doOV = false
@@ -95,6 +98,12 @@ proc setRValues*(lv: int, s: array[4, int]) =
           corData.setLen(0)
           if dLine[1] == "true":
             b2 = true
+
+        of "ignoreCorridor":
+          iCor = true
+          iCorData.setLen(0)
+          for j in 1 .. dLine.len - 1:
+            iCorData.add(dLine[j])
 
         of "halls": 
           halls = true
@@ -278,6 +287,37 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       else:
         visible[y * (lw + 1) + x] = c
 
+  proc ignoreCorridor(y: int, x: int, css: seq[string]) =
+    var setR: string = visible
+    var setC: string = "abcdefghijklmnopqrst"
+    for i in 0 .. css.len - 1:
+      setR = setR.replace(css[i], "*")
+      setC = setC.replace(css[i], "")
+    for i in 0 .. setC.len - 1:
+      setR = setR.replace(&"{setC[i]}", " ")
+    var r: seq[string] = setR.splitLines()
+    if r[y][x] == ' ':
+      var incr: int = 0
+      if r[y + 1][x] != ' ':
+        incr += 1
+      if r[y][x - 1] != ' ':
+        incr += 2
+      if r[y][x + 1] != ' ':
+        incr += 4
+      if rows[y - 1][x] != ' ':
+        incr += 8
+      if incr == 0:
+        if r[y + 1][x - 1] != ' ':
+          incr = 16 
+        elif r[y + 1][x + 1] != ' ':
+          incr = 17
+        elif r[y - 1][x - 1] != ' ':
+          incr = 18
+        elif r[y - 1][x + 1] != ' ':
+          incr = 19
+      let c = "abcdefghijklmnopqrst"[incr]
+      visible[y * (lw + 1) + x] = c
+
   proc halls(y: int, x: int, s: array[2, int], c: array[3, char], nC: array[2, bool]): bool =
     if rows[y][x] == ' ' or rows[y][x] == c[2] or c[0] != ' ':
       var nx: int = (xy[0] - coords[0] + x) div s[0]
@@ -416,13 +456,13 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       if rows[y - 1][x] != 'Z':
         incr += 8
       if incr == 0:
-        if rows[y + 1][x - 1] != ' ':
+        if rows[y + 1][x - 1] != 'Z':
           incr = 16 
-        elif rows[y + 1][x + 1] != ' ':
+        elif rows[y + 1][x + 1] != 'Z':
           incr = 17
-        elif rows[y - 1][x - 1] != ' ':
+        elif rows[y - 1][x - 1] != 'Z':
           incr = 18
-        elif rows[y - 1][x + 1] != ' ':
+        elif rows[y - 1][x + 1] != 'Z':
           incr = 19
       let c = zton[incr]
       visible[y * (lw + 1) + x] = c
@@ -451,6 +491,11 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       if doOV == true:
         if b0 == false or oVdata[2] == "true": 
           overlay(y, x, oVdata[0][0], oVdata[1])
+
+  if iCor == true:
+    for y in 1 .. rows.len - 2:
+      for x in 1 .. lw - 2:
+        ignoreCorridor(y, x, iCorData)
 
   if wM == true:
     if halls == false:

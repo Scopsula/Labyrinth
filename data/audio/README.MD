@@ -18,8 +18,9 @@ Usage Disclaimer:
 Currently in use:
 - Level 0: Glass Stucture (White)
 - Level 1: Glass Stucture (Reflective)
-- - Halls: Glass Stucture (Deep Teal)
+- | Halls: Glass Stucture (Deep Teal)
 - Level 2: Glass Stucture (Smoky)
+- Level 3: Glass Stucture (Molten)
 
 For removal:
 - Contact me via email at scopsula@tuta.com
