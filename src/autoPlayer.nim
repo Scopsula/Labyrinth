@@ -300,9 +300,6 @@ proc main() =
             if oMsg != msg:
               sUp()
       of Key.M:
-        if h4 == 1:
-          stop()
-          playAudio = true
         openMap([w, h], [x, y], m, mW, h0, bg, sMap)
         while true:
           if getKey() == Key.M:
@@ -311,9 +308,6 @@ proc main() =
         bypass = true
         closeMenu = true
       of Key.I:
-        if h4 == 1:
-          stop()
-          playAudio = true
         oInv(bg)
         bypass = true
         closeMenu = true

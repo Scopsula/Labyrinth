@@ -110,8 +110,6 @@ proc sc*(v: string, map: string, msg: string, music: array[2, string]): array[2,
       let c: string = match(t, nV, xy, [rX, r])
       writeChar(r, rx, wht[2], wht[3], wht[0], c)
 
-  let bg: string = scr
-
   proc wrLine(line: string, num: int) =
     scr[num * (wht[0] + 1) .. num * (wht[0] + 1) + line.len - 1] = line
 
@@ -145,6 +143,8 @@ proc sc*(v: string, map: string, msg: string, music: array[2, string]): array[2,
     wMLine(line, 1)
     wMLine(author, 2)
     wMLine(bLine, 3)
+
+  let bg: string = scr
 
   if gXYH[4] == 1:
     let stats = readFile("../data/stats").splitLines
