@@ -2,6 +2,7 @@
 
 Wiki: https://scopsula.github.io/Labyrinth/<br>
 Note: The wiki is not neccesary to play/understand the game.<br>
+Note: The wiki is very outdated currently.<br>
 
 This is a WIP rouguelike backrooms game with static procedurally generated levels.<br>
 For more details view the wiki above<br>
