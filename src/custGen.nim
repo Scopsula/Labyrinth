@@ -1,4 +1,4 @@
-import random, strutils
+import random, strutils, os
 
 var items: bool
 if readFile("../data/config").splitLines[5].split(' ')[1] == "true":
@@ -30,6 +30,17 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
     return path
 
   of "3":
+    var nV: bool
+    var nC: int = 1
+    if fileExists("../data/levels/3"):
+      let data = readFile("../data/levels/3").splitLines
+      for i in 0 .. data.len - 1:
+        let dLine = data[i].split('.')
+        if dLine[0] == "nV":
+          if dLine[1] == "true":
+            nV = true
+          nC = dLine[2].parseInt
+
     var doNot: array[4, seq[seq[int]]]
     special.setLen(0)
     proc inSec() =
@@ -191,7 +202,11 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
     for i in 1 .. n:
       let selW: int = rand(1 .. 100) div 30
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
-      let dd: int = rand(t[1] .. (t[0] - d[0] * t[1]))
+      var dd: int
+      if nV == true:
+        dd = sample([t[0], t[1]])
+      else:
+        dd = rand(t[1] .. (t[0] - d[0] * t[1]))
       var cj: seq[int]
       for j in 1 .. dd:
         if j == 1: doW(selW, d, false)
@@ -203,8 +218,9 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
               doFent = true
               cj.add(j)
         doW(selW, d, doFent)
-      if rand(1 .. t[0] * t[1]) == 1:
-        inSec()
+      if nC > 0:
+        if rand(1 .. t[0] * t[1] * nC) == 1:
+          inSec()
     return path
 
   of "4":

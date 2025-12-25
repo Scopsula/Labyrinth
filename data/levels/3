@@ -1,4 +1,17 @@
+nV.false.1
 eC.20000
 corridors.false
 ignoreCorridor.g.h.j.l.n.o.p
 doSpecial
+
+What is nV?
+It stands for neat version.
+nV, unlike other properties affects parts of the initial generation.
+It's goal is to open up hard-coded, level-specific, features to provide
+alternative (neater) types of generation.
+
+How does it effect this level?
+For level 3 the first attribute (bool) determines whether to neaten
+up the corridors by limiting the length to two consistent values,
+tY and tX. The second (int) determines the modifier for the chance of
+the hardcoded 'halls' spawning. Setting this value to 0 disables them.
