@@ -169,20 +169,11 @@ proc main() =
         playAudio = true
 
       if playAudio == true:
-        var mp3: bool = false
-        if fileExists(&"../data/audio/{audioFile}.mp3"):
-          mp3 = true
-        var wav: bool = false
-        if fileExists(&"../data/audio/{audioFile}.wav"):
-          wav = true
-        if mp3 or wav == true:
-          if fileExists(&"../data/audio/{audioFile}.duration"):
-            let d = readFile(&"../data/audio/{audioFile}.duration")
+        if fileExists(&"../data/audio/{audioFile}"):
+          if fileExists(&"../data/audio/{audioFile[0 .. ^5]}.duration"):
+            let d = readFile(&"../data/audio/{audioFile[0 .. ^5]}.duration")
             duration = d[0 .. ^2].parseFloat
-            if wav == true:
-              play(&"../data/audio/{audioFile}.wav")
-            elif mp3 == true:
-              play(&"../data/audio/{audioFile}.mp3")
+            play(&"../data/audio/{audioFile}")
             time = getMonoTime()
             playAudio = false
 

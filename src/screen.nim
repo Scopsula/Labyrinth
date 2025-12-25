@@ -119,7 +119,7 @@ proc sc*(v: string, map: string, msg: string, music: array[2, string]): array[2,
       let lineC: int = num * (wht[0] + 1)
       scr[lineC + rLen - line.len + 1 .. lineC + rLen] = line
 
-    var line: string = &" | Now playing: {music[0].split('/')[1]} "
+    var line: string = &" | Now playing: {music[0].split('/')[1][0 .. ^5]} "
     var author: string = & " | By: {music[1]} "
 
     if author.len < line.len:
