@@ -36,6 +36,7 @@ proc audioZone*(xy: array[2, int], t: array[2, int], lv: int): array[2, string] 
   return [rAudio[0], rAudio[2]]
 
 var
+  pV: seq[int]
   eC: float = 10000
   cel: bool
   cor: bool
@@ -157,6 +158,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
         rValues.add(1)
       else:
         rValues.add(0)
+  pV.setLen(rValues.len)
 
 proc returnEC*(): float =
   return eC
@@ -355,6 +357,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           if not kV.contains(n + i):
             kV.add(n + i)
             link.add(n + i)
+            pV[n + i] = 1
         else:
           break
       for i in 1 .. l:
@@ -364,6 +367,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           if not kV.contains(n - i):
             kV.add(n - i)
             link.add(n - i)
+            pV[n - i] = 1
         else:
           break
       for i in 1 .. l:
@@ -373,6 +377,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           if not kV.contains(n + (i * rValues[0])):
             kV.add(n + (i * rValues[0]))
             link.add(n + (i * rValues[0]))
+            pV[n + (i * rValues[0])] = 1
         else:
           break
       for i in 1 .. l:
@@ -382,6 +387,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
           if not kv.contains(n - (i * rValues[0])):
             kV.add(n - (i * rValues[0]))
             link.add(n - (i * rValues[0]))
+            pV[n - (i * rValues[0])] = 1
         else:
           break
 
@@ -390,11 +396,12 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
         let nx: int = (xy[0] - coords[0] + x) div s[0]
         let ny: int = (xy[1] - coords[1] + y) div s[1]
         let n: int = nx + (ny * rValues[0]) + 1
-        if rValues[n] == 1:
-          if not dV.contains(n):
-            dV.add(n)
-          if rows[y][x] != ' ':
-            if not kV.contains(n):
+        if pV[n] != 1:
+          if rValues[n] == 1:
+            if not dV.contains(n):
+              dV.add(n)
+            if rows[y][x] != ' ':
+              pV[n] = 1
               kV.add(n)
               if doLink == true:
                 link.setLen(0)
@@ -410,6 +417,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       if dV.contains(kV[i]):
         let d: int = find(dV, kV[i])
         dV.del(d)
+
     for i in 0 .. dV.len - 1:
       rValues[dV[i]] = 0
 
