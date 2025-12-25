@@ -191,7 +191,7 @@ proc main() =
         playAudio = true
 
     if h2 == 1:
-      let uM: array[2, string] = moveEntities([x, y], m, mW)
+      let uM: array[2, string] = moveEntities([x, y], m, mW, collision)
       if uM[1] == "true":
         m = uM[0]
         if m[gY * mW + gX] != 'X':

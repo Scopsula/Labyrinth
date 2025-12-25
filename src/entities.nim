@@ -96,8 +96,10 @@ proc setDir(mv: array[2, int], i: int) =
   if mv == [0, 1]: eloc[i][3] = 3
   if mv == [0, -1]: eloc[i][3] = 4
 
-proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
+proc moveEntities*(xy: array[2, int], m: string, mW: int, collision: string): array[2, string] =
+  var col: string = collision & "E"
   var map: string = m
+  var eM: string = m
   var update: bool = false
   if eloc.len > 0:
     for i in 0 .. eloc.len - 1:
@@ -105,7 +107,6 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
       if (getMonoTime() - eTime[i]).inMilliseconds().toFloat >= eT * 1000:
         update = true
         eTime[i] = getMonoTime()
-        var eM: string = map.replace("E", " ")
 
         if deadZones[i].len > 0:
           if deadZones[i].contains(xy):
@@ -120,39 +121,38 @@ proc moveEntities*(xy: array[2, int], m: string, mW: int): array[2, string] =
         if map[chk] != 'X': map[chk] = '*'
         if (eXY[1] + 1) * mW + eXY[0] + 1 > map.len - 1: discard
         elif (eXY[1] - 1) * mW + eXY[0] - 1 < 0: discard
-        elif eXY[0] < xy[0] and eM[chk + 1] != ' ':
+        elif eXY[0] < xy[0] and not col.contains(eM[chk + 1]):
           eloc[i][3] = 1
           eXY[0] += 1
-        elif eXY[0] > xy[0] and eM[chk - 1] != ' ':
+        elif eXY[0] > xy[0] and not col.contains(eM[chk - 1]):
           eloc[i][3] = 2
           eXY[0] -= 1 
-        elif eXY[1] < xy[1] and eM[chk + mW] != ' ':
+        elif eXY[1] < xy[1] and not col.contains(eM[chk + mW]):
           eloc[i][3] = 3 
           eXY[1] += 1
-        elif eXY[1] > xy[1] and eM[chk - mW] != ' ':
+        elif eXY[1] > xy[1] and not col.contains(eM[chk - mW]):
           eloc[i][3] = 4
           eXY[1] -= 1
         else:
           var moved: bool = false
-          if eM[chk + 1] == ' ':
-            if eM[chk - 1] == ' ':
-              if eM[chk + mW] == ' ':
-                if eM[chk - mW] == ' ':
+          if collision.contains(eM[chk + 1]):
+            if collision.contains(eM[chk - 1]):
+              if collision.contains(eM[chk + mW]):
+                if collision.contains(eM[chk - mW]):
                   let mv: array[2, int] = sample(dir)
-                  if map[chk + mv[1] * mW + mv[0]] != ' ':
-                    if map[chk + mv[1] * mW + mv[0]] != 'E':
-                      deadZones[i].add([eXY[0], eXY[1]]) 
-                      eXY[0] += mv[0]
-                      eXY[1] += mv[1]
-                      moved = true
-                      setDir(mv, i)
-                    else:
-                      eloc[i][3] = 0
+                  if not col.contains(map[chk + mv[1] * mW + mv[0]]):
+                    deadZones[i].add([eXY[0], eXY[1]]) 
+                    eXY[0] += mv[0]
+                    eXY[1] += mv[1]
+                    moved = true
+                    setDir(mv, i)
+                  else:
+                    eloc[i][3] = 0
 
           deadZones[i].add([eXY[0], eXY[1]])
           if moved == false:
             let mv: array[2, int] = sample(dir)
-            if eM[chk + mv[1] * mW + mv[0]] != ' ':
+            if not col.contains(eM[chk + mv[1] * mW + mv[0]]):
               eXY[0] += mv[0]
               eXY[1] += mv[1]
               setDir(mv, i)
