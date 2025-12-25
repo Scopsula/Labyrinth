@@ -146,6 +146,7 @@ proc setRValues*(lv: int, s: array[4, int]) =
 
         else: discard
 
+  pV.setLen(0)
   rValues.setLen(0)
   cList.setLen(0)
   if rSV[0] != -1:
