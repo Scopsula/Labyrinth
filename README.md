@@ -7,9 +7,14 @@ Note: The wiki is very outdated currently.<br>
 This is a WIP rouguelike backrooms game with static procedurally generated levels.<br>
 For more details view the wiki above<br>
 
-Audio files (in data/audio) are non-free, and are copyright of DM DOKURO
-- These are not licensed under the GPL
-- More details can be found in data/audio/README.md (such as album links)
+Audio files must be self downloaded.
+- Download 1: https://dmdokuro.bandcamp.com/album/glass-structures-vol-1
+- Download 2: https://dmdokuro.bandcamp.com/album/glass-structures-vol-2
+- You must either download the wav or mp3 version.
+- Place the zips in the Labyrinth/music directory.
+- music.sh will extract and move the files into the correct place
+- music.sh is not complete yet and will be present soon
+- More details can be found in data/audio/README.md
 
 Building on Linux:
 - Depends on illwill https://github.com/johnnovak/illwill

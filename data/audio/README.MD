@@ -1,8 +1,8 @@
-Audio files from:
+Audio files must be downloaded from:
 - Glass Structures (vol. 1) https://dmdokuro.bandcamp.com/album/glass-structures-vol-1
 - Glass Structures (vol. 2) https://dmdokuro.bandcamp.com/album/glass-structures-vol-2
 
-Copyright of DM DOKURO<br><br>
+Music is copyright of DM DOKURO<br><br>
 Notice on DM DOKURO's bandcamp<br>
 "need background music? here's another batch of songs that never<br>
 made it as their own individual tracks, or intriguing extras from existing<br>
@@ -14,6 +14,8 @@ Usage Disclaimer:
 - Glass Structures is used as background music (BGM) for Labyrinth.
 - It plays in the background whilst the user navigates the labyrinth.
 - The track name and author is displayed in the top right
+- Glass Stuctures is no longer distributed with labyrinth.
+- This means the user must download them and a script will put them in the right place.
 
 Currently in use:
 - Level 0: Glass Stucture (White)
@@ -21,8 +23,9 @@ Currently in use:
 - | Halls: Glass Stucture (Deep Teal)
 - Level 2: Glass Stucture (Smoky)
 - Level 3: Glass Stucture (Molten)
+- Level 4: Glass Stucture (Clear II)
 
-For removal:
+For complete removal:
 - Contact me via email at scopsula@tuta.com
 - Alternativley create an issue on github
 
