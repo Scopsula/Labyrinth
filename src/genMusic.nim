@@ -27,10 +27,14 @@ proc extract(v: string, es: string) =
 
 proc calcDur(file: string) =
   let nS: string = &"{file[0 .. ^5]}.duration"
+  let preLoc = &"preDuration/{nS.split('/')[^1]}"
+
+  if not dirExists("preDuration"):
+    createDir("preDuration")
   if sox == 0:
     discard execShellCmd(&"soxi -D '{file}' > '{nS}'")
+    copyFile(nS, preLoc)
   else:
-    let preLoc = &"preDuration/{nS.split('/')[^1]}"
     if fileExists(preLoc):
       copyFile(preLoc, nS)
     else:
