@@ -75,5 +75,6 @@ for i in 0 .. files.len - 1:
       let line: string = &"{zone}|{target}{name}|DM DOKURO"
       if not match.contains(line):
         match = &"{match}{line}\n"
+    match = match[0 .. ^2]
     writeFile(&"{audioDir}{target}match", match)
 
