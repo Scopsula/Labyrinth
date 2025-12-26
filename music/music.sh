@@ -60,6 +60,14 @@ if [ -f "./DM DOKURO - Glass Structures (vol. 2).zip" ]; then
     mv "./DM DOKURO - Glass Structures (vol. 2) - 12 Glass Structure (Clear II).wav" "../../data/audio/4/Glass Structure (Clear II).wav" 
     cp ../wav/4 ../../data/audio/4/match
   fi
+  if [ -f "./DM DOKURO - Glass Structures (vol. 2) - 06 Glass Structure (Slate Blue).mp3" ]; then
+    mv "./DM DOKURO - Glass Structures (vol. 2) - 06 Glass Structure (Slate Blue).mp3" "../../data/audio/5/Glass Structure (Slate Blue).mp3" 
+    cp ../mp3/5 ../../data/audio/5/match
+  fi
+  if [ -f "./DM DOKURO - Glass Structures (vol. 2) - 06 Glass Structure (Slate Blue).wav" ]; then
+    mv "./DM DOKURO - Glass Structures (vol. 2) - 06 Glass Structure (Slate Blue).wav" "../../data/audio/5/Glass Structure (Slate Blue).wav" 
+    cp ../wav/5 ../../data/audio/5/match
+  fi
   cd ..
 fi
 

@@ -20,12 +20,15 @@ Usage Disclaimer:
 - This means the user must download them and a script will put them in the right place.
 
 Currently in use:
-- Level 0: Glass Stucture (White)
-- Level 1: Glass Stucture (Reflective)
-- | Halls: Glass Stucture (Deep Teal)
-- Level 2: Glass Stucture (Smoky)
-- Level 3: Glass Stucture (Molten)
-- Level 4: Glass Stucture (Clear II)
+- Volume 1:
+- - Level 0: Glass Stucture (White)
+- Volume 2:
+- - Level 1: Glass Structure (Reflective)
+- - | Halls: Glass Structure (Deep Teal)
+- - Level 2: Glass Structure (Smoky)
+- - Level 3: Glass Structure (Molten)
+- - Level 4: Glass Structure (Clear II)
+- - Level 5: Glass Structure (Slate Blue)
 
 For complete removal:
 - Contact me via email at scopsula@tuta.com
