@@ -33,7 +33,6 @@ proc move(v: string, t: string, n: string, target: string, structure: string) =
     createDir(&"{audioDir}{target}")
 
   let s: string = &"DM DOKURO - Glass Structures (vol. {v}) - {t} Glass Structure ({n})"
-
   let nS: string = &"Glass Structure ({n})"
   var fType: string = ".wav"
   for i in 0 .. 1:
