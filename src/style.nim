@@ -402,6 +402,8 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
             if not dV.contains(n):
               dV.add(n)
             if rows[y][x] != ' ':
+              if h1 == true:
+                noCorner(nx, ny)
               pV[n] = 1
               kV.add(n)
               if doLink == true:
