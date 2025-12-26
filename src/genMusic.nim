@@ -9,13 +9,18 @@ if sox != 0:
   echo "Warning: soxi not found"
   echo "Pre-calculated values will be used instead"
 
+let grep: int = execShellCmd("which grep")
+if grep != 0:
+  echo "Warning: grep not found"
+  echo "Unnecessary commands may run and fail"
+
 let audioDir: string = "../data/audio/"
 var files: seq[array[3, string]]
 
 proc extract(v: string, es: string) =
   let zip: string = &"DM DOKURO - Glass Structures (vol. {v}).zip"
   if fileExists(zip):
-    if execShellCmd(&"unzip -l '{zip}' | grep -q '{es}'") == 0:
+    if execShellCmd(&"unzip -l '{zip}' | grep -q '{es}'") == 0 or grep != 0:
       if not dirExists(".tmp"):
         createDir(".tmp")
       discard execShellCmd(&"unzip -o '{zip}' '{es}' -d .tmp")
