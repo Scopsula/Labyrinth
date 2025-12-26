@@ -30,8 +30,12 @@ proc calcDur(file: string) =
   if sox == 0:
     discard execShellCmd(&"soxi -D '{file}' > '{nS}'")
   else:
-    let preLoc = nS.split('/')[^1]
-    copyFile(&"preDuration/{preLoc}", nS)
+    let preLoc = &"preDuration/{nS.split('/')[^1]}"
+    if fileExists(preLoc):
+      copyFile(preLoc, nS)
+    else:
+      echo &"Error: Duration ({preLoc}) not found"
+      echo "Install soxi (sox) and re-run to calculate"
 
 proc move(v: string, t: string, n: string, target: string, structure: string) =
   if not fileExists(&"{audioDir}{target}"):
