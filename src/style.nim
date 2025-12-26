@@ -326,7 +326,7 @@ proc adjustVisible*(v: string, xy: array[2, int], level: int, mS: array[2, strin
       var nx: int = (xy[0] - coords[0] + x) div s[0]
       var ny: int = (xy[1] - coords[1] + y) div s[1]
       if rValues[nx + (ny * rValues[0]) + 1] == 1:
-        if nC[0] == true:
+        if nC[0] == true and doDH == false:
           noCorner(nx, ny)
         let cx: int = xy[0] - coords[0] + x - (nx * s[0])
         let cy: int = xy[1] - coords[1] + y - (ny * s[1])
