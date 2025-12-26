@@ -17,7 +17,7 @@ Instructions:
 - Download 1: https://dmdokuro.bandcamp.com/album/glass-structures-vol-1
 - Download 2: https://dmdokuro.bandcamp.com/album/glass-structures-vol-2
 - Credit to DM DOKURO, please consider paying money for these albums
-- Download either an mp3 or wav version
+- Download either mp3 or wav version
 - Place both zips in the music directory
 - If you haven't already run build.sh in the base directory
 - Run genMusic in the music directory
