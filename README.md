@@ -22,8 +22,8 @@ Instructions:
 - If you haven't already run build.sh in the base directory
 - Run genMusic in the music directory
 - genMusic depends on unzip and optionally depends on soxi (sox)
-- Music should now play unless audio has been disabled in config
-genMusic automatically generates match and duration (if soxi is present, otherwise preDuration is used)<br>
+- Music should now play (when running autoPlayer) unless audio has been disabled in config
+<br>genMusic automatically generates match and duration (if soxi is present, otherwise preDuration is used)<br>
 More details can be found in [data/audio/README.md](https://github.com/Scopsula/Labyrinth/blob/main/data/audio/README.MD)<br>
 
 Building on Linux:
