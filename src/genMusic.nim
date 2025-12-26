@@ -34,7 +34,8 @@ proc calcDur(file: string) =
 
   if sox == 0:
     discard execShellCmd(&"soxi -D '{file}' > '{nS}'")
-    copyFile(nS, preLoc)
+    if not fileExists(preLoc) or file.contains("wav"):
+      copyFile(nS, preLoc)
   else:
     if fileExists(preLoc):
       copyFile(preLoc, nS)
