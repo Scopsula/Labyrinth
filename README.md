@@ -11,19 +11,20 @@ CURRENTLY LINUX ONLY:
 - This game will compile on windows but doesn't display correctly.
 - I don't have a way to test MacOS however it may work.
 
-Music must be self downloaded (optional):
-- Labyrinth allows for any mp3 / wav as long as match is correctly set
-- Instructions:
-- - Download 1: https://dmdokuro.bandcamp.com/album/glass-structures-vol-1
-- - Download 2: https://dmdokuro.bandcamp.com/album/glass-structures-vol-2
-- - Credit to DM DOKURO, please consider paying money for these albums
-- - Download either an mp3 or wav version
-- - Place both zips in the music directory
-- - If you haven't already run build.sh in the base directory
-- - Run genMusic in the music directory
-- - genMusic depends on unzip and optionally depends on soxi (sox)
-- genMusic automatically generates match and duration (if soxi is present, otherwise preDuration is used)
-- More details can be found in [data/audio/README.md](https://github.com/Scopsula/Labyrinth/blob/main/data/audio/README.MD)
+Music must be self downloaded (optional):<br>
+Labyrinth allows for any mp3 / wav as long as match is correctly set<br>
+Instructions:
+- Download 1: https://dmdokuro.bandcamp.com/album/glass-structures-vol-1
+- Download 2: https://dmdokuro.bandcamp.com/album/glass-structures-vol-2
+- Credit to DM DOKURO, please consider paying money for these albums
+- Download either an mp3 or wav version
+- Place both zips in the music directory
+- If you haven't already run build.sh in the base directory
+- Run genMusic in the music directory
+- genMusic depends on unzip and optionally depends on soxi (sox)
+- Music should now play unless audio has been disabled in config
+genMusic automatically generates match and duration (if soxi is present, otherwise preDuration is used)<br>
+More details can be found in [data/audio/README.md](https://github.com/Scopsula/Labyrinth/blob/main/data/audio/README.MD)<br>
 
 Building on Linux:
 - Depends on illwill https://github.com/johnnovak/illwill
