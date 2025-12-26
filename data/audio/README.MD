@@ -13,13 +13,18 @@ BGM, and i'll consider making more."
 Usage Disclaimer:
 - Glass Structures is not included with Labyrinth:
 - - The user must manually download the albums
-- - A script will then arange the files for use
+- - A program will then arange the files for use
 - Glass Structures is used as background music (BGM) for Labyrinth.
 - It plays in the background whilst the user navigates the Labyrinth.
 - The track name and author is displayed in the top right
 - This means the user must download them and a script will put them in the right place.
 
-Currently in use:
+You can find the setup here: [music/setup](https://github.com/Scopsula/Labyrinth/blob/main/music/setup)<br>
+The setup can be modified to play any of the Glass Structures at any level or structures<br>
+genMusic will extract and configure music based on setup<br>
+When making changes make sure to run remove.sh to clear out old data as genMusic doesn't do this<br>
+
+Currently in setup:
 - Volume 1:
 - - Level 0: Glass Stucture (White)
 - Volume 2:

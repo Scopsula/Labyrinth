@@ -28,9 +28,13 @@ if [ ! -d ./bin ]; then
 fi
 
 nim c -d:release -l:-ldl -l:-lm -l:-lpthread ./src/autoPlayer
-nim c -d:release ./src/genConf.nim
 mv ./src/autoPlayer ./bin
+
+nim c -d:release ./src/genConf.nim
 mv ./src/genConf ./bin
+
+nim c -d:release ./src/genMusic.nim
+mv ./src/genMusic ./music
 
 cd ./bin
 ./genConf

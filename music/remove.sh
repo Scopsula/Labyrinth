@@ -1,5 +1,4 @@
-rm -rf ../data/audio/*.mp3
-rm -rf ../data/audio/*/*.mp3
-rm -rf ../data/audio/*.wav
-rm -rf ../data/audio/*/*.wav
-rm -rf ../data/audio/*/match
+mv ../data/audio/README.MD .
+rm -rf ../data/audio/*
+mv README.MD ../data/audio
+
