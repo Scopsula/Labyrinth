@@ -12,8 +12,8 @@ Audio files must be self downloaded.
 - Download 2: https://dmdokuro.bandcamp.com/album/glass-structures-vol-2
 - You must either download the wav or mp3 version.
 - Place the zips in the Labyrinth/music directory.
-- music.sh will extract and move the files into the correct place
-- music.sh is not complete yet and will be present soon
+- music.sh will extract and move the files into the correct place.
+- Make sure to run in inside of the music directory
 - More details can be found in data/audio/README.md
 
 Building on Linux:

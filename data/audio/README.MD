@@ -12,9 +12,9 @@ BGM, and i'll consider making more."
 
 Usage Disclaimer:
 - Glass Structures is used as background music (BGM) for Labyrinth.
-- It plays in the background whilst the user navigates the labyrinth.
+- It plays in the background whilst the user navigates the Labyrinth.
 - The track name and author is displayed in the top right
-- Glass Stuctures is no longer distributed with labyrinth.
+- Glass Stuctures is no longer distributed with Labyrinth.
 - This means the user must download them and a script will put them in the right place.
 
 Currently in use:
