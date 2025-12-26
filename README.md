@@ -12,6 +12,7 @@ CURRENTLY LINUX ONLY:
 - I don't have a way to test MacOS however it may work.
 
 Music must be self downloaded (optional):
+- Labyrinth is modular so you can use your own music instead of the following
 - Download 1: https://dmdokuro.bandcamp.com/album/glass-structures-vol-1
 - Download 2: https://dmdokuro.bandcamp.com/album/glass-structures-vol-2
 - Credit to DM DOKURO
