@@ -14,7 +14,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
   path.add(pos)
   case lv
   of "1":
-    for i in 1 .. n div 2:
+    for i in 1 .. n div 2 + 1:
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
       for i in 1 .. rand(t[1] div 2 .. (t[0] - d[0] * t[1]) * 2):
         pos[d[0]] += d[1]
@@ -22,7 +22,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
     return path
 
   of "2":
-    for i in 1 .. n div ((t[0] + t[1]) div 2):
+    for i in 1 .. n div ((t[0] + t[1]) div 2) + 1:
       let d: array[2, int] = sample([[0, 1], [0,-1], [1,1], [1,-1]])
       for i in 1 .. rand(1 .. (t[0] - d[0] * t[1]) * t[1]):
         pos[d[0]] += d[1]
@@ -57,20 +57,20 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
             if iPos[i] >= 0:
               useI[i] = i
               if doNot[i].len <= iPos[i]:
-                doNot[i].setLen(iPos[i] + 1)
+                doNot[i].setLen(iPos[i] + 2)
 
             if iPos[i] < 0:
               cIpos[i] = cIpos[i] * -1
               useI[i] = i + 2
               if doNot[i + 2].len <= -1 * iPos[i]:
-                doNot[i + 2].setLen(-1 * iPos[i] + 1)
+                doNot[i + 2].setLen(-1 * iPos[i] + 2)
 
           if y == 0: 
             if cIpos[1] - 1 == -1:
               useI[1] += 2
               cIpos[1] = 2
             if doNot[useI[1]].len <= cIpos[1] - 1:
-              doNot[useI[1]].setLen(cIpos[1] + 1) 
+              doNot[useI[1]].setLen(cIpos[1] + 2) 
             doNot[useI[1]][cIPos[1] - 1].add(cIpos[0])
             doNot[useI[0]][cIPos[0]].add(cIpos[1] - 1)
             if cIpos[1] - 1 < 0:
@@ -88,7 +88,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
               useI[0] += 2
               cIpos[0] = 2
             if doNot[useI[0]].len <= cIpos[0] - 1:
-              doNot[useI[0]].setLen(cIpos[0] + 1) 
+              doNot[useI[0]].setLen(cIpos[0] + 2) 
             doNot[useI[1]][cIPos[1]].add(cIpos[0] - 1)
             doNot[useI[0]][cIPos[0] - 1].add(cIpos[1])
             if cIpos[0] - 1 < 0:
@@ -218,7 +218,7 @@ proc cGen*(n: int, t: array[2, int]): seq[array[2, int]] =
               doFent = true
               cj.add(j)
         doW(selW, d, doFent)
-      if nC > 0:
+      if nC > 0 and i > 1:
         if rand(1 .. t[0] * t[1] * nC) == 1:
           inSec()
     return path
